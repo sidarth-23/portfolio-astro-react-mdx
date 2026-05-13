@@ -10,7 +10,6 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { sidebarContent } from "@/lib/sidebar-content"
 import { NavFooter } from "./nav-footer"
 
@@ -27,12 +26,13 @@ export function AppSidebar({
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader className="flex flex-col items-center gap-3 px-4 py-6">
-        <Avatar className="size-20">
-          <AvatarImage src={avatarSrc} alt={profile.name} />
-          <AvatarFallback className="bg-sidebar-primary text-2xl font-semibold text-sidebar-primary-foreground">
-            {profile.fallback}
-          </AvatarFallback>
-        </Avatar>
+        <img
+          src={avatarSrc}
+          alt={profile.name}
+          className="size-20 rounded-full object-cover"
+          loading="eager"
+          decoding="sync"
+        />
         <div className="flex flex-col items-center gap-1 text-center">
           <h3 className="font-semibold text-sidebar-foreground">
             {profile.name}

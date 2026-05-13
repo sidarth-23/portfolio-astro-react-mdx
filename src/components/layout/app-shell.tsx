@@ -23,7 +23,9 @@ export function AppShell({
         <AppSidebar currentPath={currentPath} avatarSrc={avatarSrc} />
         <SidebarInset className="min-h-svh">
           <SiteHeader currentPath={currentPath} pageTitle={pageTitle} />
-          <div className="flex-1">{children}</div>
+          <div className="flex-1">
+            {children}
+          </div>
           <Footer currentPath={currentPath} />
         </SidebarInset>
       </SidebarProvider>

@@ -3,6 +3,7 @@ import "@/styles/global.css"
 import { resolveSeo } from "@/lib/seo"
 import { AppShell } from "@/components/layout/app-shell"
 import avatarImage from "@/assets/images/avatar.jpg"
+import { ClientRouter } from "astro:transitions"
 
 interface Props {
   title: string
@@ -26,8 +27,9 @@ const currentPath = Astro.url.pathname
 const avatarSrc = avatarImage.src
 ---
 
-<html lang="en">
+<html lang="en" transition:animate="none">
   <head>
+    <ClientRouter />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -57,18 +59,28 @@ const avatarSrc = avatarImage.src
     }
 
     <!-- Theme initialization script -->
-    <script is:inline>
+    <script is:inline data-astro-rerun>
       (function() {
         const theme = localStorage.getItem('theme') || 'system'
         const root = document.documentElement
-        root.classList.remove('light', 'dark')
+        let targetTheme
         if (theme === 'system') {
-          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-          root.classList.add(systemTheme)
+          targetTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
         } else {
-          root.classList.add(theme)
+          targetTheme = theme
         }
+        root.classList.remove('light', 'dark')
+        root.classList.add(targetTheme)
       })()
+    </script>
+
+    <!-- Prevent theme flash during view transitions -->
+    <script>
+      document.addEventListener('astro:before-swap', (e) => {
+        const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+        e.newDocument.documentElement.classList.remove('light', 'dark')
+        e.newDocument.documentElement.classList.add(currentTheme)
+      })
     </script>
   </head>
   <body class="min-h-svh bg-background text-foreground antialiased">
