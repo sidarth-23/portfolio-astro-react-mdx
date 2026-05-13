@@ -1,6 +1,7 @@
 ---
 import "@/styles/global.css"
 import { resolveSeo } from "@/lib/seo"
+import { AppShell } from "@/components/app-shell"
 
 interface Props {
   title: string
@@ -43,6 +44,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
     {resolved.ogImage && <meta name="twitter:image" content={resolved.ogImage} />}
   </head>
   <body class="min-h-svh bg-background text-foreground antialiased">
-    <slot />
+    <AppShell client:load>
+      <slot />
+    </AppShell>
   </body>
 </html>
