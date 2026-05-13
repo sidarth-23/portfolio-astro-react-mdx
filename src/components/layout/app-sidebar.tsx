@@ -2,8 +2,7 @@
 
 import * as React from "react"
 
-import { NavLinks } from "@/components/nav-links"
-import { SocialClouds } from "@/components/social-clouds"
+import { NavLinks } from "./nav-links"
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +12,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { sidebarContent } from "@/lib/sidebar-content"
+import { NavFooter } from "./nav-footer"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { profile, navigation, social } = sidebarContent
@@ -43,13 +43,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarSeparator />
 
-      <SidebarContent className="px-2 py-4">
+      <SidebarContent className="mt-2">
         <NavLinks items={navigation} />
       </SidebarContent>
-
-      <SidebarFooter className="px-4 py-4">
-        <SidebarSeparator className="mb-4" />
-        <SocialClouds items={social} />
+      <SidebarFooter>
+        <NavFooter items={social} />
       </SidebarFooter>
     </Sidebar>
   )

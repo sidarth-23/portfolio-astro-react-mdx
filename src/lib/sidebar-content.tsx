@@ -1,47 +1,38 @@
-/**
- * Sidebar content configuration
- * Easily replaceable data for the portfolio sidebar
- */
+import type { ReactNode } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Home01Icon,
+  FolderCodeIcon,
+  BookOpen02Icon,
+  File02Icon,
+  Linkedin01Icon,
+  Mail01Icon,
+} from "@hugeicons/core-free-icons"
+import { siGithub, siRss } from "simple-icons"
+import { SimpleIcon } from "@/components/shared/simple-icon"
 
-/** Navigation link item for sidebar menu */
 export interface NavigationItem {
-  /** Display title of the navigation link */
   title: string
-  /** URL or route path */
   url: string
-  /** Icon identifier from icon library */
-  icon: string
+  icon: ReactNode
 }
 
-/** Social media link item */
 export interface SocialLink {
-  /** Platform or service name */
   title: string
-  /** Full URL to the profile or resource */
   url: string
-  /** Icon identifier for the platform */
-  icon: string
+  icon: ReactNode
 }
 
-/** Profile information displayed in sidebar */
 export interface ProfileInfo {
-  /** Full name displayed in sidebar */
   name: string
-  /** Professional title or role */
   title: string
-  /** Path to avatar image */
   avatar: string
-  /** Fallback initials when avatar fails to load */
   fallback: string
 }
 
-/** Complete sidebar content structure */
 export interface SidebarContent {
-  /** Profile section configuration */
   profile: ProfileInfo
-  /** Main navigation links */
   navigation: NavigationItem[]
-  /** Social media and contact links */
   social: SocialLink[]
 }
 
@@ -57,22 +48,22 @@ export const sidebarContent: SidebarContent = {
     {
       title: "Home",
       url: "/",
-      icon: "Home01Icon",
+      icon: <HugeiconsIcon icon={Home01Icon} strokeWidth={2} />,
     },
     {
       title: "Projects",
       url: "/projects",
-      icon: "FolderCodeIcon",
+      icon: <HugeiconsIcon icon={FolderCodeIcon} strokeWidth={2} />,
     },
     {
       title: "Blog",
       url: "/blog",
-      icon: "BookOpen02Icon",
+      icon: <HugeiconsIcon icon={BookOpen02Icon} strokeWidth={2} />,
     },
     {
       title: "Resume",
       url: "#",
-      icon: "File02Icon",
+      icon: <HugeiconsIcon icon={File02Icon} strokeWidth={2} />,
     },
   ],
 
@@ -80,22 +71,22 @@ export const sidebarContent: SidebarContent = {
     {
       title: "GitHub",
       url: "https://github.com",
-      icon: "github",
+      icon: <SimpleIcon icon={siGithub} />,
     },
     {
       title: "LinkedIn",
       url: "https://linkedin.com",
-      icon: "linkedin",
+      icon: <HugeiconsIcon icon={Linkedin01Icon} strokeWidth={2} />,
     },
     {
       title: "RSS",
       url: "/rss.xml",
-      icon: "rss",
+      icon: <SimpleIcon icon={siRss} />,
     },
     {
       title: "Email",
       url: "mailto:hello@sidshub.in",
-      icon: "mail",
+      icon: <HugeiconsIcon icon={Mail01Icon} strokeWidth={2} />,
     },
   ],
 }

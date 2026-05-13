@@ -1,7 +1,7 @@
 ---
 import "@/styles/global.css"
 import { resolveSeo } from "@/lib/seo"
-import { AppShell } from "@/components/app-shell"
+import { AppShell } from "@/components/layout/app-shell"
 
 interface Props {
   title: string
@@ -35,13 +35,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
     <meta property="og:description" content={resolved.ogDescription} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    {resolved.ogImage && <meta property="og:image" content={resolved.ogImage} />}
+    {
+      resolved.ogImage && (
+        <meta property="og:image" content={resolved.ogImage} />
+      )
+    }
 
     <!-- Twitter -->
     <meta name="twitter:card" content={resolved.twitterCard} />
     <meta name="twitter:title" content={resolved.ogTitle} />
     <meta name="twitter:description" content={resolved.ogDescription} />
-    {resolved.ogImage && <meta name="twitter:image" content={resolved.ogImage} />}
+    {
+      resolved.ogImage && (
+        <meta name="twitter:image" content={resolved.ogImage} />
+      )
+    }
   </head>
   <body class="min-h-svh bg-background text-foreground antialiased">
     <AppShell client:load>
