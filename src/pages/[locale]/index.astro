@@ -1,0 +1,97 @@
+---
+import ContentLayout from "@/layouts/ContentLayout.astro"
+import { Image } from "astro:assets"
+import { getPublishedBlogPosts, getFeaturedProjects, formatShortDate } from "@/lib/content"
+import { locales, defaultLocale, type Locale } from "@/i18n/config"
+import { t } from "@/i18n/ui"
+
+export async function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale } }))
+}
+
+const { locale } = Astro.params as { locale: Locale }
+
+const posts = await getPublishedBlogPosts(locale)
+const projects = await getFeaturedProjects(locale)
+const latestPosts = posts.slice(0, 3)
+---
+
+<ContentLayout
+  title={locale === defaultLocale ? "Sid — Engineer & Builder" : t(locale, "meta.description")}
+  locale={locale}
+>
+  <section class="mb-16">
+    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Sid</h1>
+    <p class="mt-4 max-w-lg text-lg text-muted-foreground leading-relaxed">
+      {locale === "en"
+        ? "Engineer. I build things on the web, write about what I learn, and share projects that solve real problems."
+        : locale === "hi"
+          ? "इंजीनियर। मैं वेब पर चीज़ें बनाता हूँ, जो सीखता हूँ उसके बारे में लिखता हूँ, और ऐसे प्रोजेक्ट्स साझा करता हूँ जो असली समस्याएँ हल करते हैं।"
+          : "Ingénieur. Je construis des choses sur le web, j'écris sur ce que j'apprends, et je partage des projets qui résolvent de vrais problèmes."}
+    </p>
+  </section>
+
+  {
+    latestPosts.length > 0 && (
+      <section class="mb-16">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-6">
+          {t(locale, "blog.latest")}
+        </h2>
+        <div class="flex flex-col gap-6">
+          {latestPosts.map((post) => (
+            <a href={`/${locale}/blog/${post.slug.split("/").slice(1).join("/")}`} class="group block">
+              <article class="flex flex-col gap-2">
+                <h3 class="text-lg font-medium group-hover:text-primary transition-colors">
+                  {post.data.title}
+                </h3>
+                <p class="text-sm text-muted-foreground line-clamp-2">{post.data.description}</p>
+                <time class="text-xs text-muted-foreground/70">
+                  {formatShortDate(post.data.date, locale)}
+                </time>
+              </article>
+            </a>
+          ))}
+        </div>
+        <a href={`/${locale}/blog`} class="mt-6 inline-block text-sm font-medium text-primary hover:underline">
+          {t(locale, "blog.viewAll")}
+        </a>
+      </section>
+    )
+  }
+
+  {
+    projects.length > 0 && (
+      <section>
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-6">
+          {t(locale, "projects.featured")}
+        </h2>
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {projects.slice(0, 4).map((project) => (
+            <a href={`/${locale}/projects/${project.slug.split("/").slice(1).join("/")}`} class="group block">
+              <article class="overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/30">
+                <Image
+                  src={project.data.coverImage}
+                  alt={project.data.title}
+                  width={600}
+                  height={340}
+                  class="aspect-video w-full object-cover"
+                />
+                <div class="p-4">
+                  <h3 class="font-medium group-hover:text-primary transition-colors">
+                    {project.data.title}
+                  </h3>
+                  <p class="mt-1 text-sm text-muted-foreground line-clamp-2">
+                    {project.data.summary}
+                  </p>
+                </div>
+              </article>
+            </a>
+          ))}
+        </div>
+        <a href={`/${locale}/projects`} class="mt-6 inline-block text-sm font-medium text-primary hover:underline">
+          {t(locale, "projects.viewAll")}
+        </a>
+      </section>
+    )
+  }
+</ContentLayout>

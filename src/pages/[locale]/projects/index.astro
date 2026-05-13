@@ -2,14 +2,22 @@
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import { Image } from "astro:assets"
 import { getAllProjects, getAllProjectTags, formatShortDate } from "@/lib/content"
+import { locales, type Locale } from "@/i18n/config"
+import { t } from "@/i18n/ui"
 
-const projects = await getAllProjects()
+export async function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale } }))
+}
+
+const { locale } = Astro.params as { locale: Locale }
+
+const projects = await getAllProjects(locale)
 const tags = getAllProjectTags(projects)
 ---
 
-<ContentLayout title="Projects — Sid">
-  <h1 class="text-3xl font-bold tracking-tight mb-2">Projects</h1>
-  <p class="text-muted-foreground mb-8">A selection of things I have built, shipped, and learned from.</p>
+<ContentLayout title={t(locale, "projects.title") + " — Sid"} locale={locale}>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">{t(locale, "projects.title")}</h1>
+  <p class="text-muted-foreground mb-8">{t(locale, "projects.description")}</p>
 
   {
     tags.length > 0 && (
@@ -26,7 +34,7 @@ const tags = getAllProjectTags(projects)
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
     {
       projects.map((project) => (
-        <a href={`/projects/${project.slug}`} class="group block">
+        <a href={`/${locale}/projects/${project.slug.split("/").slice(1).join("/")}`} class="group block">
           <article class="overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/30 h-full flex flex-col">
             <Image
               src={project.data.coverImage}
@@ -42,7 +50,7 @@ const tags = getAllProjectTags(projects)
                 </h2>
                 {project.data.featured && (
                   <span class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-                    Featured
+                    {t(locale, "projects.featuredLabel")}
                   </span>
                 )}
               </div>
@@ -55,7 +63,7 @@ const tags = getAllProjectTags(projects)
                 ))}
               </div>
               <time class="mt-3 text-xs text-muted-foreground/60">
-                {formatShortDate(project.data.date)}
+                {formatShortDate(project.data.date, locale)}
               </time>
             </div>
           </article>

@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content"
 import { z } from "zod"
 import { seoSchema, linkSchema, tagSchema, dateSchema } from "@/lib/schemas"
+import { locales } from "@/i18n/config"
 
 const blog = defineCollection({
   type: "content",
@@ -16,6 +17,7 @@ const blog = defineCollection({
       category: z.string().min(1).optional(),
       series: z.string().optional(),
       seo: seoSchema.optional(),
+      locale: z.enum(locales).default("en"),
     }),
 })
 
@@ -33,6 +35,7 @@ const projects = defineCollection({
       links: z.array(linkSchema).default([]),
       tags: z.array(tagSchema).default([]),
       seo: seoSchema.optional(),
+      locale: z.enum(locales).default("en"),
     }),
 })
 

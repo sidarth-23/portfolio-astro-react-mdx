@@ -4,6 +4,7 @@ import { resolveSeo } from "@/lib/seo"
 import { AppShell } from "@/components/layout/app-shell"
 import avatarImage from "@/assets/images/avatar.jpg"
 import { ClientRouter } from "astro:transitions"
+import type { Locale } from "@/i18n/config"
 
 interface Props {
   title: string
@@ -11,6 +12,7 @@ interface Props {
   image?: string
   seo?: import("@/lib/seo").SeoData
   headerTitle?: string
+  locale?: Locale
 }
 
 const {
@@ -19,6 +21,7 @@ const {
   image = "/og-default.jpg",
   seo,
   headerTitle,
+  locale = "en",
 } = Astro.props
 
 const resolved = resolveSeo({ title, description, image }, seo)
@@ -27,7 +30,7 @@ const currentPath = Astro.url.pathname
 const avatarSrc = avatarImage.src
 ---
 
-<html lang="en" transition:animate="none">
+<html lang={locale} transition:animate="none">
   <head>
     <ClientRouter />
     <meta charset="utf-8" />
@@ -84,7 +87,7 @@ const avatarSrc = avatarImage.src
     </script>
   </head>
   <body class="min-h-svh bg-background text-foreground antialiased">
-    <AppShell client:load currentPath={currentPath} avatarSrc={avatarSrc} pageTitle={headerTitle}>
+    <AppShell client:load currentPath={currentPath} avatarSrc={avatarSrc} pageTitle={headerTitle} locale={locale}>
       <slot />
     </AppShell>
   </body>

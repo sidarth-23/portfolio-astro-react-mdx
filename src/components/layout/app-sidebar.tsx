@@ -12,16 +12,19 @@ import {
 } from "@/components/ui/sidebar"
 import { sidebarContent } from "@/lib/sidebar-content"
 import { NavFooter } from "./nav-footer"
+import type { Locale } from "@/i18n/config"
 
 export function AppSidebar({
   currentPath,
   avatarSrc,
+  locale = "en",
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   currentPath: string
   avatarSrc: string
+  locale?: Locale
 }) {
-  const { profile, navigation, social } = sidebarContent
+  const { profile, navigation, social } = sidebarContent(locale)
 
   return (
     <Sidebar variant="inset" {...props}>

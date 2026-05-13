@@ -1,28 +1,62 @@
 import { getCollection, type CollectionEntry } from "astro:content"
 import type { z } from "zod"
 import type { tagSchema } from "@/lib/schemas"
+import type { Locale } from "@/i18n/config"
 
 type Tag = z.infer<typeof tagSchema>
 
-export async function getPublishedBlogPosts() {
+function getLocaleFromSlug(slug: string): Locale {
+  const firstSegment = slug.split("/")[0]
+  if (firstSegment === "en" || firstSegment === "hi" || firstSegment === "fr") {
+    return firstSegment
+  }
+  return "en"
+}
+
+function getContentSlug(slug: string): string {
+  const parts = slug.split("/")
+  if (parts[0] === "en" || parts[0] === "hi" || parts[0] === "fr") {
+    return parts.slice(1).join("/")
+  }
+  return slug
+}
+
+function filterByLocale<T extends "blog" | "projects">(
+  entries: CollectionEntry<T>[],
+  locale: Locale
+): CollectionEntry<T>[] {
+  return entries.filter((entry) => {
+    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.slug)
+    return entryLocale === locale
+  })
+}
+
+export async function getPublishedBlogPosts(locale: Locale = "en") {
   const posts = await getCollection("blog", ({ data }) => !data.draft)
-  return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  const filtered = filterByLocale(posts, locale)
+  return filtered.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
 
-export async function getDraftBlogPosts() {
-  return getCollection("blog", ({ data }) => data.draft)
+export async function getDraftBlogPosts(locale: Locale = "en") {
+  const posts = await getCollection("blog", ({ data }) => data.draft)
+  return filterByLocale(posts, locale)
 }
 
-export async function getBlogPostBySlug(slug: string) {
-  const posts = await getCollection("blog", (entry) => entry.slug === slug)
+export async function getBlogPostBySlug(slug: string, locale: Locale = "en") {
+  const posts = await getCollection("blog", (entry) => {
+    const entrySlug = getContentSlug(entry.slug)
+    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.slug)
+    return entrySlug === slug && entryLocale === locale && !entry.data.draft
+  })
   return posts[0] ?? null
 }
 
-export async function getBlogPostsByTag(tag: Tag) {
+export async function getBlogPostsByTag(tag: Tag, locale: Locale = "en") {
   const posts = await getCollection("blog", ({ data }) =>
     data.tags.includes(tag)
   )
-  return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  const filtered = filterByLocale(posts, locale)
+  return filtered.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
 
 export function getAllTags(posts: CollectionEntry<"blog">[]): Tag[] {
@@ -35,26 +69,35 @@ export function getAllTags(posts: CollectionEntry<"blog">[]): Tag[] {
   return Array.from(tags).sort()
 }
 
-export async function getFeaturedProjects() {
+export async function getFeaturedProjects(locale: Locale = "en") {
   const projects = await getCollection("projects", ({ data }) => data.featured)
-  return projects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  return filterByLocale(projects, locale).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime()
+  )
 }
 
-export async function getAllProjects() {
+export async function getAllProjects(locale: Locale = "en") {
   const projects = await getCollection("projects")
-  return projects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  return filterByLocale(projects, locale).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime()
+  )
 }
 
-export async function getProjectBySlug(slug: string) {
-  const projects = await getCollection("projects", (entry) => entry.slug === slug)
+export async function getProjectBySlug(slug: string, locale: Locale = "en") {
+  const projects = await getCollection("projects", (entry) => {
+    const entrySlug = getContentSlug(entry.slug)
+    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.slug)
+    return entrySlug === slug && entryLocale === locale
+  })
   return projects[0] ?? null
 }
 
-export async function getProjectsByTag(tag: Tag) {
+export async function getProjectsByTag(tag: Tag, locale: Locale = "en") {
   const projects = await getCollection("projects", ({ data }) =>
     data.tags.includes(tag)
   )
-  return projects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  const filtered = filterByLocale(projects, locale)
+  return filtered.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
 
 export function getAllProjectTags(projects: CollectionEntry<"projects">[]): Tag[] {
@@ -67,16 +110,26 @@ export function getAllProjectTags(projects: CollectionEntry<"projects">[]): Tag[
   return Array.from(tags).sort()
 }
 
-export function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatDate(date: Date, locale: Locale = "en"): string {
+  const localeMap: Record<Locale, string> = {
+    en: "en-US",
+    hi: "hi-IN",
+    fr: "fr-FR",
+  }
+  return new Intl.DateTimeFormat(localeMap[locale], {
     year: "numeric",
     month: "long",
     day: "numeric",
   }).format(date)
 }
 
-export function formatShortDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatShortDate(date: Date, locale: Locale = "en"): string {
+  const localeMap: Record<Locale, string> = {
+    en: "en-US",
+    hi: "hi-IN",
+    fr: "fr-FR",
+  }
+  return new Intl.DateTimeFormat(localeMap[locale], {
     year: "numeric",
     month: "short",
     day: "numeric",

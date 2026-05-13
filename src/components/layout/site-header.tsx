@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useSidebar } from "@/components/ui/sidebar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { PanelLeft } from "@hugeicons/core-free-icons"
+import { PanelLeft, SparklesIcon } from "@hugeicons/core-free-icons"
 import { ThemeToggle } from "./theme-toggle"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -22,7 +22,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { resolvePageTitle } from "@/lib/sidebar-content"
+import { locales, localeLabels, defaultLocale, type Locale } from "@/i18n/config"
+import { t } from "@/i18n/ui"
 
 function HeaderSidebarTrigger() {
   const { toggleSidebar } = useSidebar()
@@ -49,28 +58,32 @@ interface BreadcrumbSegment {
 function buildBreadcrumbs(currentPath: string, pageTitle?: string): BreadcrumbSegment[] {
   const segments = currentPath.split("/").filter(Boolean)
   
-  if (segments.length === 0) {
-    return [{ title: "Home", href: "/", isCurrent: true }]
+  // First segment is locale, skip it for breadcrumbs
+  const pathSegments = segments.slice(1)
+  
+  if (pathSegments.length === 0) {
+    return [{ title: "Home", href: "/" + segments[0], isCurrent: true }]
   }
 
+  const locale = segments[0] || defaultLocale
   const breadcrumbs: BreadcrumbSegment[] = [
-    { title: "Home", href: "/", isCurrent: false },
+    { title: "Home", href: `/${locale}`, isCurrent: false },
   ]
 
   let accumulatedPath = ""
-  for (let i = 0; i < segments.length; i++) {
-    accumulatedPath += "/" + segments[i]
-    const isLast = i === segments.length - 1
+  for (let i = 0; i < pathSegments.length; i++) {
+    accumulatedPath += "/" + pathSegments[i]
+    const isLast = i === pathSegments.length - 1
     const title = isLast && pageTitle
       ? pageTitle
-      : resolvePageTitle(accumulatedPath) || segments[i]
+      : resolvePageTitle(accumulatedPath) || pathSegments[i]
         .split("-")
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
         .join(" ")
     
     breadcrumbs.push({
       title,
-      href: accumulatedPath,
+      href: `/${locale}${accumulatedPath}`,
       isCurrent: isLast,
     })
   }
@@ -141,12 +154,70 @@ function Breadcrumbs({ currentPath, pageTitle }: { currentPath: string; pageTitl
   )
 }
 
+function LanguageSelector({ currentPath, locale }: { currentPath: string; locale: Locale }) {
+  const handleChange = (value: string) => {
+    const segments = currentPath.split("/").filter(Boolean)
+    const currentLocale = segments[0] || defaultLocale
+    
+    if (value === currentLocale) return
+    
+    // Replace locale in path
+    if (segments.length > 0) {
+      segments[0] = value
+    } else {
+      segments.unshift(value)
+    }
+    
+    window.location.href = "/" + segments.join("/")
+  }
+
+  const getPathForLocale = (targetLocale: Locale): string => {
+    const segments = currentPath.split("/").filter(Boolean)
+    if (segments.length > 0) {
+      segments[0] = targetLocale
+    } else {
+      segments.unshift(targetLocale)
+    }
+    return "/" + segments.join("/")
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Select value={locale} onValueChange={handleChange}>
+        <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs" size="sm">
+          <SelectValue placeholder={t(locale, "lang.selector")} />
+        </SelectTrigger>
+        <SelectContent>
+          {locales.map((loc) => (
+            <SelectItem key={loc} value={loc} className="text-xs">
+              <a href={getPathForLocale(loc)} className="flex items-center gap-2">
+                <span>{localeLabels[loc]}</span>
+                {loc !== defaultLocale && (
+                  <HugeiconsIcon
+                    icon={SparklesIcon}
+                    size={14}
+                    strokeWidth={2}
+                    className="text-primary/70"
+                    title={t(loc, "lang.aiGenerated")}
+                  />
+                )}
+              </a>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
 export function SiteHeader({
   currentPath,
   pageTitle,
+  locale = "en",
 }: {
   currentPath: string
   pageTitle?: string
+  locale?: Locale
 }) {
   return (
     <header className="border-b">
@@ -156,7 +227,10 @@ export function SiteHeader({
           <Separator orientation="vertical" />
           <Breadcrumbs currentPath={currentPath} pageTitle={pageTitle} />
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-3">
+          <LanguageSelector currentPath={currentPath} locale={locale} />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   )

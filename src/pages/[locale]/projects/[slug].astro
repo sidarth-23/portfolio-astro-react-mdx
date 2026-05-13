@@ -2,14 +2,24 @@
 import ProjectLayout from "@/layouts/ProjectLayout.astro"
 import { Image } from "astro:assets"
 import { getAllProjects, formatDate } from "@/lib/content"
+import { locales, type Locale } from "@/i18n/config"
 import type { CollectionEntry } from "astro:content"
 
 export async function getStaticPaths() {
-  const projects = await getAllProjects()
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: { project },
-  }))
+  const paths: Array<{ params: { locale: Locale; slug: string }; props: { project: CollectionEntry<"projects"> } }> = []
+
+  for (const locale of locales) {
+    const projects = await getAllProjects(locale)
+    for (const project of projects) {
+      const slug = project.slug.split("/").slice(1).join("/")
+      paths.push({
+        params: { locale, slug },
+        props: { project },
+      })
+    }
+  }
+
+  return paths
 }
 
 interface Props {
@@ -17,13 +27,14 @@ interface Props {
 }
 
 const { project } = Astro.props
+const { locale } = Astro.params as { locale: Locale }
 const { Content } = await project.render()
 
-const date = formatDate(project.data.date)
-const updatedDate = project.data.updatedDate ? formatDate(project.data.updatedDate) : null
+const date = formatDate(project.data.date, locale)
+const updatedDate = project.data.updatedDate ? formatDate(project.data.updatedDate, locale) : null
 ---
 
-<ProjectLayout project={project}>
+<ProjectLayout project={project} locale={locale}>
   <article class="max-w-none">
     <header class="mb-8">
       <div class="flex items-center gap-3 mb-3">
