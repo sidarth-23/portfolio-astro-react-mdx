@@ -5,11 +5,8 @@ import {
   FolderCodeIcon,
   BookOpen02Icon,
   File02Icon,
-  Linkedin01Icon,
-  Mail01Icon,
 } from "@hugeicons/core-free-icons"
-import { siGithub, siRss } from "simple-icons"
-import { SimpleIcon } from "@/components/shared/simple-icon"
+import { GitHubIcon, LinkedInIcon, RssIcon, MailIcon } from "@/components/icons"
 
 export interface NavigationItem {
   title: string
@@ -36,6 +33,17 @@ export interface SidebarContent {
   social: SocialLink[]
 }
 
+export function resolvePageTitle(
+  currentPath: string,
+  override?: string
+): string {
+  if (override) return override
+  for (const item of sidebarContent.navigation) {
+    if (item.url === currentPath) return item.title
+  }
+  return ""
+}
+
 export const sidebarContent: SidebarContent = {
   profile: {
     name: "Sidarth G",
@@ -48,22 +56,22 @@ export const sidebarContent: SidebarContent = {
     {
       title: "Home",
       url: "/",
-      icon: <HugeiconsIcon icon={Home01Icon} strokeWidth={2} />,
+      icon: <HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={2} />,
     },
     {
       title: "Projects",
       url: "/projects",
-      icon: <HugeiconsIcon icon={FolderCodeIcon} strokeWidth={2} />,
+      icon: <HugeiconsIcon icon={FolderCodeIcon} size={16} strokeWidth={2} />,
     },
     {
       title: "Blog",
       url: "/blog",
-      icon: <HugeiconsIcon icon={BookOpen02Icon} strokeWidth={2} />,
+      icon: <HugeiconsIcon icon={BookOpen02Icon} size={16} strokeWidth={2} />,
     },
     {
       title: "Resume",
       url: "#",
-      icon: <HugeiconsIcon icon={File02Icon} strokeWidth={2} />,
+      icon: <HugeiconsIcon icon={File02Icon} size={16} strokeWidth={2} />,
     },
   ],
 
@@ -71,22 +79,22 @@ export const sidebarContent: SidebarContent = {
     {
       title: "GitHub",
       url: "https://github.com",
-      icon: <SimpleIcon icon={siGithub} />,
+      icon: <GitHubIcon />,
     },
     {
       title: "LinkedIn",
       url: "https://linkedin.com",
-      icon: <HugeiconsIcon icon={Linkedin01Icon} strokeWidth={2} />,
+      icon: <LinkedInIcon />,
     },
     {
       title: "RSS",
       url: "/rss.xml",
-      icon: <SimpleIcon icon={siRss} />,
+      icon: <RssIcon />,
     },
     {
       title: "Email",
       url: "mailto:hello@sidshub.in",
-      icon: <HugeiconsIcon icon={Mail01Icon} strokeWidth={2} />,
+      icon: <MailIcon />,
     },
   ],
 }

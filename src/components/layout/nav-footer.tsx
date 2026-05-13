@@ -9,9 +9,22 @@ export function NavFooter({
 }) {
   return (
     <div className="flex items-center justify-center gap-6">
-      {items.map((item) => {
-        return <div>{item.icon}</div>
-      })}
+      {items.map((item) => (
+        <a
+          key={item.title}
+          href={item.url}
+          target={item.url.startsWith("http") ? "_blank" : undefined}
+          rel={
+            item.url.startsWith("http")
+              ? "noopener noreferrer"
+              : undefined
+          }
+          aria-label={item.title}
+          className="text-sidebar-foreground transition-colors hover:text-sidebar-foreground/80"
+        >
+          {item.icon}
+        </a>
+      ))}
     </div>
   )
 }
