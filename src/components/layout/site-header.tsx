@@ -1,38 +1,52 @@
-import { SidebarTrigger } from "@/components/ui/sidebar"
+"use client"
+
+import { useSidebar } from "@/components/ui/sidebar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Menu01Icon } from "@hugeicons/core-free-icons"
+import { PanelLeftOpenIcon, PanelLeftCloseIcon } from "@hugeicons/core-free-icons"
 import { ThemeToggle } from "./theme-toggle"
 import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { resolvePageTitle } from "@/lib/page-titles"
 
-export function SiteHeader({ avatarSrc }: { avatarSrc: string }) {
+function HeaderSidebarTrigger() {
+  const { toggleSidebar, open, openMobile, isMobile } = useSidebar()
+  const isOpen = isMobile ? openMobile : open
+
+  return (
+    <Button
+      data-sidebar="trigger"
+      variant="ghost"
+      size="icon-sm"
+      onClick={toggleSidebar}
+    >
+      <HugeiconsIcon
+        icon={isOpen ? PanelLeftCloseIcon : PanelLeftOpenIcon}
+        strokeWidth={2}
+        className="size-5"
+      />
+      <span className="sr-only">Toggle sidebar</span>
+    </Button>
+  )
+}
+
+export function SiteHeader({
+  currentPath,
+  pageTitle,
+}: {
+  currentPath: string
+  pageTitle?: string
+}) {
+  const title = resolvePageTitle(currentPath, pageTitle)
+
   return (
     <header className="border-b">
       <div className="mx-auto flex h-14 w-full shrink-0 items-center justify-between px-4 md:max-w-5xl">
-        <a
-          href="/"
-          className="flex items-center gap-2.5 text-base font-semibold tracking-tight text-foreground transition-colors hover:text-primary"
-        >
-          <Avatar className="size-8">
-            <AvatarImage src={avatarSrc} alt="Sidarth G" />
-            <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
-              SG
-            </AvatarFallback>
-          </Avatar>
-          <span>SG</span>
-        </a>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <Separator orientation="vertical" />
-          <SidebarTrigger>
-            <HugeiconsIcon
-              icon={Menu01Icon}
-              strokeWidth={2}
-              className="size-5"
-            />
-            <span className="sr-only">Toggle sidebar</span>
-          </SidebarTrigger>
+        <div className="flex items-center gap-3">
+          <HeaderSidebarTrigger />
+          <Separator orientation="vertical" className="h-5" />
+          <span className="text-sm font-medium text-foreground">{title}</span>
         </div>
+        <ThemeToggle />
       </div>
     </header>
   )

@@ -1,5 +1,5 @@
 ---
-import ContentLayout from "@/layouts/ContentLayout.astro"
+import BlogPostLayout from "@/layouts/BlogPostLayout.astro"
 import { Image } from "astro:assets"
 import { getPublishedBlogPosts, formatDate } from "@/lib/content"
 import type { CollectionEntry } from "astro:content"
@@ -23,12 +23,7 @@ const pubDate = formatDate(post.data.date)
 const updatedDate = post.data.updatedDate ? formatDate(post.data.updatedDate) : null
 ---
 
-<ContentLayout
-  title={post.data.seo?.title ?? post.data.title}
-  description={post.data.seo?.description ?? post.data.description}
-  image={post.data.seo?.image}
-  seo={post.data.seo}
->
+<BlogPostLayout post={post}>
   <article class="max-w-none">
     <header class="mb-8">
       <time class="text-sm text-muted-foreground" datetime={post.data.date.toISOString()}>
@@ -66,4 +61,4 @@ const updatedDate = post.data.updatedDate ? formatDate(post.data.updatedDate) : 
       <Content />
     </div>
   </article>
-</ContentLayout>
+</BlogPostLayout>

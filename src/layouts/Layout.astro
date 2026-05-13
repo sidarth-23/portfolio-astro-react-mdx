@@ -9,6 +9,7 @@ interface Props {
   description?: string
   image?: string
   seo?: import("@/lib/seo").SeoData
+  headerTitle?: string
 }
 
 const {
@@ -16,6 +17,7 @@ const {
   description = "Sid's portfolio — thoughts on engineering, design, and building things.",
   image = "/og-default.jpg",
   seo,
+  headerTitle,
 } = Astro.props
 
 const resolved = resolveSeo({ title, description, image }, seo)
@@ -70,7 +72,7 @@ const avatarSrc = avatarImage.src
     </script>
   </head>
   <body class="min-h-svh bg-background text-foreground antialiased">
-    <AppShell client:load currentPath={currentPath} avatarSrc={avatarSrc}>
+    <AppShell client:load currentPath={currentPath} avatarSrc={avatarSrc} pageTitle={headerTitle}>
       <slot />
     </AppShell>
   </body>

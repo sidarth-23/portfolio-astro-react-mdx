@@ -1,0 +1,20 @@
+---
+import ContentLayout from "./ContentLayout.astro"
+import type { CollectionEntry } from "astro:content"
+
+interface Props {
+  post: CollectionEntry<"blog">
+}
+
+const { post } = Astro.props
+---
+
+<ContentLayout
+  title={post.data.seo?.title ?? post.data.title}
+  description={post.data.seo?.description ?? post.data.description}
+  image={post.data.seo?.image}
+  seo={post.data.seo}
+  headerTitle={post.data.title}
+>
+  <slot />
+</ContentLayout>

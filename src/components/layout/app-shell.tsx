@@ -10,17 +10,19 @@ export function AppShell({
   children,
   currentPath,
   avatarSrc,
+  pageTitle,
 }: {
   children: React.ReactNode
   currentPath: string
   avatarSrc: string
+  pageTitle?: string
 }) {
   return (
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar currentPath={currentPath} avatarSrc={avatarSrc} />
         <SidebarInset className="min-h-svh">
-          <SiteHeader avatarSrc={avatarSrc} />
+          <SiteHeader currentPath={currentPath} pageTitle={pageTitle} />
           <div className="flex-1">{children}</div>
           <Footer currentPath={currentPath} />
         </SidebarInset>
