@@ -30,7 +30,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { resolvePageTitle } from "@/lib/sidebar-content"
-import { locales, localeLabels, defaultLocale, type Locale } from "@/i18n/config"
+import {
+  locales,
+  localeLabels,
+  defaultLocale,
+  isValidLocale,
+  type Locale,
+} from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
 function HeaderSidebarTrigger() {
@@ -55,19 +61,23 @@ interface BreadcrumbSegment {
   isCurrent: boolean
 }
 
-function buildBreadcrumbs(currentPath: string, pageTitle?: string): BreadcrumbSegment[] {
+function buildBreadcrumbs(
+  currentPath: string,
+  pageTitle?: string
+): BreadcrumbSegment[] {
   const segments = currentPath.split("/").filter(Boolean)
-  
+
   // First segment is locale, skip it for breadcrumbs
   const pathSegments = segments.slice(1)
-  
+
+  const locale: Locale = isValidLocale(segments[0]) ? segments[0] : defaultLocale
+
   if (pathSegments.length === 0) {
-    return [{ title: "Home", href: "/" + segments[0], isCurrent: true }]
+    return [{ title: t(locale, "nav.home"), href: "/" + locale, isCurrent: true }]
   }
 
-  const locale = segments[0] || defaultLocale
   const breadcrumbs: BreadcrumbSegment[] = [
-    { title: "Home", href: `/${locale}`, isCurrent: false },
+    { title: t(locale, "nav.home"), href: `/${locale}`, isCurrent: false },
   ]
 
   let accumulatedPath = ""
@@ -76,7 +86,7 @@ function buildBreadcrumbs(currentPath: string, pageTitle?: string): BreadcrumbSe
     const isLast = i === pathSegments.length - 1
     const title = isLast && pageTitle
       ? pageTitle
-      : resolvePageTitle(accumulatedPath) || pathSegments[i]
+      : resolvePageTitle(`/${locale}${accumulatedPath}`, locale) || pathSegments[i]
         .split("-")
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
         .join(" ")
@@ -193,13 +203,14 @@ function LanguageSelector({ currentPath, locale }: { currentPath: string; locale
               <a href={getPathForLocale(loc)} className="flex items-center gap-2">
                 <span>{localeLabels[loc]}</span>
                 {loc !== defaultLocale && (
-                  <HugeiconsIcon
-                    icon={SparklesIcon}
-                    size={14}
-                    strokeWidth={2}
-                    className="text-primary/70"
-                    title={t(loc, "lang.aiGenerated")}
-                  />
+                  <span title={t(loc, "lang.aiGenerated")}>
+                    <HugeiconsIcon
+                      icon={SparklesIcon}
+                      size={14}
+                      strokeWidth={2}
+                      className="text-primary/70"
+                    />
+                  </span>
                 )}
               </a>
             </SelectItem>

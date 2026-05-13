@@ -1,15 +1,9 @@
 import { Separator } from "@/components/ui/separator"
 import { ThemeToggle } from "./theme-toggle"
 import { sidebarContent } from "@/lib/sidebar-content"
+import { isActiveLink } from "@/lib/utils"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
-
-function isActiveLink(currentPath: string, url: string): boolean {
-  if (url === "/") {
-    return currentPath === "/"
-  }
-  return currentPath === url || currentPath.startsWith(url + "/")
-}
 
 export function Footer({ currentPath, locale = "en" }: { currentPath: string; locale?: Locale }) {
   const year = new Date().getFullYear()

@@ -21,10 +21,18 @@ function getContentSlug(slug: string): string {
   return slug
 }
 
-function filterByLocale<T extends "blog" | "projects">(
-  entries: CollectionEntry<T>[],
+function filterByLocale(
+  entries: CollectionEntry<"blog">[],
   locale: Locale
-): CollectionEntry<T>[] {
+): CollectionEntry<"blog">[]
+function filterByLocale(
+  entries: CollectionEntry<"projects">[],
+  locale: Locale
+): CollectionEntry<"projects">[]
+function filterByLocale(
+  entries: (CollectionEntry<"blog"> | CollectionEntry<"projects">)[],
+  locale: Locale
+): (CollectionEntry<"blog"> | CollectionEntry<"projects">)[] {
   return entries.filter((entry) => {
     const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.slug)
     return entryLocale === locale

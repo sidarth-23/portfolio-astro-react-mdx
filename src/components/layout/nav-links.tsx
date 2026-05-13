@@ -5,13 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-
-function isActiveLink(currentPath: string, url: string): boolean {
-  if (url === "/") {
-    return currentPath === "/"
-  }
-  return currentPath === url || currentPath.startsWith(url + "/")
-}
+import { isActiveLink } from "@/lib/utils"
 
 export function NavLinks({
   items,

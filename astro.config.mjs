@@ -5,27 +5,29 @@ import { defineConfig } from "astro/config"
 import react from "@astrojs/react"
 import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
-import { checkTranslations, formatReport } from "./scripts/check-translations.ts"
+import { translateIntegration } from "./src/integrations/translate"
 
 // https://astro.build/config
 export default defineConfig({
   vite: {
-    plugins: [
-      tailwindcss(),
-      {
-        name: "i18n-translation-check",
-        buildStart() {
-          console.log("\n🔍 Checking translations...")
-          const result = checkTranslations()
-          console.log(formatReport(result))
-          if (!result.ok) {
-            throw new Error("Translation check failed. Run `npm run translate` to fix.")
-          }
-        },
-      },
-    ],
+    plugins: [tailwindcss()],
   },
-  integrations: [react(), mdx(), sitemap()],
+  integrations: [
+    react(),
+    mdx(),
+    sitemap(),
+    translateIntegration({
+      providerConfig: {
+        provider: "openai",
+        model: process.env.AI_MODEL || "gpt-4o-mini",
+        apiKey: process.env.AI_API_KEY,
+        baseURL: process.env.AI_API_URL,
+      },
+      // Set autoTranslate: true to generate missing translations during build.
+      // Off by default so builds are deterministic and don't consume API quota.
+      autoTranslate: false,
+    }),
+  ],
   site: "https://sidshub.in",
   i18n: {
     locales: ["en", "hi", "fr"],

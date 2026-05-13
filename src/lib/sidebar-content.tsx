@@ -37,10 +37,11 @@ export interface SidebarContent {
 
 export function resolvePageTitle(
   currentPath: string,
+  locale: Locale = "en",
   override?: string
 ): string {
   if (override) return override
-  for (const item of sidebarContent("en").navigation) {
+  for (const item of sidebarContent(locale).navigation) {
     if (item.url === currentPath) return item.title
   }
   return ""
