@@ -24,7 +24,7 @@ export function AppShell({
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar currentPath={currentPath} avatarSrc={avatarSrc} locale={locale} />
-        <SidebarInset className="min-h-svh">
+        <SidebarInset>
           <SiteHeader currentPath={currentPath} pageTitle={pageTitle} locale={locale} />
           <div className="flex-1">
             {children}
