@@ -1,0 +1,48 @@
+---
+import "@/styles/global.css"
+import { resolveSeo } from "@/lib/seo"
+
+interface Props {
+  title: string
+  description?: string
+  image?: string
+  seo?: import("@/lib/seo").SeoData
+}
+
+const {
+  title,
+  description = "Sid's portfolio — thoughts on engineering, design, and building things.",
+  image = "/og-default.jpg",
+  seo,
+} = Astro.props
+
+const resolved = resolveSeo({ title, description, image }, seo)
+const canonical = new URL(Astro.url.pathname, Astro.site)
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{resolved.title}</title>
+    <meta name="description" content={resolved.description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={resolved.ogTitle} />
+    <meta property="og:description" content={resolved.ogDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    {resolved.ogImage && <meta property="og:image" content={resolved.ogImage} />}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content={resolved.twitterCard} />
+    <meta name="twitter:title" content={resolved.ogTitle} />
+    <meta name="twitter:description" content={resolved.ogDescription} />
+    {resolved.ogImage && <meta name="twitter:image" content={resolved.ogImage} />}
+  </head>
+  <body class="min-h-svh bg-background text-foreground antialiased">
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,96 @@
+---
+import ContentLayout from "@/layouts/ContentLayout.astro"
+import { Image } from "astro:assets"
+import { getAllProjects, formatDate } from "@/lib/content"
+import type { CollectionEntry } from "astro:content"
+
+export async function getStaticPaths() {
+  const projects = await getAllProjects()
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }))
+}
+
+interface Props {
+  project: CollectionEntry<"projects">
+}
+
+const { project } = Astro.props
+const { Content } = await project.render()
+
+const date = formatDate(project.data.date)
+const updatedDate = project.data.updatedDate ? formatDate(project.data.updatedDate) : null
+---
+
+<ContentLayout
+  title={project.data.seo?.title ?? project.data.title}
+  description={project.data.seo?.description ?? project.data.summary}
+  image={project.data.seo?.image}
+  seo={project.data.seo}
+>
+  <article class="max-w-none">
+    <header class="mb-8">
+      <div class="flex items-center gap-3 mb-3">
+        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{project.data.title}</h1>
+        {
+          project.data.status !== "active" && (
+            <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+              {project.data.status}
+            </span>
+          )
+        }
+      </div>
+      <p class="text-lg text-muted-foreground">{project.data.summary}</p>
+      {
+        project.data.links.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-3">
+            {project.data.links.map((link) => (
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+              >
+                {link.label}
+                <span aria-hidden="true" class="text-muted-foreground">&rarr;</span>
+              </a>
+            ))}
+          </div>
+        )
+      }
+      {
+        project.data.tags.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-2">
+            {project.data.tags.map((tag) => (
+              <span class="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <Image
+      src={project.data.coverImage}
+      alt={project.data.title}
+      width={1200}
+      height={630}
+      class="mb-10 w-full rounded-xl object-cover"
+    />
+
+    <div class="prose prose-zinc max-w-none dark:prose-invert">
+      <Content />
+    </div>
+
+    <footer class="mt-12 border-t border-border pt-6 text-sm text-muted-foreground">
+      <time datetime={project.data.date.toISOString()}>Published {date}</time>
+      {
+        updatedDate && (
+          <span class="ml-2">&middot; Updated {updatedDate}</span>
+        )
+      }
+    </footer>
+  </article>
+</ContentLayout>
