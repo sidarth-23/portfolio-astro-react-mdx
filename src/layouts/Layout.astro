@@ -2,6 +2,7 @@
 import "@/styles/global.css"
 import { resolveSeo } from "@/lib/seo"
 import { AppShell } from "@/components/layout/app-shell"
+import avatarImage from "@/assets/images/avatar.jpg"
 
 interface Props {
   title: string
@@ -19,6 +20,8 @@ const {
 
 const resolved = resolveSeo({ title, description, image }, seo)
 const canonical = new URL(Astro.url.pathname, Astro.site)
+const currentPath = Astro.url.pathname
+const avatarSrc = avatarImage.src
 ---
 
 <html lang="en">
@@ -50,9 +53,24 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
         <meta name="twitter:image" content={resolved.ogImage} />
       )
     }
+
+    <!-- Theme initialization script -->
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system'
+        const root = document.documentElement
+        root.classList.remove('light', 'dark')
+        if (theme === 'system') {
+          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          root.classList.add(systemTheme)
+        } else {
+          root.classList.add(theme)
+        }
+      })()
+    </script>
   </head>
   <body class="min-h-svh bg-background text-foreground antialiased">
-    <AppShell client:load>
+    <AppShell client:load currentPath={currentPath} avatarSrc={avatarSrc}>
       <slot />
     </AppShell>
   </body>
