@@ -8,10 +8,7 @@ export const TranslationSchema = z.object({
     resume: z.string(),
   }),
   footer: z.object({
-    navigation: z.string(),
-    connect: z.string(),
-    appearance: z.string(),
-    rss: z.string(),
+    designedBy: z.string(),
   }),
   blog: z.object({
     title: z.string(),
