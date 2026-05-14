@@ -1,0 +1,68 @@
+---
+import { Image } from "astro:assets"
+import type { ImageMetadata } from "astro"
+
+interface Props {
+  heading: string
+  role: string
+  description: string
+  buttons: {
+    primary: {
+      text: string
+      url: string
+      className?: string
+    }
+    secondary: {
+      text: string
+      url: string
+    }
+  }
+  image: ImageMetadata
+  imageAlt: string
+  className?: string
+}
+
+const { heading, role, description, buttons, image, imageAlt, className } = Astro.props
+---
+
+<section class:list={["flex min-h-[calc(100vh-4rem)] items-center", className]}>
+  <div class="container grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
+    <div class="mx-auto flex flex-col items-center text-center md:ml-auto lg:max-w-3xl lg:items-start lg:text-left">
+      <h1 class="mt-6 text-4xl font-bold text-pretty lg:text-6xl xl:text-7xl">
+        {heading}
+      </h1>
+      <p class="mt-2 text-lg font-medium text-primary lg:text-xl">
+        {role}
+      </p>
+      <p class="mb-12 mt-6 max-w-xl text-muted-foreground leading-relaxed lg:text-lg">
+        {description}
+      </p>
+      <div class="flex w-full flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+        <a
+          href={buttons.primary.url}
+          class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80 w-full sm:w-auto"
+        >
+          {buttons.primary.text}
+        </a>
+        <a
+          href={buttons.secondary.url}
+          class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-foreground dark:border-input dark:bg-input/30 w-full sm:w-auto"
+        >
+          {buttons.secondary.text}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4">
+            <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="flex">
+      <Image
+        src={image}
+        alt={imageAlt}
+        width={800}
+        height={800}
+        class="max-h-150 w-full rounded-md object-cover lg:max-h-200"
+      />
+    </div>
+  </div>
+</section>

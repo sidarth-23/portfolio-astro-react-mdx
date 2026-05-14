@@ -47,6 +47,7 @@ const translations: Record<Locale, unknown> = {
       description: "I build fast, reliable products with modern web tech and cloud infrastructure. Turning complex problems into elegant solutions — from robust APIs to seamless user experiences. Always learning, always shipping.",
       connect: "Let's Connect",
       resume: "View Resume",
+      imageAlt: "Sidarth G — Backend & Full-Stack Developer",
     },
   },
   hi: {
@@ -92,6 +93,7 @@ const translations: Record<Locale, unknown> = {
       description: "मैं आधुनिक वेब तकनीक और क्लाउड इंफ्रास्ट्रक्चर के साथ तेज़ और विश्वसनीय प्रोडक्ट बनाता हूँ। जटिल समस्याओं को सुरुचिपूर्ण समाधानों में बदलना — मज़बूत API से लेकर बेहतरीन यूज़र अनुभव तक। हमेशा सीखना, हमेशा शिप करना।",
       connect: "मेरे साथ जुड़ें",
       resume: "रिज्यूमे देखें",
+      imageAlt: "Sidarth G — Backend & Full-Stack Developer",
     },
   },
   fr: {
@@ -133,10 +135,11 @@ const translations: Record<Locale, unknown> = {
     },
     hero: {
       heading: "Sidarth G",
-      role: "D\u00E9veloppeur Backend \u0026 Full-Stack",
-      description: "Je construis des produits rapides et fiables avec des technologies web modernes et une infrastructure cloud. Transformer des probl\u00E8mes complexes en solutions \u00E9l\u00E9gantes — des API robustes aux exp\u00E9riences utilisateur fluides. Toujours en apprentissage, toujours en production.",
+      role: "Développeur Backend & Full-Stack",
+      description: "Je construis des produits rapides et fiables avec des technologies web modernes et une infrastructure cloud. Transformer des problèmes complexes en solutions élégantes — des API robustes aux expériences utilisateur fluides. Toujours en apprentissage, toujours en production.",
       connect: "Me Contacter",
       resume: "Voir le CV",
+      imageAlt: "Sidarth G — Développeur Backend & Full-Stack",
     },
   },
 }

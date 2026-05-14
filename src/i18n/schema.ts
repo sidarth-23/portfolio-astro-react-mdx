@@ -39,6 +39,7 @@ export const TranslationSchema = z.object({
     description: z.string(),
     connect: z.string(),
     resume: z.string(),
+    imageAlt: z.string(),
   }),
 })
 

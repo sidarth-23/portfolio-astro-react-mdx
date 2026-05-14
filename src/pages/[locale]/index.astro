@@ -1,7 +1,7 @@
 ---
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import { Image } from "astro:assets"
-import { Hero } from "@/components/sections/Hero"
+import Hero from "@/components/sections/Hero.astro"
 import heroImage from "@/assets/images/hero-image.png"
 import { getPublishedBlogPosts, getFeaturedProjects, formatShortDate } from "@/lib/content"
 import { locales, defaultLocale, type Locale } from "@/i18n/config"
@@ -25,7 +25,6 @@ const latestPosts = posts.slice(0, 3)
   locale={locale}
 >
   <Hero
-    client:load
     heading={t(locale, "hero.heading")}
     role={t(locale, "hero.role")}
     description={t(locale, "hero.description")}
@@ -39,7 +38,8 @@ const latestPosts = posts.slice(0, 3)
         url: "/resume",
       },
     }}
-    imageSrc={heroImage.src}
+    image={heroImage}
+    imageAlt={t(locale, "hero.imageAlt")}
   />
 
   {
