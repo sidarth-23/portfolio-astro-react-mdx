@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets"
 import type { CollectionEntry } from "astro:content"
+import { Badge } from "@/components/ui/badge"
 import { formatShortDate } from "@/lib/content"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
@@ -45,11 +46,9 @@ const { project, locale } = Astro.props
         {project.data.summary}
       </p>
       {project.data.tags.length > 0 && (
-        <div class="mt-4 flex flex-wrap gap-2">
+        <div class="mt-4 flex flex-wrap gap-1.5">
           {project.data.tags.map((tag) => (
-            <span class="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-medium text-secondary-foreground">
-              {tag}
-            </span>
+            <Badge variant="outline" className="text-[10px] text-muted-foreground/80">#{tag}</Badge>
           ))}
         </div>
       )}

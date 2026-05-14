@@ -12,9 +12,8 @@ export const seoSchema = z.object({
 })
 
 export const linkSchema = z.object({
-  label: z.string().min(1),
+  type: z.enum(["github", "link"]),
   url: z.string().url(),
-  icon: z.string().optional(),
 })
 
 export const tagSchema = z.string().min(1).max(50)

@@ -20,4 +20,5 @@ const { post, locale = "en" } = Astro.props
   locale={locale}
 >
   <slot />
+  <slot name="toc" slot="toc" />
 </ContentLayout>

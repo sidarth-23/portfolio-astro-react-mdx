@@ -1,7 +1,10 @@
 ---
 import ProjectLayout from "@/layouts/ProjectLayout.astro"
+import TableOfContents from "@/components/TableOfContents.astro"
+import { ProjectLinkButtons } from "@/components/ProjectLinkButtons"
+import { Badge } from "@/components/ui/badge"
 import { Image } from "astro:assets"
-import { getAllProjects, formatDate } from "@/lib/content"
+import { getAllProjects, formatDate, estimateReadingTime } from "@/lib/content"
 import { locales, type Locale } from "@/i18n/config"
 import type { CollectionEntry } from "astro:content"
 
@@ -28,16 +31,32 @@ interface Props {
 
 const { project } = Astro.props
 const { locale } = Astro.params as { locale: Locale }
-const { Content } = await project.render()
+const { Content, headings } = await project.render()
 
 const date = formatDate(project.data.date, locale)
 const updatedDate = project.data.updatedDate ? formatDate(project.data.updatedDate, locale) : null
+const showUpdatedDate = updatedDate && updatedDate !== date
+const readingTime = estimateReadingTime(project.body)
 ---
 
 <ProjectLayout project={project} locale={locale}>
   <article class="max-w-none">
     <header class="mb-8">
-      <div class="flex items-center gap-3 mb-3">
+      <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+        <time datetime={project.data.date.toISOString()}>{date}</time>
+        <span aria-hidden="true">·</span>
+        <span>{readingTime} min read</span>
+        {
+          showUpdatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <time datetime={project.data.updatedDate?.toISOString()}>{updatedDate}</time>
+            </>
+          )
+        }
+      </div>
+
+      <div class="mt-3 flex items-center gap-3">
         <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{project.data.title}</h1>
         {
           project.data.status !== "active" && (
@@ -47,31 +66,22 @@ const updatedDate = project.data.updatedDate ? formatDate(project.data.updatedDa
           )
         }
       </div>
-      <p class="text-lg text-muted-foreground">{project.data.summary}</p>
+
+      <p class="mt-3 text-lg text-muted-foreground">{project.data.summary}</p>
+
       {
         project.data.links.length > 0 && (
-          <div class="mt-4 flex flex-wrap gap-3">
-            {project.data.links.map((link) => (
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
-              >
-                {link.label}
-                <span aria-hidden="true" class="text-muted-foreground">&rarr;</span>
-              </a>
-            ))}
+          <div class="mt-4">
+            <ProjectLinkButtons links={project.data.links} />
           </div>
         )
       }
+
       {
         project.data.tags.length > 0 && (
-          <div class="mt-4 flex flex-wrap gap-2">
+          <div class="mt-4 flex flex-wrap gap-1.5">
             {project.data.tags.map((tag) => (
-              <span class="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
-                {tag}
-              </span>
+              <Badge variant="outline" className="text-muted-foreground/80">#{tag}</Badge>
             ))}
           </div>
         )
@@ -86,17 +96,10 @@ const updatedDate = project.data.updatedDate ? formatDate(project.data.updatedDa
       class="mb-10 w-full rounded-xl object-cover"
     />
 
-    <div class="prose prose-zinc max-w-none dark:prose-invert">
+    <div class="prose prose-lg prose-zinc max-w-none dark:prose-invert">
       <Content />
     </div>
-
-    <footer class="mt-12 border-t border-border pt-6 text-sm text-muted-foreground">
-      <time datetime={project.data.date.toISOString()}>Published {date}</time>
-      {
-        updatedDate && (
-          <span class="ml-2">&middot; Updated {updatedDate}</span>
-        )
-      }
-    </footer>
   </article>
+
+  <TableOfContents slot="toc" items={headings} />
 </ProjectLayout>

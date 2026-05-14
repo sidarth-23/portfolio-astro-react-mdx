@@ -1,7 +1,9 @@
 ---
 import BlogPostLayout from "@/layouts/BlogPostLayout.astro"
+import TableOfContents from "@/components/TableOfContents.astro"
+import { Badge } from "@/components/ui/badge"
 import { Image } from "astro:assets"
-import { getPublishedBlogPosts, formatDate } from "@/lib/content"
+import { getPublishedBlogPosts, formatDate, estimateReadingTime } from "@/lib/content"
 import { locales, type Locale } from "@/i18n/config"
 import type { CollectionEntry } from "astro:content"
 
@@ -28,32 +30,48 @@ interface Props {
 
 const { post } = Astro.props
 const { locale } = Astro.params as { locale: Locale }
-const { Content } = await post.render()
+const { Content, headings } = await post.render()
 
 const pubDate = formatDate(post.data.date, locale)
 const updatedDate = post.data.updatedDate ? formatDate(post.data.updatedDate, locale) : null
+const showUpdatedDate = updatedDate && updatedDate !== pubDate
+const readingTime = estimateReadingTime(post.body)
 ---
 
 <BlogPostLayout post={post} locale={locale}>
   <article class="max-w-none">
     <header class="mb-8">
-      <time class="text-sm text-muted-foreground" datetime={post.data.date.toISOString()}>
-        {pubDate}
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+          <time datetime={post.data.date.toISOString()}>{pubDate}</time>
+          <span aria-hidden="true">·</span>
+          <span>{readingTime} min read</span>
+          {
+            showUpdatedDate && (
+              <>
+                <span aria-hidden="true">·</span>
+                <time datetime={post.data.updatedDate?.toISOString()}>{updatedDate}</time>
+              </>
+            )
+          }
+        </div>
         {
-          updatedDate && (
-            <span class="ml-2 text-muted-foreground/70">(updated {updatedDate})</span>
+          post.data.category && (
+            <span class="inline-flex shrink-0 items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              {post.data.category}
+            </span>
           )
         }
-      </time>
-      <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{post.data.title}</h1>
+      </div>
+
+      <h1 class="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">{post.data.title}</h1>
       <p class="mt-3 text-lg text-muted-foreground">{post.data.description}</p>
+
       {
         post.data.tags.length > 0 && (
-          <div class="mt-4 flex flex-wrap gap-2">
+          <div class="mt-4 flex flex-wrap gap-1.5">
             {post.data.tags.map((tag) => (
-              <span class="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
-                {tag}
-              </span>
+              <Badge variant="outline" className="text-muted-foreground/80">#{tag}</Badge>
             ))}
           </div>
         )
@@ -68,8 +86,10 @@ const updatedDate = post.data.updatedDate ? formatDate(post.data.updatedDate, lo
       class="mb-10 w-full rounded-xl object-cover"
     />
 
-    <div class="prose prose-zinc max-w-none dark:prose-invert">
+    <div class="prose prose-lg prose-zinc max-w-none dark:prose-invert">
       <Content />
     </div>
   </article>
+
+  <TableOfContents slot="toc" items={headings} />
 </BlogPostLayout>
