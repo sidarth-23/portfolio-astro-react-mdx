@@ -5,6 +5,8 @@ import {
   FolderCodeIcon,
   BookOpen02Icon,
   File02Icon,
+  Archive02Icon,
+  Download02Icon,
 } from "@hugeicons/core-free-icons"
 import { GitHubIcon, LinkedInIcon, RssIcon, MailIcon } from "@/components/icons"
 import type { Locale } from "@/i18n/config"
@@ -32,6 +34,7 @@ export interface ProfileInfo {
 export interface SidebarContent {
   profile: ProfileInfo
   navigation: NavigationItem[]
+  secondary: NavigationItem[]
   social: SocialLink[]
 }
 
@@ -73,9 +76,22 @@ export function sidebarContent(locale: Locale = "en"): SidebarContent {
         icon: <HugeiconsIcon icon={BookOpen02Icon} size={16} strokeWidth={2} />,
       },
       {
-        title: t(locale, "nav.resume"),
+        title: t(locale, "nav.cv"),
         url: "#",
         icon: <HugeiconsIcon icon={File02Icon} size={16} strokeWidth={2} />,
+      },
+    ],
+
+    secondary: [
+      {
+        title: t(locale, "nav.archive"),
+        url: "https://archive-portfolio.sidshub.in",
+        icon: <HugeiconsIcon icon={Archive02Icon} size={16} strokeWidth={2} />,
+      },
+      {
+        title: t(locale, "nav.downloadResume"),
+        url: "https://drive.google.com/file/d/1dummy/view",
+        icon: <HugeiconsIcon icon={Download02Icon} size={16} strokeWidth={2} />,
       },
     ],
 

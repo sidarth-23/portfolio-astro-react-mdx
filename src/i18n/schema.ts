@@ -5,7 +5,9 @@ export const TranslationSchema = z.object({
     home: z.string(),
     projects: z.string(),
     blog: z.string(),
-    resume: z.string(),
+    cv: z.string(),
+    archive: z.string(),
+    downloadResume: z.string(),
   }),
   footer: z.object({
     designedBy: z.string(),

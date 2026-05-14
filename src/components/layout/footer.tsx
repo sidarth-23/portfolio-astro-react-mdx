@@ -15,7 +15,7 @@ export function Footer({
 
   return (
     <footer className="mt-auto border-t border-border/60">
-      <div className="mx-auto flex w-full flex-col items-center justify-between gap-4 px-6 py-2 sm:flex-row">
+      <div className="mx-auto flex w-full flex-col items-center justify-between gap-2 px-6 py-3 sm:flex-row">
         <span className="text-sm text-muted-foreground">
           {t(locale, "footer.designedBy")} &copy; {year}
         </span>

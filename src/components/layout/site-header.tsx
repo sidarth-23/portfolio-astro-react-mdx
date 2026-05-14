@@ -108,13 +108,13 @@ function Breadcrumbs({
   if (breadcrumbs.length <= 2) {
     return (
       <Breadcrumb>
-        <BreadcrumbList>
+        <BreadcrumbList className="flex-nowrap">
           {breadcrumbs.map((crumb, index) => (
             <React.Fragment key={crumb.href}>
               {index > 0 && <BreadcrumbSeparator />}
-              <BreadcrumbItem>
+              <BreadcrumbItem className={crumb.isCurrent ? "min-w-0" : undefined}>
                 {crumb.isCurrent ? (
-                  <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                  <BreadcrumbPage className="block truncate">{crumb.title}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink href={crumb.href}>
                     {crumb.title}
@@ -135,7 +135,7 @@ function Breadcrumbs({
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>
+      <BreadcrumbList className="flex-nowrap">
         <BreadcrumbItem>
           <BreadcrumbLink href={first.href}>{first.title}</BreadcrumbLink>
         </BreadcrumbItem>
@@ -158,8 +158,8 @@ function Breadcrumbs({
           </DropdownMenu>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>{last.title}</BreadcrumbPage>
+        <BreadcrumbItem className="min-w-0">
+          <BreadcrumbPage className="block truncate">{last.title}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -178,12 +178,12 @@ export function SiteHeader({
   return (
     <header className="border-b">
       <div className="mx-auto flex h-14 w-full shrink-0 items-center justify-between px-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-1 items-center gap-3 min-w-0 overflow-hidden">
           <HeaderSidebarTrigger />
           <Separator orientation="vertical" />
           <Breadcrumbs currentPath={currentPath} pageTitle={pageTitle} />
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1 bg-background">
           <LanguageSelector currentPath={currentPath} locale={locale} />
           <ThemeToggle />
         </div>

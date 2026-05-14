@@ -1,6 +1,8 @@
 ---
 import ProjectLayout from "@/layouts/ProjectLayout.astro"
 import TableOfContents from "@/components/TableOfContents.astro"
+import MobileToc from "@/components/MobileToc.astro"
+import TocScrollspy from "@/components/TocScrollspy.astro"
 import { ProjectLinkButtons } from "@/components/ProjectLinkButtons"
 import { Badge } from "@/components/ui/badge"
 import { Image } from "astro:assets"
@@ -40,6 +42,9 @@ const readingTime = estimateReadingTime(project.body)
 ---
 
 <ProjectLayout project={project} locale={locale}>
+  <MobileToc slot="mobile-toc" items={headings} />
+  <TocScrollspy />
+
   <article class="max-w-none">
     <header class="mb-8">
       <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">

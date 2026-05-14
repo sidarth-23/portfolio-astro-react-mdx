@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { NavLinks } from "./nav-links"
+import { NavSecondary } from "./nav-secondary"
 import {
   Sidebar,
   SidebarContent,
@@ -24,7 +25,7 @@ export function AppSidebar({
   avatarSrc: string
   locale?: Locale
 }) {
-  const { profile, navigation, social } = sidebarContent(locale)
+  const { profile, navigation, secondary, social } = sidebarContent(locale)
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -48,8 +49,10 @@ export function AppSidebar({
 
       <SidebarContent className="mt-2">
         <NavLinks items={navigation} currentPath={currentPath} />
+        <NavSecondary items={secondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
+        <SidebarSeparator />
         <NavFooter items={social} />
       </SidebarFooter>
     </Sidebar>

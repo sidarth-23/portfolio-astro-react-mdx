@@ -11,7 +11,9 @@ const translations: Record<Locale, unknown> = {
       home: "Home",
       projects: "Projects",
       blog: "Blog",
-      resume: "Resume",
+      cv: "CV",
+      archive: "Archive Site",
+      downloadResume: "Resume",
     },
     footer: {
       designedBy: "Designed by Sidarth",
@@ -56,7 +58,9 @@ const translations: Record<Locale, unknown> = {
       home: "Inicio",
       projects: "Proyectos",
       blog: "Blog",
-      resume: "Currículum",
+      cv: "CV",
+      archive: "Sitio Archivo",
+      downloadResume: "Currículum",
     },
     footer: {
       designedBy: "Designed by Sidarth",
@@ -103,7 +107,9 @@ const translations: Record<Locale, unknown> = {
       home: "Accueil",
       projects: "Projets",
       blog: "Blog",
-      resume: "CV",
+      cv: "CV",
+      archive: "Site Archive",
+      downloadResume: "CV",
     },
     footer: {
       designedBy: "Designed by Sidarth",
