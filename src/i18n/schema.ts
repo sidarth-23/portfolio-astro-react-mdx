@@ -33,6 +33,13 @@ export const TranslationSchema = z.object({
   rss: z.object({
     description: z.string(),
   }),
+  hero: z.object({
+    heading: z.string(),
+    role: z.string(),
+    description: z.string(),
+    connect: z.string(),
+    resume: z.string(),
+  }),
 })
 
 export type TranslationSchema = z.infer<typeof TranslationSchema>
