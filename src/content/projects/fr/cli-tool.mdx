@@ -1,0 +1,61 @@
+---
+title: "Outil DevOps CLI"
+summary: "Un outil en ligne de commande pour automatiser les tâches DevOps courantes: déploiement, streaming de logs et inspection d'infrastructure."
+date: 2026-05-06T00:00:00Z
+coverImage: "@/assets/images/placeholder-cover.jpg"
+featured: false
+status: "active"
+links:
+  - label: "GitHub"
+    url: "https://github.com/sidarth-23/devops-cli"
+  - label: "Releases"
+    url: "https://github.com/sidarth-23/devops-cli/releases"
+tags: ["go", "cli", "devops"]
+seo:
+  title: "DevOps CLI — Sid"
+  description: "Outil CLI pour automatiser les tâches DevOps et la gestion d'infrastructure."
+locale: "fr"
+---
+
+## Vue d'Ensemble
+
+Fatigué de basculer entre kubectl, docker et ssh? Cette CLI unifie les opérations DevOps courantes en un seul outil rapide écrit en Go.
+
+## Fonctionnalités
+
+- **Déploiement**: Déploiements en une seule commande avec support de rollback
+- **Logs**: Streaming de logs depuis plusieurs services simultanément
+- **Inspection**: Vérifiez la santé du service, l'utilisation des ressources et les configurations
+- **Secrets**: Gérez les variables d'environnement et les secrets en toute sécurité
+
+## Commandes
+
+```bash
+# Déployer un service
+devops deploy --service api --env production
+
+# Stream de logs de tous les services
+devops logs --all --follow
+
+# Vérifier la santé du service
+devops health --service api
+
+# Voir l'utilisation des ressources
+devops stats --service api
+```
+
+## Configuration
+
+La CLI utilise un fichier YAML pour les définitions d'environnement:
+
+```yaml
+environments:
+  production:
+    cluster: prod-k8s
+    namespace: default
+    registry: gcr.io/my-project
+```
+
+## Résultats
+
+Réduit le temps de déploiement de 15 minutes à 2 minutes. Utilisé quotidiennement par une équipe de 8 ingénieurs.

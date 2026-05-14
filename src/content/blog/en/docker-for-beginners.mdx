@@ -1,0 +1,65 @@
+---
+title: "Docker for Backend Developers: A Practical Guide"
+description: "Moving from local development to containerized deployments? Here's everything you need to know about Docker as a backend engineer."
+date: 2026-05-08T00:00:00Z
+draft: false
+coverImage: "@/assets/images/placeholder-cover.jpg"
+tags: ["docker", "devops", "backend"]
+category: "DevOps"
+seo:
+  title: "Docker Guide — Sid"
+  description: "Practical Docker guide for backend developers."
+locale: "en"
+---
+
+## Why Docker Matters
+
+Gone are the days of "works on my machine." Docker standardizes your environment from development to production, eliminating an entire class of deployment bugs.
+
+## Key Concepts
+
+**Images** are blueprints. **Containers** are running instances. **Volumes** persist data. **Networks** connect containers.
+
+## Multi-Stage Builds
+
+The biggest win for Go developers: compile in a full build image, then copy the binary into a minimal runtime image.
+
+```dockerfile
+FROM golang:1.22-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o main .
+
+FROM alpine:latest
+COPY --from=builder /app/main .
+CMD ["./main"]
+```
+
+This drops image size from ~300MB to ~20MB.
+
+## Compose for Local Dev
+
+```yaml
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: myapp
+```
+
+## Production Tips
+
+- Use specific image tags, never `latest`
+- Run as non-root user
+- Scan images for vulnerabilities
+- Use health checks
+
+## Bottom Line
+
+Docker isn't just for deployment — it's a development superpower. Start containerizing your services today.

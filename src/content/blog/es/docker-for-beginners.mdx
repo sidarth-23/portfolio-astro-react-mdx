@@ -1,0 +1,65 @@
+---
+title: "Docker para Desarrolladores Backend: Guía Práctica"
+description: "¿Pasando del desarrollo local a despliegues contenedorizados? Aquí está todo lo que necesitas saber sobre Docker como ingeniero backend."
+date: 2026-05-08T00:00:00Z
+draft: false
+coverImage: "@/assets/images/placeholder-cover.jpg"
+tags: ["docker", "devops", "backend"]
+category: "DevOps"
+seo:
+  title: "Guía Docker — Sid"
+  description: "Guía práctica de Docker para desarrolladores backend."
+locale: "es"
+---
+
+## Por qué Docker Importa
+
+Se acabaron los días de "funciona en mi máquina." Docker estandariza tu entorno desde el desarrollo hasta la producción, eliminando toda una clase de bugs de despliegue.
+
+## Conceptos Clave
+
+**Las imágenes** son planos. **Los contenedores** son instancias en ejecución. **Los volúmenes** persisten datos. **Las redes** conectan contenedores.
+
+## Builds Multi-Etapa
+
+La mayor ventaja para desarrolladores Go: compila en una imagen de build completa, luego copia el binario en una imagen runtime mínima.
+
+```dockerfile
+FROM golang:1.22-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o main .
+
+FROM alpine:latest
+COPY --from=builder /app/main .
+CMD ["./main"]
+```
+
+Esto reduce el tamaño de la imagen de ~300MB a ~20MB.
+
+## Compose para Desarrollo Local
+
+```yaml
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: myapp
+```
+
+## Consejos para Producción
+
+- Usa tags de imagen específicos, nunca `latest`
+- Ejecuta como usuario no-root
+- Escanea imágenes por vulnerabilidades
+- Usa health checks
+
+## Conclusión
+
+Docker no es solo para despliegue — es un superpoder de desarrollo. Empieza a contenerizar tus servicios hoy.

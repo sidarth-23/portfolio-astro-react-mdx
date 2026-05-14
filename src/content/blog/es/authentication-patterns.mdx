@@ -1,0 +1,46 @@
+---
+title: "No Confíes en el Cliente: Guía Práctica de Autenticación"
+description: "La mayoría de los tutoriales te enseñan a usar JWTs para todo, pero ¿es realmente seguro? Exploremos los compromisos entre Sesiones y Tokens, y por qué 'simple' no siempre es seguro."
+date: 2026-05-10T00:00:00Z
+draft: false
+coverImage: "@/assets/images/placeholder-cover.jpg"
+tags: ["authentication", "security", "backend"]
+category: "Backend Systems"
+seo:
+  title: "Guía de Autenticación — Sid"
+  description: "Guía práctica de patrones de autenticación y mejores prácticas de seguridad."
+locale: "es"
+---
+
+## El Problema con JWT Simple
+
+La mayoría de los tutoriales muestran JWT como la bala de plata para la autenticación. Pero almacenar tokens en el cliente abre puertas a ataques XSS, y los tokens de larga duración son una pesadilla de seguridad cuando se ven comprometidos.
+
+## Sesiones vs Tokens
+
+**Sesiones** (lado del servidor):
+- ✅ Revocables al instante
+- ✅ Pueden almacenar datos arbitrarios
+- ❌ Requieren estado del servidor
+- ❌ Más difíciles de escalar horizontalmente
+
+**JWTs** (lado del cliente):
+- ✅ Sin estado — escalan fácilmente
+- ✅ Amigables entre servicios
+- ❌ No se pueden revocar sin lista de bloqueo
+- ❌ Payload visible para el cliente
+
+## El Enfoque Híbrido
+
+Usa tokens de acceso de corta duración (JWT) + tokens de refresco de larga duración (basados en sesión). Esto te da lo mejor de ambos mundos: escalabilidad y revocabilidad.
+
+## Consejos de Implementación
+
+1. Mantén los tokens de acceso cortos (5-15 minutos)
+2. Almacena los tokens de refresco en cookies httpOnly
+3. Rota los tokens de refresco en cada uso
+4. Mantén una lista de bloqueo de tokens para el cierre de sesión
+
+## Conclusión
+
+No hay una solución única para todos. Elige basándote en tu escala, requisitos de seguridad y experiencia del equipo.

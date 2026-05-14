@@ -1,0 +1,52 @@
+---
+title: "Dashboard de Analíticas React"
+summary: "Un dashboard de analíticas en tiempo real construido con React, TypeScript y conexiones WebSocket para visualización de datos en vivo."
+date: 2026-05-09T00:00:00Z
+coverImage: "@/assets/images/placeholder-cover.jpg"
+featured: false
+status: "active"
+links:
+  - label: "GitHub"
+    url: "https://github.com/sidarth-23/react-dashboard"
+  - label: "Demo en Vivo"
+    url: "https://dashboard-demo.sidshub.in"
+tags: ["react", "typescript", "frontend"]
+seo:
+  title: "React Dashboard — Sid"
+  description: "Dashboard de analíticas en tiempo real con React y WebSocket."
+locale: "es"
+---
+
+## Visión General
+
+Cada backend necesita un frontend. Este dashboard de analíticas se conecta a tus APIs vía WebSocket y renderiza métricas en tiempo real, logs y datos de rendimiento en una interfaz limpia y responsiva.
+
+## Stack Tecnológico
+
+| Capa         | Tecnología                          |
+| ------------ | ----------------------------------- |
+| Framework    | React 19                            |
+| Lenguaje     | TypeScript                          |
+| Estilos      | Tailwind CSS + shadcn/ui            |
+| Estado       | TanStack Query                      |
+| Tiempo Real  | WebSocket + Server-Sent Events      |
+| Gráficos     | Recharts                            |
+
+## Características Principales
+
+- **Métricas en Tiempo Real**: Gráficos en vivo de CPU, memoria y tasa de solicitudes
+- **Streaming de Logs**: Cola de logs filtrable, con colores y búsqueda
+- **Gestión de Alertas**: Configura umbrales y canales de notificación
+- **Modo Oscuro**: Soporte completo de modo oscuro con detección de preferencia del sistema
+
+## Arquitectura
+
+El dashboard usa un sistema de widgets modular:
+
+1. **Registro de Widgets**: Carga dinámica de widgets
+2. **Fuentes de Datos**: Conectores enchufables (REST, WebSocket, GraphQL)
+3. **Gestión de Estado**: Filtros sincronizados con URL y rangos de tiempo
+
+## Resultados
+
+Maneja 1000+ conexiones WebSocket concurrentes con renderizado fluido a 60fps.

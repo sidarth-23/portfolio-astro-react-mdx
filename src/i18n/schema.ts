@@ -15,6 +15,7 @@ export const TranslationSchema = z.object({
     description: z.string(),
     latest: z.string(),
     viewAll: z.string(),
+    readMore: z.string(),
   }),
   projects: z.object({
     title: z.string(),

@@ -1,0 +1,52 @@
+---
+title: "Tableau de Bord d'Analytiques React"
+summary: "Un tableau de bord d'analytiques en temps réel construit avec React, TypeScript et des connexions WebSocket pour la visualisation de données en direct."
+date: 2026-05-09T00:00:00Z
+coverImage: "@/assets/images/placeholder-cover.jpg"
+featured: false
+status: "active"
+links:
+  - label: "GitHub"
+    url: "https://github.com/sidarth-23/react-dashboard"
+  - label: "Démo en Direct"
+    url: "https://dashboard-demo.sidshub.in"
+tags: ["react", "typescript", "frontend"]
+seo:
+  title: "React Dashboard — Sid"
+  description: "Tableau de bord d'analytiques en temps réel avec React et WebSocket."
+locale: "fr"
+---
+
+## Vue d'Ensemble
+
+Chaque backend a besoin d'un frontend. Ce tableau de bord d'analytiques se connecte à vos APIs via WebSocket et affiche des métriques en temps réel, des logs et des données de performance dans une interface propre et responsive.
+
+## Stack Technique
+
+| Couche       | Technologie                         |
+| ------------ | ----------------------------------- |
+| Framework    | React 19                            |
+| Langage      | TypeScript                          |
+| Styles       | Tailwind CSS + shadcn/ui            |
+| État         | TanStack Query                      |
+| Temps Réel   | WebSocket + Server-Sent Events      |
+| Graphiques   | Recharts                            |
+
+## Fonctionnalités Clés
+
+- **Métriques en Temps Réel**: Graphiques en direct de CPU, mémoire et taux de requêtes
+- **Streaming de Logs**: Queue de logs filtrable, colorée et avec recherche
+- **Gestion d'Alertes**: Configurez des seuils et canaux de notification
+- **Mode Sombre**: Support complet du mode sombre avec détection de préférence système
+
+## Architecture
+
+Le tableau de bord utilise un système de widgets modulaire:
+
+1. **Registre de Widgets**: Chargement dynamique de widgets
+2. **Sources de Données**: Connecteurs enfichables (REST, WebSocket, GraphQL)
+3. **Gestion d'État**: Filtres synchronisés avec URL et plages horaires
+
+## Résultats
+
+Gère 1000+ connexions WebSocket concurrentes avec un rendu fluide à 60fps.

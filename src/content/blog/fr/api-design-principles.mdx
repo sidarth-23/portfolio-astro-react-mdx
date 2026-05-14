@@ -1,0 +1,60 @@
+---
+title: "Conception d'API REST: Leçons de la Production"
+description: "Construire des APIs qui passent à l'échelle nécessite plus que des endpoints CRUD. Voici les principes que j'ai appris en concevant des APIs servant des millions de requêtes."
+date: 2026-05-05T00:00:00Z
+draft: false
+coverImage: "@/assets/images/placeholder-cover.jpg"
+tags: ["api", "rest", "backend"]
+category: "Engineering"
+seo:
+  title: "Conception API — Sid"
+  description: "Principes de conception d'API REST appris des systèmes en production."
+locale: "fr"
+---
+
+## Commencez par le Consommateur
+
+Les meilleures APIs sont conçues de l'extérieur vers l'intérieur. Avant d'écrire un seul endpoint, définissez ce que le consommateur doit accomplir.
+
+## Stratégie de Versionnage
+
+**Versionnage par URL** (`/v1/users`) est simple et explicite. **Versionnage par Header** est plus propre mais plus difficile à déboguer. Choisissez-en un et tenez-vous-y.
+
+## La Cohérence est Roi
+
+- Utilisez des noms au pluriel (`/users`, pas `/user`)
+- Standardisez les réponses d'erreur
+- Implémentez la pagination sur chaque endpoint de liste
+- Supportez le filtrage, le tri et la sélection de champs
+
+## Gestion des Erreurs
+
+```json
+{
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "Le format de l'email est invalide",
+    "field": "email"
+  }
+}
+```
+
+Incluez toujours:
+- Code d'erreur lisible par machine
+- Message lisible par l'homme
+- Contexte (champ, ID de requête)
+
+## Performance
+
+- Utilisez les headers de cache (ETag, Cache-Control)
+- Implémentez la compression requête/réponse
+- Envisagez GraphQL pour les besoins de données complexes
+- Limitez le débit par utilisateur ET par IP
+
+## Documentation
+
+Votre API n'est aussi bonne que sa documentation. Utilisez OpenAPI/Swagger et gardez-le synchronisé avec le code.
+
+## Conclusion
+
+Les grandes APIs sont dogmatiques, cohérentes et bien documentées. Investissez du temps dès le départ — votre moi du futur vous en remerciera.

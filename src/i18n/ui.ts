@@ -21,6 +21,7 @@ const translations: Record<Locale, unknown> = {
       description: "Thoughts on engineering, design, and building things.",
       latest: "Latest Writing",
       viewAll: "View all posts →",
+      readMore: "Read more",
     },
     projects: {
       title: "Projects",
@@ -66,6 +67,7 @@ const translations: Record<Locale, unknown> = {
         "Reflexiones sobre ingeniería, diseño y construcción de cosas.",
       latest: "Últimas Publicaciones",
       viewAll: "Ver todas las publicaciones →",
+      readMore: "Leer más",
     },
     projects: {
       title: "Proyectos",
@@ -112,6 +114,7 @@ const translations: Record<Locale, unknown> = {
         "Réflexions sur l'ingénierie, le design, et la construction de choses.",
       latest: "Derniers Articles",
       viewAll: "Voir tous les articles →",
+      readMore: "Lire la suite",
     },
     projects: {
       title: "Projets",

@@ -1,0 +1,52 @@
+---
+title: "React Analytics Dashboard"
+summary: "A real-time analytics dashboard built with React, TypeScript, and WebSocket connections for live data visualization."
+date: 2026-05-09T00:00:00Z
+coverImage: "@/assets/images/placeholder-cover.jpg"
+featured: false
+status: "active"
+links:
+  - label: "GitHub"
+    url: "https://github.com/sidarth-23/react-dashboard"
+  - label: "Live Demo"
+    url: "https://dashboard-demo.sidshub.in"
+tags: ["react", "typescript", "frontend"]
+seo:
+  title: "React Dashboard — Sid"
+  description: "Real-time analytics dashboard with React and WebSocket."
+locale: "en"
+---
+
+## Overview
+
+Every backend needs a frontend. This analytics dashboard connects to your APIs via WebSocket and renders real-time metrics, logs, and performance data in a clean, responsive interface.
+
+## Tech Stack
+
+| Layer        | Technology                          |
+| ------------ | ----------------------------------- |
+| Framework    | React 19                            |
+| Language     | TypeScript                          |
+| Styling      | Tailwind CSS + shadcn/ui            |
+| State        | TanStack Query                      |
+| Real-time    | WebSocket + Server-Sent Events      |
+| Charts       | Recharts                            |
+
+## Key Features
+
+- **Real-time Metrics**: Live CPU, memory, and request rate charts
+- **Log Streaming**: Filterable, color-coded log tail with search
+- **Alert Management**: Configure thresholds and notification channels
+- **Dark Mode**: Full dark mode support with system preference detection
+
+## Architecture
+
+The dashboard uses a modular widget system:
+
+1. **Widget Registry**: Dynamic widget loading
+2. **Data Sources**: Pluggable connectors (REST, WebSocket, GraphQL)
+3. **State Management**: URL-synced filters and time ranges
+
+## Results
+
+Handles 1000+ concurrent WebSocket connections with smooth 60fps rendering.

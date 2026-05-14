@@ -1,9 +1,10 @@
 ---
 import ContentLayout from "@/layouts/ContentLayout.astro"
-import { Image } from "astro:assets"
 import Hero from "@/components/sections/Hero.astro"
 import heroImage from "@/assets/images/hero-image.png"
-import { getPublishedBlogPosts, getFeaturedProjects, formatShortDate } from "@/lib/content"
+import BlogCard from "@/components/BlogCard.astro"
+import ProjectCard from "@/components/ProjectCard.astro"
+import { getPublishedBlogPosts, getFeaturedProjects } from "@/lib/content"
 import { locales, defaultLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
@@ -48,24 +49,9 @@ const latestPosts = posts.slice(0, 3)
         <h2 class="mb-6 text-sm font-semibold tracking-wider text-muted-foreground uppercase">
           {t(locale, "blog.latest")}
         </h2>
-        <div class="flex flex-col gap-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {latestPosts.map((post) => (
-            <a
-              href={`/${locale}/blog/${post.slug.split("/").slice(1).join("/")}`}
-              class="group block"
-            >
-              <article class="flex flex-col gap-2">
-                <h3 class="text-lg font-medium transition-colors group-hover:text-primary">
-                  {post.data.title}
-                </h3>
-                <p class="line-clamp-2 text-sm text-muted-foreground">
-                  {post.data.description}
-                </p>
-                <time class="text-xs text-muted-foreground/70">
-                  {formatShortDate(post.data.date, locale)}
-                </time>
-              </article>
-            </a>
+            <BlogCard post={post} locale={locale} />
           ))}
         </div>
         <a
@@ -86,28 +72,7 @@ const latestPosts = posts.slice(0, 3)
         </h2>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {projects.slice(0, 4).map((project) => (
-            <a
-              href={`/${locale}/projects/${project.slug.split("/").slice(1).join("/")}`}
-              class="group block"
-            >
-              <article class="overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/30">
-                <Image
-                  src={project.data.coverImage}
-                  alt={project.data.title}
-                  width={600}
-                  height={340}
-                  class="aspect-video w-full object-cover"
-                />
-                <div class="p-4">
-                  <h3 class="font-medium transition-colors group-hover:text-primary">
-                    {project.data.title}
-                  </h3>
-                  <p class="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                    {project.data.summary}
-                  </p>
-                </div>
-              </article>
-            </a>
+            <ProjectCard project={project} locale={locale} />
           ))}
         </div>
         <a
