@@ -30,7 +30,7 @@ export default defineConfig({
   ],
   site: "https://sidshub.in",
   i18n: {
-    locales: ["en", "hi", "fr"],
+    locales: ["en", "es", "fr"],
     defaultLocale: "en",
     routing: {
       prefixDefaultLocale: true,

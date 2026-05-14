@@ -31,7 +31,7 @@ export function translateIntegration(
     providerConfig,
     rulesPath = path.join(ROOT, "src", "i18n", "rules.md"),
     autoTranslate = false,
-    targetLocales = ["hi", "fr"],
+    targetLocales = ["es", "fr"],
     contentTypes = ["blog", "projects"],
   } = options
 

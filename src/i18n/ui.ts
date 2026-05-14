@@ -20,14 +20,14 @@ const translations: Record<Locale, unknown> = {
       title: "Blog",
       description: "Thoughts on engineering, design, and building things.",
       latest: "Latest Writing",
-      viewAll: "View all posts \u2192",
+      viewAll: "View all posts →",
     },
     projects: {
       title: "Projects",
       description:
         "A selection of things I have built, shipped, and learned from.",
       featured: "Featured Projects",
-      viewAll: "View all projects \u2192",
+      viewAll: "View all projects →",
       featuredLabel: "Featured",
     },
     lang: {
@@ -36,7 +36,7 @@ const translations: Record<Locale, unknown> = {
     },
     meta: {
       description:
-        "Sid's portfolio \u2014 thoughts on engineering, design, and building things.",
+        "Sid's portfolio — thoughts on engineering, design, and building things.",
     },
     rss: {
       description: "Thoughts on engineering, design, and building things.",
@@ -50,50 +50,50 @@ const translations: Record<Locale, unknown> = {
       imageAlt: "Sidarth G — Backend & Full-Stack Developer",
     },
   },
-  hi: {
+  es: {
     nav: {
-      home: "होम",
-      projects: "प्रोजेक्ट्स",
-      blog: "ब्लॉग",
-      resume: "रिज्यूमे",
+      home: "Inicio",
+      projects: "Proyectos",
+      blog: "Blog",
+      resume: "Currículum",
     },
     footer: {
       designedBy: "Designed by Sidarth",
     },
     blog: {
-      title: "ब्लॉग",
+      title: "Blog",
       description:
-        "इंजीनियरिंग, डिज़़ाइन, और चीज़़ें बनाने पर विचार।",
-      latest: "नवीनतम लेख",
-      viewAll: "सभी पोस्ट देखें →",
+        "Reflexiones sobre ingeniería, diseño y construcción de cosas.",
+      latest: "Últimas Publicaciones",
+      viewAll: "Ver todas las publicaciones →",
     },
     projects: {
-      title: "प्रोजेक्ट्स",
+      title: "Proyectos",
       description:
-        "चीज़़ें जो मैंने बनाई, शिप की, और सीखी।",
-      featured: "फीचर्ड प्रोजेक्ट्स",
-      viewAll: "सभी प्रोजेक्ट्स देखें →",
-      featuredLabel: "फीचर्ड",
+        "Una selección de cosas que he construido, enviado y aprendido.",
+      featured: "Proyectos Destacados",
+      viewAll: "Ver todos los proyectos →",
+      featuredLabel: "Destacado",
     },
     lang: {
-      aiGenerated: "AI द्वारा अनुवादित",
-      selector: "भाषा",
+      aiGenerated: "Traducido por IA",
+      selector: "Idioma",
     },
     meta: {
       description:
-        "सिद का पोर्टफोलियो — इंजीनियरिंग, डिज़़ाइन, और चीज़़ें बनाने पर विचार।",
+        "Portafolio de Sid — reflexiones sobre ingeniería, diseño y construcción de cosas.",
     },
     rss: {
       description:
-        "इंजीनियरिंग, डिज़़ाइन, और चीज़़ें बनाने पर विचार।",
+        "Reflexiones sobre ingeniería, diseño y construcción de cosas.",
     },
     hero: {
       heading: "Sidarth G",
-      role: "Backend & Full-Stack Developer",
-      description: "मैं आधुनिक वेब तकनीक और क्लाउड इंफ्रास्ट्रक्चर के साथ तेज़ और विश्वसनीय प्रोडक्ट बनाता हूँ। जटिल समस्याओं को सुरुचिपूर्ण समाधानों में बदलना — मज़बूत API से लेकर बेहतरीन यूज़र अनुभव तक। हमेशा सीखना, हमेशा शिप करना।",
-      connect: "मेरे साथ जुड़ें",
-      resume: "रिज्यूमे देखें",
-      imageAlt: "Sidarth G — Backend & Full-Stack Developer",
+      role: "Desarrollador Backend y Full-Stack",
+      description: "Construyo productos rápidos y confiables con tecnologías web modernas e infraestructura en la nube. Transformo problemas complejos en soluciones elegantes — desde API robustas hasta experiencias de usuario fluidas. Siempre aprendiendo, siempre enviando.",
+      connect: "Conectemos",
+      resume: "Ver Currículum",
+      imageAlt: "Sidarth G — Desarrollador Backend y Full-Stack",
     },
   },
   fr: {
@@ -109,16 +109,16 @@ const translations: Record<Locale, unknown> = {
     blog: {
       title: "Blog",
       description:
-        "R\u00E9flexions sur l'ing\u00E9nierie, le design, et la construction de choses.",
+        "Réflexions sur l'ingénierie, le design, et la construction de choses.",
       latest: "Derniers Articles",
-      viewAll: "Voir tous les articles \u2192",
+      viewAll: "Voir tous les articles →",
     },
     projects: {
       title: "Projets",
       description:
-        "Une s\u00E9lection de choses que j'ai construites, livr\u00E9es et apprises.",
+        "Une sélection de choses que j'ai construites, livrées et apprises.",
       featured: "Projets en Vedette",
-      viewAll: "Voir tous les projets \u2192",
+      viewAll: "Voir tous les projets →",
       featuredLabel: "En Vedette",
     },
     lang: {
@@ -127,11 +127,11 @@ const translations: Record<Locale, unknown> = {
     },
     meta: {
       description:
-        "Portfolio de Sid \u2014 r\u00E9flexions sur l'ing\u00E9nierie, le design, et la construction de choses.",
+        "Portfolio de Sid — réflexions sur l'ingénierie, le design, et la construction de choses.",
     },
     rss: {
       description:
-        "R\u00E9flexions sur l'ing\u00E9nierie, le design, et la construction de choses.",
+        "Réflexions sur l'ingénierie, le design, et la construction de choses.",
     },
     hero: {
       heading: "Sidarth G",

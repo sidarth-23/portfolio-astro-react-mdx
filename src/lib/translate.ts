@@ -93,7 +93,7 @@ export async function translateAll(options: TranslateOptions): Promise<void> {
   const {
     providerConfig,
     rulesPath,
-    targetLocales = ["hi", "fr"],
+    targetLocales = ["es", "fr"],
     contentTypes = ["blog", "projects"],
     rootDir,
     force = false,

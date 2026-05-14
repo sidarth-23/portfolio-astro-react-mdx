@@ -1,3 +1,4 @@
+import { locales } from "../i18n/config"
 import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
@@ -5,7 +6,7 @@ import { fileURLToPath } from "node:url"
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, "../..")
 
-const targetLocales = ["hi", "fr"]
+const targetLocales = locales.filter((l) => l !== "en")
 const contentTypes = ["blog", "projects"]
 
 export interface CheckResult {
@@ -60,27 +61,27 @@ export function checkTranslations(rootDir = ROOT): CheckResult {
 
 export function formatReport(result: CheckResult): string {
   if (result.ok) {
-    return "\u2705 All translations are up to date"
+    return "✅ All translations are up to date"
   }
 
   const lines: string[] = []
 
   if (result.missing.length > 0) {
-    lines.push("\n\u274C Missing translations:")
+    lines.push("\n❌ Missing translations:")
     for (const file of result.missing) {
       lines.push(`  - ${file}`)
     }
   }
 
   if (result.stale.length > 0) {
-    lines.push(
-      "\n\u26A0\uFE0F  Stale translations (source modified after translation):"
-    )
+    lines.push("\n⚠️  Stale translations (source modified after translation):")
     for (const file of result.stale) {
       lines.push(`  - ${file}`)
     }
   }
 
-  lines.push("\nRun `npm run translate` to generate missing/stale translations.")
+  lines.push(
+    "\nRun `npm run translate` to generate missing/stale translations."
+  )
   return lines.join("\n")
 }

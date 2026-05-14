@@ -1,21 +1,21 @@
 import { getCollection, type CollectionEntry } from "astro:content"
 import type { z } from "zod"
 import type { tagSchema } from "@/lib/schemas"
-import type { Locale } from "@/i18n/config"
+import { locales, type Locale } from "@/i18n/config"
 
 type Tag = z.infer<typeof tagSchema>
 
 function getLocaleFromSlug(slug: string): Locale {
   const firstSegment = slug.split("/")[0]
-  if (firstSegment === "en" || firstSegment === "hi" || firstSegment === "fr") {
-    return firstSegment
+  if (locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale
   }
   return "en"
 }
 
 function getContentSlug(slug: string): string {
   const parts = slug.split("/")
-  if (parts[0] === "en" || parts[0] === "hi" || parts[0] === "fr") {
+  if (locales.includes(parts[0] as Locale)) {
     return parts.slice(1).join("/")
   }
   return slug
@@ -108,7 +108,9 @@ export async function getProjectsByTag(tag: Tag, locale: Locale = "en") {
   return filtered.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
 
-export function getAllProjectTags(projects: CollectionEntry<"projects">[]): Tag[] {
+export function getAllProjectTags(
+  projects: CollectionEntry<"projects">[]
+): Tag[] {
   const tags = new Set<Tag>()
   for (const project of projects) {
     for (const tag of project.data.tags) {
@@ -121,7 +123,7 @@ export function getAllProjectTags(projects: CollectionEntry<"projects">[]): Tag[
 export function formatDate(date: Date, locale: Locale = "en"): string {
   const localeMap: Record<Locale, string> = {
     en: "en-US",
-    hi: "hi-IN",
+    es: "es-ES",
     fr: "fr-FR",
   }
   return new Intl.DateTimeFormat(localeMap[locale], {
@@ -134,7 +136,7 @@ export function formatDate(date: Date, locale: Locale = "en"): string {
 export function formatShortDate(date: Date, locale: Locale = "en"): string {
   const localeMap: Record<Locale, string> = {
     en: "en-US",
-    hi: "hi-IN",
+    es: "es-ES",
     fr: "fr-FR",
   }
   return new Intl.DateTimeFormat(localeMap[locale], {

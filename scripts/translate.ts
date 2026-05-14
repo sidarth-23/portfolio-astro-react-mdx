@@ -38,7 +38,7 @@ async function main() {
       baseURL: process.env.AI_API_URL,
     },
     rulesPath,
-    targetLocales: ["hi", "fr"],
+    targetLocales: ["es", "fr"],
     contentTypes: ["blog", "projects"],
     rootDir: ROOT,
     force,
