@@ -15,7 +15,10 @@ const props = Astro.props
 ---
 
 <Layout {...props}>
-  <div class="mx-auto w-full flex-1 px-6 py-12 md:max-w-3xl" transition:animate="fade">
+  <div
+    class="mx-auto w-full max-w-7xl flex-1 px-6 py-12"
+    transition:animate="fade"
+  >
     <slot />
   </div>
 </Layout>

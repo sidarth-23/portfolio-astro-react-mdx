@@ -2,7 +2,12 @@
 
 import * as React from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Globe02Icon, SparklesIcon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
+import {
+  Globe02Icon,
+  SparklesIcon,
+  ArrowDown01Icon,
+  Tick01Icon,
+} from "@hugeicons/core-free-icons"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,7 +70,7 @@ export function LanguageSelector({
         >
           <span className="flex w-4 items-center justify-center">
             {locale === loc && (
-              <span className="text-xs text-muted-foreground">✓</span>
+              <HugeiconsIcon icon={Tick01Icon} size={14} strokeWidth={2} />
             )}
           </span>
           <a
@@ -81,7 +86,7 @@ export function LanguageSelector({
                 icon={SparklesIcon}
                 size={14}
                 strokeWidth={2}
-                className="text-amber-500/60 dark:text-amber-400/60"
+                className="text-sidebar-primary"
               />
             </span>
           )}
@@ -118,7 +123,7 @@ export function LanguageSelector({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-sm" className="size-9 relative">
+        <Button variant="ghost" size="icon-sm" className="relative size-9">
           <HugeiconsIcon
             icon={Globe02Icon}
             strokeWidth={2}

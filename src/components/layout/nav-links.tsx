@@ -26,7 +26,7 @@ export function NavLinks({
             <SidebarMenuButton
               asChild
               tooltip={item.title}
-              className="h-10"
+              className="h-10 gap-4"
               isActive={isActiveLink(currentPath, item.url)}
             >
               <a href={item.url}>

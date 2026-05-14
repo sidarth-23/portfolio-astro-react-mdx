@@ -177,7 +177,7 @@ export function SiteHeader({
 }) {
   return (
     <header className="border-b">
-      <div className="mx-auto flex h-14 w-full shrink-0 items-center justify-between px-4 md:max-w-5xl">
+      <div className="mx-auto flex h-14 w-full max-w-7xl shrink-0 items-center justify-between px-4">
         <div className="flex items-center gap-3">
           <HeaderSidebarTrigger />
           <Separator orientation="vertical" />
