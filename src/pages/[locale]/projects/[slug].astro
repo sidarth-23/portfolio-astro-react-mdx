@@ -60,9 +60,9 @@ const readingTime = estimateReadingTime(project.body)
         <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{project.data.title}</h1>
         {
           project.data.status !== "active" && (
-            <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+            <Badge variant="default" className="capitalize">
               {project.data.status}
-            </span>
+            </Badge>
           )
         }
       </div>

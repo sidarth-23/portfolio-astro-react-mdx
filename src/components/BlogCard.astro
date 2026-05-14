@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets"
 import type { CollectionEntry } from "astro:content"
+import { Badge } from "@/components/ui/badge"
 import { formatShortDate } from "@/lib/content"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
@@ -17,7 +18,7 @@ const { post, locale } = Astro.props
   href={`/${locale}/blog/${post.slug.split("/").slice(1).join("/")}`}
   class="group block h-full"
 >
-  <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-all hover:ring-primary/20">
+  <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-all hover:shadow-md hover:-translate-y-0.5">
     <div class="overflow-hidden">
       <Image
         src={post.data.coverImage}
@@ -29,9 +30,9 @@ const { post, locale } = Astro.props
     </div>
     <div class="flex flex-1 flex-col p-5">
       {post.data.category && (
-        <span class="mb-2 inline-flex w-fit items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+        <Badge variant="default" className="mb-2 w-fit capitalize">
           {post.data.category}
-        </span>
+        </Badge>
       )}
       <h3 class="text-lg font-medium leading-snug transition-colors group-hover:text-primary">
         {post.data.title}

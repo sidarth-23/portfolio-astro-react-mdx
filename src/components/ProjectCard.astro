@@ -18,7 +18,7 @@ const { project, locale } = Astro.props
   href={`/${locale}/projects/${project.slug.split("/").slice(1).join("/")}`}
   class="group block h-full"
 >
-  <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-all hover:ring-primary/20">
+  <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-all hover:shadow-md hover:-translate-y-0.5">
     <div class="overflow-hidden">
       <Image
         src={project.data.coverImage}
@@ -34,9 +34,9 @@ const { project, locale } = Astro.props
           {project.data.title}
         </h3>
         {project.data.featured && (
-          <span class="inline-flex shrink-0 items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+          <Badge variant="default" className="shrink-0 capitalize">
             {t(locale, "projects.featuredLabel")}
-          </span>
+          </Badge>
         )}
       </div>
       <p class="mt-1 text-xs text-muted-foreground">

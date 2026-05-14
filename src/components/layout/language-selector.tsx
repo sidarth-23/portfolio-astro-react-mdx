@@ -75,21 +75,24 @@ export function LanguageSelector({
           </span>
           <a
             href={getPathForLocale(loc)}
-            className="flex flex-1 items-center gap-2"
+            className="flex flex-1 items-center gap-1.5"
             onClick={(e) => e.preventDefault()}
           >
             <span className="text-sm">{localeLabels[loc]}</span>
+            {loc !== defaultLocale && (
+              <span
+                title={t(loc, "lang.aiGenerated")}
+                className="relative -top-1 ml-0.5 inline-flex"
+              >
+                <HugeiconsIcon
+                  icon={SparklesIcon}
+                  size={4}
+                  strokeWidth={2}
+                  className="text-sidebar-primary/70"
+                />
+              </span>
+            )}
           </a>
-          {loc !== defaultLocale && (
-            <span title={t(loc, "lang.aiGenerated")}>
-              <HugeiconsIcon
-                icon={SparklesIcon}
-                size={14}
-                strokeWidth={2}
-                className="text-sidebar-primary"
-              />
-            </span>
-          )}
         </DropdownMenuItem>
       ))}
     </>
@@ -113,7 +116,7 @@ export function LanguageSelector({
             />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="min-w-48">
+        <DropdownMenuContent align="start" className="w-auto">
           {content}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -132,7 +135,7 @@ export function LanguageSelector({
           <span className="sr-only">{t(locale, "lang.selector")}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={6} className="min-w-48">
+      <DropdownMenuContent align="end" sideOffset={6} className="w-auto">
         {content}
       </DropdownMenuContent>
     </DropdownMenu>
