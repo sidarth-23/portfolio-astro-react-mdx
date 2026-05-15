@@ -1,0 +1,24 @@
+---
+import ContentLayout from "@/layouts/ContentLayout.astro"
+import { CvContent } from "@/components/sections/cv-content"
+import { defaultLocale, locales, type Locale } from "@/i18n/config"
+import { getCvByLocale } from "@/lib/content"
+
+export async function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale } }))
+}
+
+const { locale } = Astro.params as { locale: Locale }
+const entry =
+  (await getCvByLocale(locale)) ?? (await getCvByLocale(defaultLocale))
+
+if (!entry) {
+  throw new Error(
+    "CV content is missing. Add files under src/content/cv/*.json"
+  )
+}
+---
+
+<ContentLayout title="CV — Sidarth G" headerTitle="CV" locale={locale}>
+  <CvContent data={entry.data} />
+</ContentLayout>

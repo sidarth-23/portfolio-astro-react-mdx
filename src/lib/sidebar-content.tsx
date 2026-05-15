@@ -77,7 +77,7 @@ export function sidebarContent(locale: Locale = "en"): SidebarContent {
       },
       {
         title: t(locale, "nav.cv"),
-        url: "#",
+        url: `/${locale}/cv`,
         icon: <HugeiconsIcon icon={File02Icon} size={16} strokeWidth={2} />,
       },
     ],

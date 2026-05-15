@@ -108,6 +108,14 @@ export async function getProjectsByTag(tag: Tag, locale: Locale = "en") {
   return filtered.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
 
+export async function getCvByLocale(
+  locale: Locale = "en"
+): Promise<CollectionEntry<"cv"> | null> {
+  const entries = await getCollection("cv")
+  const entry = entries.find((item) => item.data.locale === locale)
+  return entry ?? null
+}
+
 export function getAllProjectTags(
   projects: CollectionEntry<"projects">[]
 ): Tag[] {
@@ -163,7 +171,10 @@ export function estimateReadingTime(body: string): number {
     .replace(/^\s*\d+\.\s+/gm, "")
     .replace(/\|/g, " ")
   // Count words
-  const words = withoutMarkdown.trim().split(/\s+/).filter((w) => w.length > 0)
+  const words = withoutMarkdown
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 0)
   const minutes = Math.ceil(words.length / 200)
   return Math.max(minutes, 1)
 }

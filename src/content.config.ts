@@ -1,6 +1,12 @@
 import { defineCollection } from "astro:content"
 import { z } from "zod"
-import { seoSchema, linkSchema, tagSchema, dateSchema } from "@/lib/schemas"
+import {
+  seoSchema,
+  linkSchema,
+  tagSchema,
+  dateSchema,
+  cvSchema,
+} from "@/lib/schemas"
 import { locales } from "@/i18n/config"
 
 const blog = defineCollection({
@@ -39,4 +45,9 @@ const projects = defineCollection({
     }),
 })
 
-export const collections = { blog, projects }
+const cv = defineCollection({
+  type: "data",
+  schema: cvSchema,
+})
+
+export const collections = { blog, projects, cv }

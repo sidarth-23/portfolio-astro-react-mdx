@@ -1,0 +1,111 @@
+{
+  "locale": "fr",
+  "profile": {
+    "name": "Sidarth G",
+    "role": "Backend & Full-Stack Developer",
+    "summary": "I started with HTML and JavaScript, moved across modern frontend stacks, and then focused deeply on backend architecture. I now build reliable product systems across APIs, infra, and developer workflows, while continuing to learn DevOps and networking.",
+    "focus": [
+      "OpenAPI-first",
+      "Distributed Systems",
+      "Cloud & DevOps Learning Path"
+    ]
+  },
+  "experience": [
+    {
+      "id": 1,
+      "role": "Backend Developer",
+      "company": "Truvanta",
+      "location": "Chennai",
+      "period": "May 2025 - Present",
+      "highlights": [
+        "Manage office IT infrastructure and networking with Cloudflare tunnels, Intune-managed devices, and BitLocker policies.",
+        "Maintain CI/CD pipelines using Docker and Kubernetes clusters deployed on globally distributed Proxmox servers.",
+        "Build scalable backend systems with REST, WebSockets, gRPC, and background workers for agent tasks and cleanup jobs.",
+        "Set up OpenAPI-based contract workflows that generate TypeScript clients and reduce backend/frontend integration overhead.",
+        "Collaborate on feature planning with documentation-first workflows and archived technical design decisions."
+      ]
+    },
+    {
+      "id": 2,
+      "role": "Software Development Engineer - 1",
+      "company": "Teachedison",
+      "location": "Coimbatore",
+      "period": "Jan 2024 - Apr 2025",
+      "highlights": [
+        "Built micro-SaaS marketing tools that increased traffic to the main platform by 20%.",
+        "Owned delivery lifecycle from UI design and database modeling to deployment, migrations, and reliability.",
+        "Helped establish a revamp foundation with OpenAPI clients, Turborepo micro-app architecture, and shared UI setup.",
+        "Reduced operational cost by replacing expensive Webflow forms with full-stack embedded forms and stronger validations."
+      ]
+    },
+    {
+      "id": 3,
+      "role": "Trainee Consultant",
+      "company": "Applexus Technologies",
+      "location": "Trivandrum",
+      "period": "Oct 2023 - Jan 2024",
+      "highlights": [
+        "Developed practical foundations in TypeScript, CSS, middleware, REST APIs, Angular, and Express.",
+        "Contributed to SAP Fiori analytics workflows to improve internal visibility for operational teams.",
+        "Improved data quality by removing redundant testing data and supporting debugging-heavy workflows.",
+        "Implemented a proof-of-concept rule engine with a multi-step form experience."
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "title": "Backend & Systems",
+      "items": [
+        { "label": "Golang", "icon": { "source": "simple", "name": "go" } },
+        { "label": "Python", "icon": { "source": "simple", "name": "python" } },
+        { "label": "Express.js", "icon": { "source": "huge", "name": "api" } },
+        { "label": "gRPC", "icon": { "source": "huge", "name": "connection" } },
+        { "label": "WebSockets", "icon": { "source": "huge", "name": "cloud" } }
+      ]
+    },
+    {
+      "title": "Database & Auth",
+      "items": [
+        {
+          "label": "PostgreSQL",
+          "icon": { "source": "simple", "name": "postgresql" }
+        },
+        { "label": "SQL", "icon": { "source": "huge", "name": "database" } },
+        {
+          "label": "Turso (SQLite)",
+          "icon": { "source": "huge", "name": "database" }
+        },
+        {
+          "label": "Drizzle",
+          "icon": { "source": "custom", "name": "drizzle" }
+        },
+        { "label": "GORM", "icon": { "source": "huge", "name": "layers" } }
+      ]
+    },
+    {
+      "title": "Frontend & DX",
+      "items": [
+        {
+          "label": "Next.js",
+          "icon": { "source": "simple", "name": "nextjs" }
+        },
+        { "label": "React", "icon": { "source": "simple", "name": "react" } },
+        { "label": "Astro", "icon": { "source": "simple", "name": "astro" } },
+        {
+          "label": "TypeScript",
+          "icon": { "source": "simple", "name": "typescript" }
+        },
+        {
+          "label": "Tailwind CSS",
+          "icon": { "source": "simple", "name": "tailwindcss" }
+        }
+      ]
+    }
+  ],
+  "certifications": [
+    "Boot.dev's Learn Go Course",
+    "CS50's Introduction to Computer Science",
+    "Google Project Management Specialization",
+    "IBM Full Stack Software Developer Specialization"
+  ]
+}
