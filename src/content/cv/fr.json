@@ -10,48 +10,6 @@
       "Cloud & DevOps Learning Path"
     ]
   },
-  "experience": [
-    {
-      "id": 1,
-      "role": "Backend Developer",
-      "company": "Truvanta",
-      "location": "Chennai",
-      "period": "May 2025 - Present",
-      "highlights": [
-        "Manage office IT infrastructure and networking with Cloudflare tunnels, Intune-managed devices, and BitLocker policies.",
-        "Maintain CI/CD pipelines using Docker and Kubernetes clusters deployed on globally distributed Proxmox servers.",
-        "Build scalable backend systems with REST, WebSockets, gRPC, and background workers for agent tasks and cleanup jobs.",
-        "Set up OpenAPI-based contract workflows that generate TypeScript clients and reduce backend/frontend integration overhead.",
-        "Collaborate on feature planning with documentation-first workflows and archived technical design decisions."
-      ]
-    },
-    {
-      "id": 2,
-      "role": "Software Development Engineer - 1",
-      "company": "Teachedison",
-      "location": "Coimbatore",
-      "period": "Jan 2024 - Apr 2025",
-      "highlights": [
-        "Built micro-SaaS marketing tools that increased traffic to the main platform by 20%.",
-        "Owned delivery lifecycle from UI design and database modeling to deployment, migrations, and reliability.",
-        "Helped establish a revamp foundation with OpenAPI clients, Turborepo micro-app architecture, and shared UI setup.",
-        "Reduced operational cost by replacing expensive Webflow forms with full-stack embedded forms and stronger validations."
-      ]
-    },
-    {
-      "id": 3,
-      "role": "Trainee Consultant",
-      "company": "Applexus Technologies",
-      "location": "Trivandrum",
-      "period": "Oct 2023 - Jan 2024",
-      "highlights": [
-        "Developed practical foundations in TypeScript, CSS, middleware, REST APIs, Angular, and Express.",
-        "Contributed to SAP Fiori analytics workflows to improve internal visibility for operational teams.",
-        "Improved data quality by removing redundant testing data and supporting debugging-heavy workflows.",
-        "Implemented a proof-of-concept rule engine with a multi-step form experience."
-      ]
-    }
-  ],
   "skills": [
     {
       "title": "Backend & Systems",

@@ -1,8 +1,8 @@
 ---
 import ContentLayout from "@/layouts/ContentLayout.astro"
-import { CvContent } from "@/components/sections/cv-content"
+import CvContent from "@/components/sections/cv-content.astro"
 import { defaultLocale, locales, type Locale } from "@/i18n/config"
-import { getCvByLocale } from "@/lib/content"
+import { getCvByLocale, getCvExperienceByLocale } from "@/lib/content"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))
@@ -17,8 +17,23 @@ if (!entry) {
     "CV content is missing. Add files under src/content/cv/*.json"
   )
 }
+
+const experienceEntries =
+  (await getCvExperienceByLocale(locale)).length > 0
+    ? await getCvExperienceByLocale(locale)
+    : await getCvExperienceByLocale(defaultLocale)
+
+const experiences = await Promise.all(
+  experienceEntries.map(async (item) => {
+    const { Content } = await item.render()
+    return {
+      data: item.data,
+      Content,
+    }
+  })
+)
 ---
 
 <ContentLayout title="CV — Sidarth G" headerTitle="CV" locale={locale}>
-  <CvContent data={entry.data} />
+  <CvContent data={entry.data} experiences={experiences} />
 </ContentLayout>

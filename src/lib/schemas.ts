@@ -27,6 +27,10 @@ export const cvSkillIconSchema = z.object({
   name: z.string().min(1),
 })
 
+const cvMonthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, {
+  message: "Expected month in YYYY-MM format",
+})
+
 export const cvSchema = z.object({
   locale: z.enum(["en", "es", "fr"]),
   profile: z.object({
@@ -35,18 +39,7 @@ export const cvSchema = z.object({
     summary: z.string().min(1),
     focus: z.array(z.string().min(1)).min(1),
   }),
-  experience: z
-    .array(
-      z.object({
-        id: z.number().int().positive(),
-        role: z.string().min(1),
-        company: z.string().min(1),
-        location: z.string().min(1),
-        period: z.string().min(1),
-        highlights: z.array(z.string().min(1)).min(1),
-      })
-    )
-    .min(1),
+
   skills: z
     .array(
       z.object({
@@ -64,3 +57,19 @@ export const cvSchema = z.object({
     .min(1),
   certifications: z.array(z.string().min(1)).min(1),
 })
+
+export const cvExperienceSchema = z
+  .object({
+    id: z.number().int().positive(),
+    locale: z.enum(["en", "es", "fr"]),
+    role: z.string().min(1),
+    company: z.string().min(1),
+    location: z.string().min(1),
+    currentlyWorking: z.boolean().default(false),
+    start: cvMonthSchema,
+    end: cvMonthSchema.nullable().optional(),
+  })
+  .refine((item) => item.currentlyWorking || Boolean(item.end), {
+    message: "end is required when currentlyWorking is false",
+    path: ["end"],
+  })

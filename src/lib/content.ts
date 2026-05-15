@@ -116,6 +116,26 @@ export async function getCvByLocale(
   return entry ?? null
 }
 
+export async function getCvExperienceByLocale(locale: Locale = "en") {
+  const entries = (await getCollection("cvExperience" as never)) as Array<{
+    data: {
+      id: number
+      locale: Locale
+      role: string
+      company: string
+      location: string
+      currentlyWorking: boolean
+      start: string
+      end?: string | null
+    }
+    render: () => Promise<{ Content: unknown; headings: unknown[] }>
+  }>
+
+  return entries
+    .filter((entry) => entry.data.locale === locale)
+    .sort((a, b) => a.data.id - b.data.id)
+}
+
 export function getAllProjectTags(
   projects: CollectionEntry<"projects">[]
 ): Tag[] {

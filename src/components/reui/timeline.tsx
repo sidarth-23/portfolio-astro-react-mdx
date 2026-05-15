@@ -17,9 +17,14 @@ const TimelineContext = createContext<TimelineContextValue | undefined>(
 
 const useTimeline = () => {
   const context = useContext(TimelineContext)
+
   if (!context) {
-    throw new Error("useTimeline must be used within a Timeline")
+    return {
+      activeStep: Number.POSITIVE_INFINITY,
+      setActiveStep: () => {},
+    }
   }
+
   return context
 }
 
