@@ -55,7 +55,14 @@ export const cvSchema = z.object({
       })
     )
     .min(1),
-  certifications: z.array(z.string().min(1)).min(1),
+  certifications: z
+    .array(
+      z.object({
+        title: z.string().min(1),
+        url: z.string().url(),
+      })
+    )
+    .min(1),
 })
 
 export const cvExperienceSchema = z

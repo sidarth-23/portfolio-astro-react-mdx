@@ -61,9 +61,21 @@
     }
   ],
   "certifications": [
-    "Boot.dev's Learn Go Course",
-    "CS50's Introduction to Computer Science",
-    "Google Project Management Specialization",
-    "IBM Full Stack Software Developer Specialization"
+    {
+      "title": "Learn Go",
+      "url": "https://www.boot.dev/courses/learn-go"
+    },
+    {
+      "title": "CS50's Introduction to Computer Science",
+      "url": "https://cs50.harvard.edu/x/"
+    },
+    {
+      "title": "Google Project Management: Professional Certificate",
+      "url": "https://www.coursera.org/professional-certificates/google-project-management"
+    },
+    {
+      "title": "IBM Full Stack Software Developer Professional Certificate",
+      "url": "https://www.coursera.org/professional-certificates/ibm-full-stack-cloud-developer"
+    }
   ]
 }

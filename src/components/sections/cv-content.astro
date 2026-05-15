@@ -4,7 +4,6 @@ import {
   Briefcase01Icon,
   Award03Icon,
   Layers01Icon,
-  UserSquareIcon,
 } from "@hugeicons/core-free-icons"
 import {
   Timeline,
@@ -24,6 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { SkillIcon } from "@/components/icons/skill-icons"
 import avatarImage from "@/assets/images/avatar.jpg"
 import type { CollectionEntry } from "astro:content"
@@ -192,23 +192,41 @@ function getPeriodLabel(
         Certifications
       </h2>
     </div>
-    <Card size="sm">
+    <Card size="sm" className="max-w-2xl border-primary/20">
       <CardContent className="pt-1">
-        <ul class="space-y-2 text-sm text-muted-foreground">
-          {
-            data.certifications.map((cert) => (
-              <li class="flex items-start gap-2">
-                <HugeiconsIcon
-                  icon={UserSquareIcon}
-                  size={14}
-                  strokeWidth={2}
-                  className="mt-0.5 shrink-0"
-                />
-                <span>{cert}</span>
-              </li>
-            ))
-          }
-        </ul>
+        <Table>
+          <TableBody>
+            {
+              data.certifications.map((cert) => (
+                <TableRow>
+                  <TableCell className="font-medium text-foreground">
+                    <a
+                      href={cert.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="underline-offset-4 transition hover:underline"
+                      aria-label={`Open ${cert.title}`}
+                    >
+                      {cert.title}
+                    </a>
+                  </TableCell>
+                  <TableCell className="w-12 text-right">
+                    <a
+                      href={cert.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center text-muted-foreground transition hover:text-foreground"
+                      aria-label={`Open ${cert.title}`}
+                      title={`Open ${cert.title}`}
+                    >
+                      ↗
+                    </a>
+                  </TableCell>
+                </TableRow>
+              ))
+            }
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   </section>
