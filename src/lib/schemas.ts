@@ -65,18 +65,24 @@ export const cvSchema = z.object({
     .min(1),
 })
 
-export const cvExperienceSchema = z
+const cvExperienceRoleSchema = z
   .object({
-    id: z.number().int().positive(),
-    locale: z.enum(["en", "es", "fr"]),
-    role: z.string().min(1),
-    company: z.string().min(1),
-    location: z.string().min(1),
-    currentlyWorking: z.boolean().default(false),
+    title: z.string().min(1),
+    location: z.string().min(1).optional(),
     start: cvMonthSchema,
     end: cvMonthSchema.nullable().optional(),
+    currentlyWorking: z.boolean().default(false),
+    highlights: z.array(z.string().min(1)).min(1),
   })
   .refine((item) => item.currentlyWorking || Boolean(item.end), {
     message: "end is required when currentlyWorking is false",
     path: ["end"],
   })
+
+export const cvExperienceSchema = z.object({
+  id: z.number().int().positive(),
+  locale: z.enum(["en", "es", "fr"]),
+  company: z.string().min(1),
+  location: z.string().min(1),
+  roles: z.array(cvExperienceRoleSchema).min(1),
+})

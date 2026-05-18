@@ -23,15 +23,9 @@ const experienceEntries =
     ? await getCvExperienceByLocale(locale)
     : await getCvExperienceByLocale(defaultLocale)
 
-const experiences = await Promise.all(
-  experienceEntries.map(async (item) => {
-    const { Content } = await item.render()
-    return {
-      data: item.data,
-      Content,
-    }
-  })
-)
+const experiences = experienceEntries.map((item) => ({
+  data: item.data,
+}))
 ---
 
 <ContentLayout title="CV — Sidarth G" headerTitle="CV" locale={locale}>

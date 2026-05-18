@@ -121,12 +121,16 @@ export async function getCvExperienceByLocale(locale: Locale = "en") {
     data: {
       id: number
       locale: Locale
-      role: string
       company: string
       location: string
-      currentlyWorking: boolean
-      start: string
-      end?: string | null
+      roles: Array<{
+        title: string
+        location?: string
+        start: string
+        end?: string | null
+        currentlyWorking: boolean
+        highlights: string[]
+      }>
     }
     render: () => Promise<{ Content: unknown; headings: unknown[] }>
   }>

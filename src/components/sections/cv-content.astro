@@ -30,20 +30,25 @@ import type { CollectionEntry } from "astro:content"
 
 type CvData = CollectionEntry<"cv">["data"]
 
+type ExperienceRole = {
+  title: string
+  location?: string
+  start: string
+  end?: string | null
+  currentlyWorking: boolean
+  highlights: string[]
+}
+
 type ExperienceData = {
   id: number
   locale: "en" | "es" | "fr"
-  role: string
   company: string
   location: string
-  currentlyWorking: boolean
-  start: string
-  end?: string | null
+  roles: ExperienceRole[]
 }
 
 type ExperienceItem = {
   data: ExperienceData
-  Content: any
 }
 
 interface Props {
@@ -70,6 +75,22 @@ function getPeriodLabel(
   const from = formatMonthLabel(start)
   const to = currentlyWorking ? "Present" : formatMonthLabel(end as string)
   return `${from} - ${to}`
+}
+
+function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
+  const sortedRoles = [...roles].sort((a, b) =>
+    a.start < b.start ? -1 : a.start > b.start ? 1 : 0
+  )
+
+  const firstRole = sortedRoles[0]
+  const currentRole = sortedRoles.find((role) => role.currentlyWorking)
+  const lastRole = sortedRoles[sortedRoles.length - 1]
+
+  return getPeriodLabel(
+    firstRole.start,
+    currentRole ? null : lastRole.end,
+    Boolean(currentRole)
+  )
 }
 ---
 
@@ -120,7 +141,7 @@ function getPeriodLabel(
 
     <Timeline defaultValue={experiences.length} className="w-full">
       {
-        experiences.map(({ data: item, Content }) => (
+        experiences.map(({ data: item }) => (
           <TimelineItem
             step={item.id}
             className="group-data-[orientation=vertical]/timeline:ms-10"
@@ -128,7 +149,7 @@ function getPeriodLabel(
             <TimelineHeader>
               <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
               <TimelineTitle className="mt-0.5 text-base font-semibold">
-                {item.role}
+                {item.company}
               </TimelineTitle>
               <TimelineIndicator className="flex size-6 items-center justify-center border-none bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground group-data-[orientation=vertical]/timeline:-left-7">
                 <HugeiconsIcon
@@ -140,15 +161,81 @@ function getPeriodLabel(
             </TimelineHeader>
 
             <TimelineContent>
-              <p class="text-sm font-medium text-foreground">
-                {item.company} · {item.location}
-              </p>
-              <TimelineDate className="mt-1 mb-3">
-                {getPeriodLabel(item.start, item.end, item.currentlyWorking)}
+              <p class="text-sm font-medium text-foreground">{item.location}</p>
+              <TimelineDate className="mt-1 mb-4">
+                {getExperiencePeriodLabel(item.roles)}
               </TimelineDate>
-              <div class="prose prose-sm max-w-none text-muted-foreground dark:prose-invert prose-p:my-2 prose-ul:my-2 prose-li:my-1">
-                <Content />
-              </div>
+
+              <Card size="sm" className="border-border/70">
+                <CardContent className="py-4">
+                  {item.roles.length > 1 ? (
+                    <Timeline
+                      defaultValue={item.roles.length}
+                      className="w-full"
+                    >
+                      {item.roles.map((role, index) => (
+                        <TimelineItem
+                          step={index + 1}
+                          className="group-data-[orientation=vertical]/timeline:ms-8"
+                        >
+                          <TimelineHeader>
+                            <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-5" />
+                            <TimelineTitle className="mt-0.5 text-sm font-semibold text-foreground">
+                              {role.title}
+                            </TimelineTitle>
+                            <TimelineIndicator className="size-3 border-primary/30 bg-background group-data-completed/timeline-item:border-primary group-data-completed/timeline-item:bg-primary group-data-[orientation=vertical]/timeline:-left-5" />
+                          </TimelineHeader>
+
+                          <TimelineContent>
+                            <TimelineDate className="mt-1 mb-2 text-xs">
+                              {getPeriodLabel(
+                                role.start,
+                                role.end,
+                                role.currentlyWorking
+                              )}
+                            </TimelineDate>
+                            {role.location && (
+                              <p class="mb-2 text-xs font-medium text-foreground">
+                                {role.location}
+                              </p>
+                            )}
+                            <ul class="list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+                              {role.highlights.map((highlight) => (
+                                <li>{highlight}</li>
+                              ))}
+                            </ul>
+                          </TimelineContent>
+                        </TimelineItem>
+                      ))}
+                    </Timeline>
+                  ) : (
+                    item.roles.map((role) => (
+                      <div class="ml-8 space-y-2">
+                        <h3 class="text-sm font-semibold text-foreground">
+                          {role.title}
+                        </h3>
+                        <TimelineDate className="mt-1 mb-2 text-xs">
+                          {getPeriodLabel(
+                            role.start,
+                            role.end,
+                            role.currentlyWorking
+                          )}
+                        </TimelineDate>
+                        {role.location && (
+                          <p class="text-xs font-medium text-foreground">
+                            {role.location}
+                          </p>
+                        )}
+                        <ul class="list-disc space-y-1 pl-4 text-sm text-muted-foreground marker:ms-4">
+                          {role.highlights.map((highlight) => (
+                            <li>{highlight}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
             </TimelineContent>
           </TimelineItem>
         ))
