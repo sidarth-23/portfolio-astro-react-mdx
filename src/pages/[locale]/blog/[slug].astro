@@ -11,6 +11,7 @@ import {
   estimateReadingTime,
 } from "@/lib/content"
 import { locales, type Locale } from "@/i18n/config"
+import { t } from "@/i18n/ui"
 import type { CollectionEntry } from "astro:content"
 
 export async function getStaticPaths() {
@@ -59,15 +60,17 @@ const readingTime = estimateReadingTime(post.body)
         <div
           class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground"
         >
-          <time datetime={post.data.date.toISOString()}>{pubDate}</time>
+          <time datetime={post.data.date.toISOString()}>
+            {t(locale, "blog.published")}: {pubDate}
+          </time>
           <span aria-hidden="true">·</span>
-          <span>{readingTime} min read</span>
+          <span>{readingTime} {t(locale, "blog.minRead")}</span>
           {
             showUpdatedDate && (
               <>
                 <span aria-hidden="true">·</span>
                 <time datetime={post.data.updatedDate?.toISOString()}>
-                  {updatedDate}
+                  {t(locale, "blog.updated")} {updatedDate}
                 </time>
               </>
             )

@@ -11,6 +11,12 @@ import {
 import { GitHubIcon, LinkedInIcon, RssIcon, MailIcon } from "@/components/icons"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
+import {
+  sidebarNavigationContent,
+  sidebarProfileContent,
+  sidebarSecondaryContent,
+  sidebarSocialContent,
+} from "@/content/sidebar-content.data"
 
 export interface NavigationItem {
   title: string
@@ -38,84 +44,83 @@ export interface SidebarContent {
   social: SocialLink[]
 }
 
+function navIcon(icon: "home" | "projects" | "blog" | "cv"): ReactNode {
+  switch (icon) {
+    case "home":
+      return <HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={2} />
+    case "projects":
+      return <HugeiconsIcon icon={FolderCodeIcon} size={16} strokeWidth={2} />
+    case "blog":
+      return <HugeiconsIcon icon={BookOpen02Icon} size={16} strokeWidth={2} />
+    case "cv":
+      return <HugeiconsIcon icon={File02Icon} size={16} strokeWidth={2} />
+  }
+}
+
+function secondaryIcon(icon: "archive" | "downloadResume"): ReactNode {
+  switch (icon) {
+    case "archive":
+      return <HugeiconsIcon icon={Archive02Icon} size={16} strokeWidth={2} />
+    case "downloadResume":
+      return <HugeiconsIcon icon={Download02Icon} size={16} strokeWidth={2} />
+  }
+}
+
+function socialIcon(icon: "github" | "linkedin" | "rss" | "email"): ReactNode {
+  switch (icon) {
+    case "github":
+      return <GitHubIcon />
+    case "linkedin":
+      return <LinkedInIcon />
+    case "rss":
+      return <RssIcon />
+    case "email":
+      return <MailIcon />
+  }
+}
+
+function buildNavigation(locale: Locale): NavigationItem[] {
+  return sidebarNavigationContent.map((item) => ({
+    title: t(locale, item.titleKey),
+    url: item.path(locale),
+    icon: navIcon(item.icon),
+  }))
+}
+
+function buildSecondary(locale: Locale): NavigationItem[] {
+  return sidebarSecondaryContent.map((item) => ({
+    title: t(locale, item.titleKey),
+    url: item.url,
+    icon: secondaryIcon(item.icon),
+  }))
+}
+
+function buildSocial(locale: Locale): SocialLink[] {
+  return sidebarSocialContent.map((item) => ({
+    title: item.title,
+    url: item.url(locale),
+    icon: socialIcon(item.icon),
+  }))
+}
+
 export function resolvePageTitle(
   currentPath: string,
   locale: Locale = "en",
   override?: string
 ): string {
   if (override) return override
-  for (const item of sidebarContent(locale).navigation) {
-    if (item.url === currentPath) return item.title
-  }
-  return ""
+
+  return (
+    buildNavigation(locale).find((item) => item.url === currentPath)?.title ??
+    ""
+  )
 }
 
 export function sidebarContent(locale: Locale = "en"): SidebarContent {
   return {
-    profile: {
-      name: "Sidarth G",
-      title: "Backend & Full-Stack Developer",
-      avatar: "/avatar.jpg",
-      fallback: "SG",
-    },
-
-    navigation: [
-      {
-        title: t(locale, "nav.home"),
-        url: `/${locale}`,
-        icon: <HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={2} />,
-      },
-      {
-        title: t(locale, "nav.projects"),
-        url: `/${locale}/projects`,
-        icon: <HugeiconsIcon icon={FolderCodeIcon} size={16} strokeWidth={2} />,
-      },
-      {
-        title: t(locale, "nav.blog"),
-        url: `/${locale}/blog`,
-        icon: <HugeiconsIcon icon={BookOpen02Icon} size={16} strokeWidth={2} />,
-      },
-      {
-        title: t(locale, "nav.cv"),
-        url: `/${locale}/cv`,
-        icon: <HugeiconsIcon icon={File02Icon} size={16} strokeWidth={2} />,
-      },
-    ],
-
-    secondary: [
-      {
-        title: t(locale, "nav.archive"),
-        url: "https://archive-portfolio.sidshub.in",
-        icon: <HugeiconsIcon icon={Archive02Icon} size={16} strokeWidth={2} />,
-      },
-      {
-        title: t(locale, "nav.downloadResume"),
-        url: "https://drive.google.com/file/d/1dummy/view",
-        icon: <HugeiconsIcon icon={Download02Icon} size={16} strokeWidth={2} />,
-      },
-    ],
-
-    social: [
-      {
-        title: "GitHub",
-        url: "https://github.com",
-        icon: <GitHubIcon />,
-      },
-      {
-        title: "LinkedIn",
-        url: "https://linkedin.com",
-        icon: <LinkedInIcon />,
-      },
-      {
-        title: "RSS",
-        url: `/${locale}/rss.xml`,
-        icon: <RssIcon />,
-      },
-      {
-        title: "Email",
-        url: "mailto:hello@sidshub.in",
-        icon: <MailIcon />,
-      },
-    ],
+    profile: { ...sidebarProfileContent },
+    navigation: buildNavigation(locale),
+    secondary: buildSecondary(locale),
+    social: buildSocial(locale),
   }
 }

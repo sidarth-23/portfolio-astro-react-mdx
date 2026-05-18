@@ -75,18 +75,18 @@ export function LanguageSelector({
           </span>
           <a
             href={getPathForLocale(loc)}
-            className="flex flex-1 items-center gap-1.5"
+            className="flex flex-1 items-baseline gap-1.5"
             onClick={(e) => e.preventDefault()}
           >
             <span className="text-sm">{localeLabels[loc]}</span>
             {loc !== defaultLocale && (
               <span
                 title={t(loc, "lang.aiGenerated")}
-                className="relative -top-1 ml-0.5 inline-flex"
+                className="relative -top-1.5 ml-0.5 inline-flex"
               >
                 <HugeiconsIcon
                   icon={SparklesIcon}
-                  size={4}
+                  size={6}
                   strokeWidth={2}
                   className="text-sidebar-primary/70"
                 />

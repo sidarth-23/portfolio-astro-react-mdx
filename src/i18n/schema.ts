@@ -18,6 +18,9 @@ export const TranslationSchema = z.object({
     latest: z.string(),
     viewAll: z.string(),
     readMore: z.string(),
+    published: z.string(),
+    updated: z.string(),
+    minRead: z.string(),
   }),
   projects: z.object({
     title: z.string(),
@@ -25,6 +28,9 @@ export const TranslationSchema = z.object({
     featured: z.string(),
     viewAll: z.string(),
     featuredLabel: z.string(),
+    published: z.string(),
+    updated: z.string(),
+    minRead: z.string(),
   }),
   lang: z.object({
     aiGenerated: z.string(),

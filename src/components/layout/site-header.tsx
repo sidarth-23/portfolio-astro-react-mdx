@@ -62,14 +62,15 @@ function buildBreadcrumbs(
     ? segments[0]
     : defaultLocale
 
+  const homeTitle =
+    resolvePageTitle(`/${locale}`, locale) || t(locale, "nav.home")
+
   if (pathSegments.length === 0) {
-    return [
-      { title: t(locale, "nav.home"), href: "/" + locale, isCurrent: true },
-    ]
+    return [{ title: homeTitle, href: "/" + locale, isCurrent: true }]
   }
 
   const breadcrumbs: BreadcrumbSegment[] = [
-    { title: t(locale, "nav.home"), href: `/${locale}`, isCurrent: false },
+    { title: homeTitle, href: `/${locale}`, isCurrent: false },
   ]
 
   let accumulatedPath = ""
@@ -112,9 +113,13 @@ function Breadcrumbs({
           {breadcrumbs.map((crumb, index) => (
             <React.Fragment key={crumb.href}>
               {index > 0 && <BreadcrumbSeparator />}
-              <BreadcrumbItem className={crumb.isCurrent ? "min-w-0" : undefined}>
+              <BreadcrumbItem
+                className={crumb.isCurrent ? "min-w-0" : undefined}
+              >
                 {crumb.isCurrent ? (
-                  <BreadcrumbPage className="block truncate">{crumb.title}</BreadcrumbPage>
+                  <BreadcrumbPage className="block truncate">
+                    {crumb.title}
+                  </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink href={crumb.href}>
                     {crumb.title}
@@ -159,7 +164,9 @@ function Breadcrumbs({
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem className="min-w-0">
-          <BreadcrumbPage className="block truncate">{last.title}</BreadcrumbPage>
+          <BreadcrumbPage className="block truncate">
+            {last.title}
+          </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -178,7 +185,7 @@ export function SiteHeader({
   return (
     <header className="border-b">
       <div className="mx-auto flex h-14 w-full shrink-0 items-center justify-between px-4">
-        <div className="flex flex-1 items-center gap-3 min-w-0 overflow-hidden">
+        <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
           <HeaderSidebarTrigger />
           <Separator orientation="vertical" />
           <Breadcrumbs currentPath={currentPath} pageTitle={pageTitle} />

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Image } from "astro:assets"
 import { getAllProjects, formatDate, estimateReadingTime } from "@/lib/content"
 import { locales, type Locale } from "@/i18n/config"
+import { t } from "@/i18n/ui"
 import type { CollectionEntry } from "astro:content"
 
 export async function getStaticPaths() {
@@ -55,15 +56,17 @@ const readingTime = estimateReadingTime(project.body)
       <div
         class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground"
       >
-        <time datetime={project.data.date.toISOString()}>{date}</time>
+        <time datetime={project.data.date.toISOString()}>
+          {t(locale, "projects.published")}: {date}
+        </time>
         <span aria-hidden="true">·</span>
-        <span>{readingTime} min read</span>
+        <span>{readingTime} {t(locale, "projects.minRead")}</span>
         {
           showUpdatedDate && (
             <>
               <span aria-hidden="true">·</span>
               <time datetime={project.data.updatedDate?.toISOString()}>
-                {updatedDate}
+                {t(locale, "projects.updated")} {updatedDate}
               </time>
             </>
           )
