@@ -1,12 +1,12 @@
 import * as React from "react"
 import {
   Carousel,
-  type CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import type { CarouselApi } from "@/components/ui/carousel.types"
 
 type GalleryImage = {
   src: string

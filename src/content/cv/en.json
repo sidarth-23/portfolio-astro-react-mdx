@@ -16,8 +16,11 @@
       "items": [
         { "label": "Golang", "icon": { "source": "simple", "name": "go" } },
         { "label": "Python", "icon": { "source": "simple", "name": "python" } },
-        { "label": "Express.js", "icon": { "source": "huge", "name": "api" } },
-        { "label": "gRPC", "icon": { "source": "huge", "name": "connection" } },
+        {
+          "label": "Express.js",
+          "icon": { "source": "simple", "name": "expressjs" }
+        },
+        { "label": "gRPC", "icon": { "source": "custom", "name": "grpc" } },
         { "label": "WebSockets", "icon": { "source": "huge", "name": "cloud" } }
       ]
     },
@@ -31,13 +34,13 @@
         { "label": "SQL", "icon": { "source": "huge", "name": "database" } },
         {
           "label": "Turso (SQLite)",
-          "icon": { "source": "huge", "name": "database" }
+          "icon": { "source": "simple", "name": "turso" }
         },
         {
           "label": "Drizzle",
           "icon": { "source": "custom", "name": "drizzle" }
         },
-        { "label": "GORM", "icon": { "source": "huge", "name": "layers" } }
+        { "label": "GORM", "icon": { "source": "custom", "name": "gorm" } }
       ]
     },
     {
