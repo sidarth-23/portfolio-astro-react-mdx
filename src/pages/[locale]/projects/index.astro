@@ -17,14 +17,16 @@ const tags = getAllProjectTags(projects)
 ---
 
 <ContentLayout title={t(locale, "projects.title") + " — Sid"} locale={locale}>
-  <h1 class="text-3xl font-bold tracking-tight mb-2">{t(locale, "projects.title")}</h1>
-  <p class="text-muted-foreground mb-8">{t(locale, "projects.description")}</p>
+  <h1 class="mb-2 text-3xl font-bold tracking-tight">
+    {t(locale, "projects.title")}
+  </h1>
+  <p class="mb-8 text-muted-foreground">{t(locale, "projects.description")}</p>
 
   {
     tags.length > 0 && (
       <div class="mb-8 flex flex-wrap gap-1.5">
         {tags.map((tag) => (
-          <Badge variant="outline" className="text-muted-foreground/80">#{tag}</Badge>
+          <Badge variant="secondary">#{tag}</Badge>
         ))}
       </div>
     )

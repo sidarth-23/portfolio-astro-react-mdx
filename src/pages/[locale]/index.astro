@@ -46,20 +46,22 @@ const latestPosts = posts.slice(0, 3)
   {
     latestPosts.length > 0 && (
       <section class="mb-16">
-        <h2 class="mb-6 text-sm font-semibold tracking-wider text-muted-foreground uppercase">
-          {t(locale, "blog.latest")}
-        </h2>
+        <div class="mb-6 flex items-end justify-between gap-4">
+          <h2 class="text-sm font-semibold tracking-wider text-muted-foreground uppercase">
+            {t(locale, "blog.latest")}
+          </h2>
+          <a
+            href={`/${locale}/blog`}
+            class="inline-block text-sm font-medium text-primary hover:underline"
+          >
+            {t(locale, "blog.viewAll")}
+          </a>
+        </div>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {latestPosts.map((post) => (
             <BlogCard post={post} locale={locale} />
           ))}
         </div>
-        <a
-          href={`/${locale}/blog`}
-          class="mt-6 inline-block text-sm font-medium text-primary hover:underline"
-        >
-          {t(locale, "blog.viewAll")}
-        </a>
       </section>
     )
   }
@@ -67,20 +69,22 @@ const latestPosts = posts.slice(0, 3)
   {
     projects.length > 0 && (
       <section>
-        <h2 class="mb-6 text-sm font-semibold tracking-wider text-muted-foreground uppercase">
-          {t(locale, "projects.featured")}
-        </h2>
+        <div class="mb-6 flex items-end justify-between gap-4">
+          <h2 class="text-sm font-semibold tracking-wider text-muted-foreground uppercase">
+            {t(locale, "projects.featured")}
+          </h2>
+          <a
+            href={`/${locale}/projects`}
+            class="inline-block text-sm font-medium text-primary hover:underline"
+          >
+            {t(locale, "projects.viewAll")}
+          </a>
+        </div>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {projects.slice(0, 4).map((project) => (
             <ProjectCard project={project} locale={locale} />
           ))}
         </div>
-        <a
-          href={`/${locale}/projects`}
-          class="mt-6 inline-block text-sm font-medium text-primary hover:underline"
-        >
-          {t(locale, "projects.viewAll")}
-        </a>
       </section>
     )
   }

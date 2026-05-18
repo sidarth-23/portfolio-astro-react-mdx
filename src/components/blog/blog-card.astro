@@ -18,7 +18,9 @@ const { post, locale } = Astro.props
   href={`/${locale}/blog/${post.slug.split("/").slice(1).join("/")}`}
   class="group block h-full"
 >
-  <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-all hover:shadow-md hover:-translate-y-0.5">
+  <article
+    class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-all hover:-translate-y-0.5 hover:shadow-md"
+  >
     <div class="overflow-hidden">
       <Image
         src={post.data.coverImage}
@@ -29,17 +31,23 @@ const { post, locale } = Astro.props
       />
     </div>
     <div class="flex flex-1 flex-col p-5">
-      {post.data.category && (
-        <Badge variant="default" className="mb-2 w-fit capitalize">
-          {post.data.category}
-        </Badge>
-      )}
-      <h3 class="text-lg font-medium leading-snug transition-colors group-hover:text-primary">
+      {
+        post.data.category && (
+          <Badge variant="default" className="mb-2 w-fit capitalize">
+            {post.data.category}
+          </Badge>
+        )
+      }
+      <h3
+        class="text-lg leading-snug font-medium transition-colors group-hover:text-primary"
+      >
         {post.data.title}
       </h3>
-      <p class="mt-2 text-xs text-muted-foreground">
-        {post.data.category ? `${post.data.category} · ` : ""}{formatShortDate(post.data.date, locale)}
-      </p>
+      <div class="mt-2">
+        <Badge variant="outline" className="w-fit text-muted-foreground/80">
+          {formatShortDate(post.data.date, locale)}
+        </Badge>
+      </div>
       <p class="mt-3 line-clamp-2 text-sm text-muted-foreground/80">
         {post.data.description}
       </p>
@@ -58,8 +66,8 @@ const { post, locale } = Astro.props
             stroke-linejoin="round"
             class="ml-1 transition-transform group-hover:translate-x-1"
           >
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
           </svg>
         </span>
       </div>
