@@ -17,6 +17,11 @@ seo:
   description: "How a Figma template sparked a weekend frontend project with Next.js and shadcn’s neobrutalism theme"
 locale: "fr"
 ---
+import ImageGallery from "@/components/mdx/ImageGallery.astro"
+import gallery1 from "@/assets/images/projects/toyour-ai-powered-tour-planner/gallery-1.png"
+import gallery2 from "@/assets/images/projects/toyour-ai-powered-tour-planner/gallery-2.png"
+import gallery3 from "@/assets/images/projects/toyour-ai-powered-tour-planner/gallery-3.png"
+
 I came across a really interesting Figma template for a chat-based travel planner and thought — why not build it out? What started as a quick implementation exercise turned into a fun exploration of a UI design trend I had been wanting to try for a while: **neobrutalism**.  
  Here’s a look at how the project came together, what I used, and why I’m kind of obsessed with neobrutalism now.
 
@@ -83,7 +88,7 @@ Each place has a title, description, and an image that loads in the detail panel
 
 ## Image Gallery
 
-Here’s a look at the project across different views:
+<ImageGallery images={[gallery1, gallery2, gallery3]} />
 
 ---
 

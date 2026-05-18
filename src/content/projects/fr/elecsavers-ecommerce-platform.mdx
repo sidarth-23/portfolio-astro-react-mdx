@@ -11,10 +11,17 @@ links:
     url: "https://elecsavers.com/"
 tags: ["nextjs", "better auth", "turso db"]
 seo:
-  title: "ElecSavers — Engineering a Document-First Electronics E-commerce Platform"
+  title: "ElecSavers — Engineering a Document-First Electronics E-commerce Pl..."
   description: "A high-performance, serverless electronics marketplace built with Next.js 15, Turso, and Better Auth. Features a robust admin dashboard for real-time analy"
 locale: "fr"
 ---
+import ImageGallery from "@/components/mdx/ImageGallery.astro"
+import gallery1 from "@/assets/images/projects/elecsavers-ecommerce-platform/gallery-1.png"
+import gallery2 from "@/assets/images/projects/elecsavers-ecommerce-platform/gallery-2.png"
+import gallery3 from "@/assets/images/projects/elecsavers-ecommerce-platform/gallery-3.png"
+import gallery4 from "@/assets/images/projects/elecsavers-ecommerce-platform/gallery-4.png"
+import gallery5 from "@/assets/images/projects/elecsavers-ecommerce-platform/gallery-5.png"
+
 In today’s fast-paced digital economy, many clients want to “test the waters” with a new niche—like high-end electronics—without committing to massive upfront infrastructure costs. For this project, we built **ElecSavers**: a modern, serverless e-commerce platform designed for low-cost deployments and high performance.
 
 ---
@@ -69,6 +76,12 @@ We integrated **Better Auth** to handle:
 - Email/Password & Google OAuth.
 - Role-Based Access Control (RBAC) ensuring only admins can access `/admin`.
 - Secure session management with a 7-day expiry.
+
+---
+
+## Image Gallery
+
+<ImageGallery images={[gallery1, gallery2, gallery3, gallery4, gallery5]} />
 
 ---
 

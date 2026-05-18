@@ -11,10 +11,17 @@ links:
     url: "https://vignesh-dental-clinic.vercel.app/"
 tags: ["astrojs", "daisyui"]
 seo:
-  title: "Building a Dental Clinic Website with Astro and DaisyUI — A Performance Experiment"
+  title: "Building a Dental Clinic Website with Astro and DaisyUI — A Perform..."
   description: "What happens when you pick a real-world use case just to see how fast Astro can actually go?"
 locale: "es"
 ---
+import ImageGallery from "@/components/mdx/ImageGallery.astro"
+import gallery1 from "@/assets/images/projects/vignesh-dental-clinic-web-experience/gallery-1.png"
+import gallery2 from "@/assets/images/projects/vignesh-dental-clinic-web-experience/gallery-2.png"
+import gallery3 from "@/assets/images/projects/vignesh-dental-clinic-web-experience/gallery-3.png"
+import gallery4 from "@/assets/images/projects/vignesh-dental-clinic-web-experience/gallery-4.png"
+import gallery5 from "@/assets/images/projects/vignesh-dental-clinic-web-experience/gallery-5.png"
+
 I’ve been wanting to properly try out [Astro](https://astro.build) for a while. Not for a portfolio, not for a blog — those are the obvious ones. I wanted something that felt like a real client site: multiple pages, components, images, a contact section. A dental clinic website was the perfect excuse. It’s the kind of project a local business would actually commission, and it gave me a concrete scope to work within.  
    
 The result? Genuinely surprised by how smooth and fast the output was. Here’s the breakdown.
@@ -106,6 +113,8 @@ Astro’s file-based routing meant each page was just a `.astro` file. No router
 ---
 
 ## Image Gallery
+
+<ImageGallery images={[gallery1, gallery2, gallery3, gallery4, gallery5]} />
 
 ---
 

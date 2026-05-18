@@ -15,6 +15,13 @@ seo:
   description: "What it takes to build a real client site — not a demo, not a tutorial project — for a business that actually needs it"
 locale: "en"
 ---
+import ImageGallery from "@/components/mdx/ImageGallery.astro"
+import gallery1 from "@/assets/images/projects/pranaav-enterprises-corporate-website/gallery-1.png"
+import gallery2 from "@/assets/images/projects/pranaav-enterprises-corporate-website/gallery-2.png"
+import gallery3 from "@/assets/images/projects/pranaav-enterprises-corporate-website/gallery-3.png"
+import gallery4 from "@/assets/images/projects/pranaav-enterprises-corporate-website/gallery-4.png"
+import gallery5 from "@/assets/images/projects/pranaav-enterprises-corporate-website/gallery-5.png"
+
 Most side projects live on GitHub and never get used. This one is different.  
    
 **Pranaav Enterprises** is a civil construction services company based in Bangalore, operating since 2000 — 25 years in the industry, with clients like Larsen & Toubro, Prestige Group, and Shapoorji Pallonji on their roster. They needed a web presence that matched that credibility. Something that could be handed to a potential enterprise client as a first impression, with a link and a WhatsApp message.  
@@ -101,6 +108,8 @@ Building for a civil contractor’s audience is different from building a consum
 ---
 
 ## Image Gallery
+
+<ImageGallery images={[gallery1, gallery2, gallery3, gallery4, gallery5]} />
 
 ---
 

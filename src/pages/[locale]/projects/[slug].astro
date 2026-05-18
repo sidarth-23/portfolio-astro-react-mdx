@@ -11,7 +11,10 @@ import { locales, type Locale } from "@/i18n/config"
 import type { CollectionEntry } from "astro:content"
 
 export async function getStaticPaths() {
-  const paths: Array<{ params: { locale: Locale; slug: string }; props: { project: CollectionEntry<"projects"> } }> = []
+  const paths: Array<{
+    params: { locale: Locale; slug: string }
+    props: { project: CollectionEntry<"projects"> }
+  }> = []
 
   for (const locale of locales) {
     const projects = await getAllProjects(locale)
@@ -36,7 +39,9 @@ const { locale } = Astro.params as { locale: Locale }
 const { Content, headings } = await project.render()
 
 const date = formatDate(project.data.date, locale)
-const updatedDate = project.data.updatedDate ? formatDate(project.data.updatedDate, locale) : null
+const updatedDate = project.data.updatedDate
+  ? formatDate(project.data.updatedDate, locale)
+  : null
 const showUpdatedDate = updatedDate && updatedDate !== date
 const readingTime = estimateReadingTime(project.body)
 ---
@@ -47,7 +52,9 @@ const readingTime = estimateReadingTime(project.body)
 
   <article class="max-w-none">
     <header class="mb-8">
-      <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+      <div
+        class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground"
+      >
         <time datetime={project.data.date.toISOString()}>{date}</time>
         <span aria-hidden="true">·</span>
         <span>{readingTime} min read</span>
@@ -55,14 +62,18 @@ const readingTime = estimateReadingTime(project.body)
           showUpdatedDate && (
             <>
               <span aria-hidden="true">·</span>
-              <time datetime={project.data.updatedDate?.toISOString()}>{updatedDate}</time>
+              <time datetime={project.data.updatedDate?.toISOString()}>
+                {updatedDate}
+              </time>
             </>
           )
         }
       </div>
 
       <div class="mt-3 flex items-center gap-3">
-        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{project.data.title}</h1>
+        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
+          {project.data.title}
+        </h1>
         {
           project.data.status !== "active" && (
             <Badge variant="default" className="capitalize">
@@ -75,19 +86,21 @@ const readingTime = estimateReadingTime(project.body)
       <p class="mt-3 text-lg text-muted-foreground">{project.data.summary}</p>
 
       {
-        project.data.links.length > 0 && (
-          <div class="mt-4">
-            <ProjectLinkButtons links={project.data.links} />
+        project.data.tags.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            {project.data.tags.map((tag) => (
+              <Badge variant="outline" className="text-muted-foreground/80">
+                #{tag}
+              </Badge>
+            ))}
           </div>
         )
       }
 
       {
-        project.data.tags.length > 0 && (
-          <div class="mt-4 flex flex-wrap gap-1.5">
-            {project.data.tags.map((tag) => (
-              <Badge variant="outline" className="text-muted-foreground/80">#{tag}</Badge>
-            ))}
+        project.data.links.length > 0 && (
+          <div class="mt-4">
+            <ProjectLinkButtons links={project.data.links} />
           </div>
         )
       }
@@ -96,12 +109,13 @@ const readingTime = estimateReadingTime(project.body)
     <Image
       src={project.data.coverImage}
       alt={project.data.title}
-      width={1200}
-      height={630}
-      class="mb-10 w-full rounded-xl object-cover"
+      width={1280}
+      height={720}
+      format="webp"
+      class="mb-10 aspect-video w-full rounded-xl object-cover"
     />
 
-    <div class="prose prose-lg prose-zinc max-w-none dark:prose-invert">
+    <div class="prose prose-lg max-w-none prose-zinc dark:prose-invert">
       <Content />
     </div>
   </article>
