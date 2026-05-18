@@ -1,0 +1,99 @@
+---
+title: "Building a Themed Calculator — Learning the Web Before the Frameworks"
+summary: "The case for writing vanilla HTML, CSS, and JavaScript before reaching for React."
+date: 2026-04-26T08:08:52Z
+updatedDate: 2026-05-01T07:44:46Z
+coverImage: "../../../assets/images/projects/calculator/cover.png"
+featured: false
+status: "active"
+links:
+  - type: link
+    url: "https://sid-themed-calculator.vercel.app/"
+  - type: github
+    url: "https://github.com/sidarth-23/themed-calculator"
+tags: ["html", "css", "js", "figma"]
+seo:
+  title: "Building a Themed Calculator — Learning the Web Before the Frameworks"
+  description: "The case for writing vanilla HTML, CSS, and JavaScript before reaching for React."
+locale: "en"
+---
+This project has an honest origin story, right there in the README:
+
+> “I started this project when I was learning the fundamentals of HTML, CSS and JS. I wanted to implement the core functionalities of a web app in vanilla tech stack before diving deep into highly composed libraries like React where the core functionality is wrapped deep inside the core module that it is not visible to the average eye.”  
+>    
+> That’s the whole point. Not to build the most impressive calculator on the internet — but to build one where you understand every single line of it. ---
+
+## The Stack
+
+- **HTML** — structure
+- **CSS** — layout, theming, button styles
+- **JavaScript** — calculator logic, theme switching, keyboard support No bundler, no npm, no build step. Open `index.html` in a browser and it works.  
+   
+--- ## What It Does A functional calculator with the full standard set of operations: addition, subtraction, multiplication, division, decimal support, and chained calculations. The display shows the running input and updates as you type.  
+   
+Two keyboard shortcuts worth calling out: **`e`**** to reset** and **`d`**** to delete**. These are small additions but they make the calculator feel like something you’d actually use — no reaching for the mouse to clear a mistaken entry. ---
+
+## Three Themes
+
+The visual centrepiece is a three-way theme toggle at the top of the calculator. Switching between themes swaps the entire colour palette: button faces, shadows, backgrounds, display colours, and accent tones all change together.  
+   
+The mechanism is CSS custom properties — CSS variables — toggled by a JavaScript class swap on the root element. Each theme is a set of variable definitions, and every styled element references those variables rather than hardcoded colours. The result is an instantaneous, zero-flicker theme switch with a few lines of JS.
+
+```css
+:root {
+  --bg-main: hsl(222, 26%, 31%);
+  --bg-keypad: hsl(223, 31%, 20%);
+  --key-bg: hsl(225, 21%, 49%);
+  --key-shadow: hsl(224, 28%, 35%);
+  /* ... */
+}
+ 
+[data-theme="2"] {
+  --bg-main: hsl(0, 0%, 90%);
+  --bg-keypad: hsl(0, 5%, 81%);
+  --key-bg: hsl(185, 42%, 37%);
+  --key-shadow: hsl(185, 58%, 25%);
+}
+ 
+[data-theme="3"] {
+  --bg-main: hsl(268, 75%, 9%);
+  --bg-keypad: hsl(268, 71%, 12%);
+  --key-bg: hsl(281, 89%, 26%);
+  --key-shadow: hsl(285, 91%, 52%);
+}
+```
+
+```javascript
+toggle.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "1" ? "2" : current === "2" ? "3" : "1";
+  document.documentElement.setAttribute("data-theme", next);
+});
+```
+
+One attribute on `<html>`, three complete visual personalities. ---
+
+## The Calculator Logic
+
+The logic is the more instructive half of this project. A calculator that feels natural needs to handle a few non-obvious cases correctly:  
+   
+**Chained operations.** Pressing `5 + 3 + 2` should evaluate the first operation when you hit the second operator, not wait until `=`. The state machine tracks a pending operation, a stored value, and whether the next keypress starts a new number or continues the current one.
+
+**Operator after equals.** If you press `=` and then an operator, the result should become the left operand of the new operation — not reset the display. This is the behaviour every physical calculator has that people don’t notice until it breaks.  
+   
+**Repeated equals.** Pressing `=` multiple times after an operation should repeat that operation against the result each time. `5 + 3 = = =` should give `8`, `11`, `14`. This requires storing the last operator and operand separately from the display value.  
+   
+**Decimal guarding.** The `.` button should do nothing if a decimal already exists in the current number. A simple `includes(".")` check on the display string handles this, but it has to be there.  
+   
+None of this is complicated, but all of it is invisible in a React component where the state transitions are abstracted away. Writing it in vanilla JS means you own every transition explicitly. ---
+
+## Why Vanilla Before Frameworks
+
+The README’s motivation is one worth taking seriously as a developer principle. React, Vue, and their equivalents are productivity tools — they abstract away DOM manipulation, state synchronisation, and event wiring so you can focus on product logic. But that abstraction has a cost: if you’ve never managed DOM state manually, you don’t have intuition for what the framework is doing for you, or what it’s doing wrong.  
+   
+Building a themed calculator from scratch means you understand:
+
+- What the DOM actually is and how you manipulate it directly
+- Why centralised state management exists (because managing scattered `let` variables gets messy fast)
+- What re-rendering means, because you’ve written the manual equivalent
+- Why CSS variables are so powerful for theming, because you’ve wired them up by hand All of that knowledge transfers. When you eventually use React’s `useState`, you understand what problem it’s solving. When a framework’s theming system does something unexpected, you know where to look.

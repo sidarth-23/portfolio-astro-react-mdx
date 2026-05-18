@@ -1,0 +1,92 @@
+---
+title: "ElecSavers — Engineering a Document-First Electronics E-commerce Platform"
+summary: "A high-performance, serverless electronics marketplace built with Next.js 15, Turso, and Better Auth. Features a robust admin dashboard for real-time analytics and multi-vendor management."
+date: 2026-04-26T07:47:48Z
+updatedDate: 2026-05-01T08:06:11Z
+coverImage: "../../../assets/images/projects/elecsavers-ecommerce-platform/cover.png"
+featured: true
+status: "active"
+links:
+  - type: link
+    url: "https://elecsavers.com/"
+tags: ["nextjs", "better auth", "turso db"]
+seo:
+  title: "ElecSavers — Engineering a Document-First Electronics E-commerce Platform"
+  description: "A high-performance, serverless electronics marketplace built with Next.js 15, Turso, and Better Auth. Features a robust admin dashboard for real-time analy"
+locale: "es"
+---
+In today’s fast-paced digital economy, many clients want to “test the waters” with a new niche—like high-end electronics—without committing to massive upfront infrastructure costs. For this project, we built **ElecSavers**: a modern, serverless e-commerce platform designed for low-cost deployments and high performance.
+
+---
+
+## The Mission: Testing the Waters on a Budget
+
+The client needed an e-commerce site that felt “premium” but operated on a “pay-as-you-grow” model. Our goal was to leverage managed, serverless infrastructure to ensure that if the site has zero traffic, the costs are near zero, yet it can scale instantly when a marketing campaign hits.
+
+### The Stack Choice
+
+To achieve this, we selected a cutting-edge, edge-compatible stack:
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router) for hybrid rendering and serverless functions.
+- **Database**: [Turso](https://turso.tech/) (LibSQL) – a managed SQLite database that lives on the edge.
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/) – lightweight, type-safe, and perfect for serverless cold starts.
+- **Auth**: [Better Auth](https://better-auth.com/) – a modern, flexible authentication solution.
+- **Styling**: Tailwind CSS v4 + [shadcn/ui](https://ui.shadcn.com/) for a polished, responsive interface.
+- **Package Manager**: [Bun](https://bun.sh/) for lightning-fast installs and execution.
+
+---
+
+## Architecture & Technical Deep Dive
+
+### 1. Edge-Ready Database Schema
+
+Using Drizzle ORM, we defined a schema that supports complex e-commerce requirements like multi-vendor support and GST-compliant invoicing, all while remaining lean enough for SQLite.
+
+```typescript
+
+```
+
+### 2. Performance-First Admin Dashboard
+
+One of the highlights of this repo is the Admin Panel. To keep the dashboard snappy even with thousands of products, we implemented a **Cached Count Strategy**. Instead of running expensive `COUNT(*)` queries on every page load, we maintain a `tableCounts` table that updates via server actions.
+
+---
+
+## Key Features
+
+### Comprehensive E-commerce Flow
+
+From a sleek homepage to a multi-step checkout, the user journey is optimized for conversion.
+
+- **Persistent Cart**: Powered by Zustand and synced with the database for logged-in users.
+- **GST Compliance**: Automated tax calculations (CGST/SGST/IGST) based on the shipping state—crucial for markets like India.
+- **Invoicing**: Dynamic PDF generation for orders using `@react-pdf/renderer`.
+
+### Robust Authentication
+
+We integrated **Better Auth** to handle:
+
+- Email/Password & Google OAuth.
+- Role-Based Access Control (RBAC) ensuring only admins can access `/admin`.
+- Secure session management with a 7-day expiry.
+
+---
+
+## Developer Experience (DX)
+
+For a “test the waters” project, speed of iteration is key.
+
+- **Realistic Seeding**: The repo includes a `db:seed:real` script that populates the DB with 33+ authentic electronics products, realistic South Indian vendors, and sample orders. This allows developers to see the full flow instantly.
+- **Type Safety**: End-to-end type safety from the database schema to the frontend components using Drizzle and Zod.
+
+---
+
+## Conclusion: The Serverless Advantage
+
+By choosing Next.js, Turso, and Drizzle, we’ve built a platform that:
+
+1. **Costs $0/month** on starter tiers of Vercel and Turso.
+2. **Scales Infinitely** without manual server management.
+3. **Performs Globally** by placing data and compute closer to the user.
+
+Whether you’re building a small electronics store or a multi-vendor marketplace, this stack provides the perfect balance between low cost and high scalability.

@@ -1,0 +1,47 @@
+---
+title: "AI to UI — A 7-Day Challenge of Turning AI-Generated Designs Into Vanilla HTML and CSS"
+summary: "What happens when you take AI-generated UI concepts and commit to building them with nothing but HTML and CSS, one per day, for a week."
+date: 2026-04-26T08:06:14Z
+updatedDate: 2026-05-01T07:45:19Z
+coverImage: "../../../assets/images/projects/ai-to-ui/cover.png"
+featured: false
+status: "active"
+links:
+  - type: link
+    url: "https://ai-to-ui.vercel.app/"
+  - type: github
+    url: "https://github.com/sidarth-23/ai-to-ui"
+tags: ["html", "css", "figma"]
+seo:
+  title: "AI to UI — A 7-Day Challenge of Turning AI-Generated Designs Into Vanilla HTML and CSS"
+  description: "What happens when you take AI-generated UI concepts and commit to building them with nothing but HTML and CSS, one per day, for a week."
+locale: "en"
+---
+The premise was simple: use AI to generate a UI concept, then build it — as faithfully as possible — in pure HTML and CSS. No JavaScript. No framework. No component library. Seven days, seven UIs, each one a different visual world.  
+   
+The results ended up being far more interesting than I expected, both as a design exercise and as a CSS workout. ---Why This Challenge?There’s a gap between AI-generated UI mockups and production code that doesn’t get talked about enough. Tools like Midjourney, DALL-E, or even ChatGPT can produce visually striking UI concepts in seconds — dramatic layouts, bold typography, rich textures. But generating the image is the easy part. Translating it into actual, structured HTML with CSS that faithfully captures the intent is a completely different skill.  
+   
+This challenge was about closing that gap manually, deliberately, one day at a time. And doing it in vanilla HTML and CSS meant there was nowhere to hide — every visual effect had to be earned through CSS, not abstracted away by a library. ---The Stack (or Lack of One)**HTML** — semantic structure for each UI**CSS** — everything visual: layout, typography, colour, effects, responsive behaviour**JavaScript** — none**Deployment** — Vercel The no-JavaScript constraint was intentional. It forced every interactive-looking element — hover states, transitions, visual feedback — to be handled in CSS. That constraint produces more interesting CSS than you’d write with JS as a fallback.  
+ The Seven DaysDay 2 — Arasaka Wear, Night CityA product page straight out of Cyberpunk 2077. Dark, high-contrast, neon-accented. The Arasaka branding, a product name (“Mikoshi Dramatic Lashes”, $5,600), and a purchase CTA layered over a cinematic background.  
+   
+The challenge here was atmosphere. Getting CSS to feel like Night City meant dark overlays, precise typography sizing, and SVG assets doing a lot of the decorative work. The background image is the hero — the CSS job is to not fight it. ---Day 3 — Apple Watch Series 9 WaitlistA clean, product-launch waitlist card in Apple’s visual language. The Apple Watch centred, minimal copy, a name and email input, and a “Join the waitlist” CTA over a textured button background.  
+   
+This one was a study in restraint. Apple’s aesthetic lives in whitespace, weight contrast, and precise sizing. Getting the inputs to feel right — padding, border treatment, focus states — without JavaScript handling any of the interaction was the interesting constraint. ---Day 4 — SpaceStream Movie AppA streaming app UI — think a dark-mode movie discovery interface. Search bar, movie hero card (complete with a fake Batman-adjacent thriller), engagement stats (likes, shares, forwards), and a profile avatar.  
+   
+The interesting CSS problem here was the card layout: a full-bleed background image with content overlaid at the bottom, stats row aligned correctly across icon and number, and the whole thing feeling like a native mobile UI in a browser. Grid and absolute positioning doing the heavy lifting. ---Day 5 — Hover Series Hovercraft ConfiguratorThe most visually ambitious day. A product configurator UI for a fictional hovercraft — the “Hovercraft Gti 5500”. Specs panel (Volume: 20m3, Motor: Gti 5500, Autodrive: R2-D2), a dramatic vehicle hero image, a hamburger menu, and a “Start Customisation” CTA.  
+   
+This is where CSS grid really earns its place. A multi-zone layout — nav, hero, specs panel, CTA — all needing to coexist without overlapping. The specs data is displayed in a tight grid of label-value pairs. Getting that to feel like a premium product configurator rather than a table was the design challenge. ---Day 6 — Night City Council PortalThe most technically layered UI of the week. A Cyberpunk-themed system dashboard — citizen ID, a status grid (Client: On, Network: `5619518d`, Deploy: Global, Risk: High), and a “Welcome to Night City / Touch to Enter” portal screen. Two SVG logo marks framing the bottom.  
+   
+The status grid is a CSS grid of icon-label-value cells, each sized consistently. The background is a full-bleed night city photograph. The layering — background, overlay, content zones, SVG assets — is handled entirely in CSS with z-index and positioning. The result looks like a bespoke OS interface. ---What Pure CSS Teaches YouDoing seven UIs without JavaScript reveals things about CSS you don’t notice when you have JS as a crutch:  
+   
+**Hover states become a design system.** When JS isn’t handling interaction feedback, you think more carefully about `:hover`, `:focus`, and `:active` as first-class design elements. The Arasaka purchase button and the SpaceStream engagement stats both have hover treatments that feel intentional rather than bolted on.  
+   
+**Background images are a compositional tool, not a shortcut.** Every dramatic UI in this set uses a full-bleed background image. Getting CSS `background-size`, `background-position`, and overlay gradients right is the difference between a design that feels immersive and one that looks pasted together.  
+   
+**CSS Grid is the right mental model for UI layouts.** Each of these UIs has a distinct layout structure — the hovercraft configurator’s three-zone split, the Night City portal’s layered dashboard, the SpaceStream card’s content-over-image pattern. CSS Grid made each of these declarative and readable rather than a pile of positioned elements.  
+   
+**SVGs are doing a lot of silent work.** Logos, icons, decorative marks — all SVG, all inline or referenced as `<img>`. The Arasaka title, the hamburger menus, the engagement icons, the Night City logo marks. Getting SVG to scale and position correctly in a CSS layout is a skill that pays off every time. ---The AI-to-UI WorkflowThe actual process each day:Prompt an AI tool with a UI concept or visual directionIterate on the generated concept until the visual language is clearBreak the design down into HTML structure — semantic elements, content hierarchyWrite CSS from the outside in — layout first, then typography, then colour and texture, then detailsDeploy to Vercel The gap between step 2 and step 3 is where the real skill lives. AI-generated UI is often structurally ambiguous — a beautiful image that doesn’t make obvious choices about what’s a card, what’s a nav, what’s a hero. Translating visual hierarchy into semantic HTML requires reading the design as an engineer, not just a viewer. ---What the Week Was Actually AboutSeven days of this is a good forcing function for a few things: shipping something every day regardless of how it feels, building CSS fluency in layout patterns you wouldn’t normally reach for, and developing an eye for what makes an AI-generated concept actually buildable versus what only works as a static image.  
+   
+The Night City and Arasaka UIs look like they’d require heavy JS for the atmosphere. They don’t. The Apple Watch waitlist looks deceptively simple — the inputs are where the details live. The hovercraft configurator looks complex until you realise it’s three grid zones with good typography.  
+   
+AI can generate the vision. CSS can build it. The interesting part is the translation in between.

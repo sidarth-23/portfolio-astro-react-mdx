@@ -1,0 +1,125 @@
+---
+title: "Shipping a Production Portfolio Site for a 25-Year-Old Civil Business"
+summary: "What it takes to build a real client site — not a demo, not a tutorial project — for a business that actually needs it"
+date: 2026-04-26T07:20:29Z
+updatedDate: 2026-05-01T08:04:07Z
+coverImage: "../../../assets/images/projects/pranaav-enterprises-corporate-website/cover.png"
+featured: true
+status: "active"
+links:
+  - type: link
+    url: "https://pranaavgroups.com/"
+tags: ["nextjs"]
+seo:
+  title: "Shipping a Production Portfolio Site for a 25-Year-Old Civil Business"
+  description: "What it takes to build a real client site — not a demo, not a tutorial project — for a business that actually needs it"
+locale: "es"
+---
+Most side projects live on GitHub and never get used. This one is different.  
+   
+**Pranaav Enterprises** is a civil construction services company based in Bangalore, operating since 2000 — 25 years in the industry, with clients like Larsen & Toubro, Prestige Group, and Shapoorji Pallonji on their roster. They needed a web presence that matched that credibility. Something that could be handed to a potential enterprise client as a first impression, with a link and a WhatsApp message.  
+   
+That was the brief. Here’s how I built it.
+
+---
+
+## The Real-World Brief
+
+Civil contractors live and die by trust. When a project manager at a tier-1 firm gets a call from a subcontractor, the first thing they do is Google the name. What they find — or don’t find — shapes the conversation.  
+   
+Pranaav Enterprises had 25 years of work and a portfolio of serious clients, but no web presence to show for it. The goal was simple: **give the business a face online** that communicates scale, reliability, and the range of services they offer — fast.  
+   
+This wasn’t a UI experiment or a tech exploration. It was a production deliverable. That changes how you make decisions.
+
+---
+
+## The Stack
+
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS
+- **Deployment:** Vercel
+- **Language:** TypeScript
+- **Images:** Next.js `<Image />` with Vercel’s image CDN Next.js was the right call here for a few reasons. The client needed something that could be handed off and maintained without me being in the loop for every content update. Next.js is well-documented, widely understood, and the Vercel deploy pipeline is genuinely zero-config. The `next/image` component handled all the heavy lifting for image optimisation — critical for a site loaded with service photos and client logos.
+
+---
+
+## Pages & Structure
+
+The site is three pages, deliberately lean:  
+   
+**Home (****`/`****)** — The full story in one scroll. Hero with the 25-year milestone headline, a services image carousel, the client logo wall, and a detailed tabbed services section. Ends with a WhatsApp CTA.  
+   
+**Our Clients (****`/customers`****)** — A dedicated page for the client portfolio. When you’re pitching to enterprise procurement teams, having L&T and Shapoorji Pallonji logos on their own page — not buried in a scroll — matters.  
+   
+**Contact Us (****`/contact-us`****)** — Three phone numbers, a Gmail address, a Bangalore office address with a Google Maps link, and the WhatsApp button again. Every contact path a site visitor might want.
+
+---
+
+## The Services
+
+Pranaav Enterprises covers a wide range of civil work — more than most people expect from a single contractor. Getting all of this legibly onto a homepage without it feeling like a laundry list was one of the main design challenges:
+
+- **Water Supply** — 24/7 water delivery for residences, high-rises, and commercial sites
+- **Excavation** — Full-service precision excavation for construction projects
+- **Demolition** — Site clearance for new builds and condemned structures
+- **Debris Cleaning** — Track-mounted excavator work, urgent cleanups, site restoration
+- **JCB and Machines** — Equipment hire with skilled operators for excavation and heavy lifting
+- **Ambulance Service** — Fleet supply to hospitals and organisations
+- **Asphalting** — Road construction, resurfacing, base work
+- **Layout Development** — End-to-end site development including planning, asphalting, and electrification The solution was a tabbed interface on the homepage — each service gets its own tab with an image and a proper description. Users can explore what’s relevant to them without the page becoming a wall of text.
+
+---
+
+## The Client Wall
+
+This was non-negotiable as a feature. The roster Pranaav Enterprises has built over 25 years speaks for itself:
+
+- Prestige Group
+- Larsen & Toubro
+- Shapoorji Pallonji
+- KEC International Ltd
+- Embassy Group
+- JMC Projects
+- Simplex Infrastructures
+- Navayuga Engineering
+- Vidhya Infrastructure A scrolling logo wall on the homepage with a “Trusted by teams of all sizes” headline does a lot of heavy lifting. When a new prospect lands on the page and sees L&T in the first scroll, the credibility conversation is already won.
+
+---
+
+## Design Decisions for a B2B Audience
+
+Building for a civil contractor’s audience is different from building a consumer product. The people visiting this site are project managers, procurement officers, and site engineers — not general consumers. A few things I kept in mind:  
+   
+**Information density over aesthetics.** The site needs to answer “what do you do?” and “who have you worked with?” in the first scroll. Whitespace is nice, but not at the cost of burying the answer.  
+   
+**WhatsApp as the primary CTA.** In the Indian B2B construction space, WhatsApp is how business actually gets done. Every page has a floating WhatsApp button that opens a pre-filled message. That’s not a workaround — it’s the right UX for this audience.  
+   
+**Mobile-first, because site visits happen on phones.** A contractor forwarding the link to a colleague is sending it to a mobile user. The layout is fully responsive with a hamburger nav on mobile.  
+   
+**Real photography, not stock.** The service images are actual photos of the work — excavation sites, demolition jobs, water tankers. Stock photos of construction would have undermined the credibility the site is trying to build.
+
+---
+
+## Image Gallery
+
+---
+
+## What Made This Different from a Side Project
+
+A few things shift when you’re shipping for a real business:  
+   
+**Content is your responsibility too.** You don’t get placeholder text. You need to extract service descriptions, gather the client logos, confirm the contact details, and make sure everything is accurate before it goes live. That’s a different kind of work from writing components.  
+   
+**The client doesn’t care about your stack.** Choosing Next.js or Astro or anything else is invisible to Pranaav Enterprises. What they care about is: does it look professional, does it load fast, and can they send the link to L&T’s procurement team without embarrassment. Every technical decision has to serve that outcome.  
+   
+**Iteration happens fast.** Once the site is live and the client is showing it to people, feedback comes back quickly. “Can we add this service?” “Can we make the phone number bigger?” Being on Next.js + Vercel meant changes were a git push away from being live.  
+   
+**The WhatsApp button has already driven real leads.** That’s the metric that matters for this project — not Lighthouse scores.
+
+---
+
+## Final Thoughts
+
+There’s a version of this project that could have been more technically interesting — a headless CMS, an admin dashboard, a booking system. But the right call was to keep it simple, ship it fast, and make sure the 25 years of work Pranaav Enterprises has done is represented online with the credibility it deserves.  
+   
+Sometimes the best engineering decision is knowing what not to build.

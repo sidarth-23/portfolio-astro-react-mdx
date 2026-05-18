@@ -1,0 +1,165 @@
+---
+title: "From SvelteKit to Next.js — Building Bluebook Insights Through Two Rewrites"
+summary: "What it actually looks like when a production internal tool grows up: two framework migrations, a Python microservice, and the hard lessons about building for your team, not just your tech preferences."
+date: 2026-04-26T07:19:32Z
+updatedDate: 2026-05-01T08:06:41Z
+coverImage: "../../../assets/images/projects/bluebook-insights-analytics-platform/cover.png"
+featured: true
+status: "active"
+links:
+  - type: link
+    url: "https://bluebook.edisonos.com/"
+tags: ["nextjs", "typescript", "hono", "fastapi"]
+seo:
+  title: "From SvelteKit to Next.js — Building Bluebook Insights Through Two Rewrites"
+  description: "What it actually looks like when a production internal tool grows up: two framework migrations, a Python microservice, and the hard lessons about building "
+locale: "es"
+---
+[Bluebook Insights](https://bluebook.edisonos.com) is a sub-product of [EdisonOS](https://www.edisonos.com) — a platform built for SAT and ACT tutors. The Digital SAT runs on College Board’s Bluebook platform, and while Bluebook provides score reports after practice tests, those reports are surface-level. Tutors need more: a breakdown by domain, skill, difficulty tier, and module — the kind of granular analysis that lets them actually personalise instruction for each student rather than defaulting to a one-size-fits-all study plan.
+
+
+Bluebook Insights solves that. Students upload two documents — their score details page and their College Board score card — and the system crawls, extracts, and generates a detailed analytical report: charts, data tables, skill breakdowns, and a shareable link they can hand to their tutor.  
+   
+This is the story of how we built it — twice, then again — and why each iteration was the right call at the time.
+
+---
+
+## The Problem Worth Solving
+
+College Board’s default Bluebook reports show an overall score and a rough section split. That’s it. For a tutor managing 20 students, each with different gaps in Algebra vs. Problem Solving & Data Analysis, or Heart of Algebra vs. Passport to Advanced Math, those reports are nearly useless for targeted instruction.  
+   
+What tutors actually needed was:
+
+- **Domain and skill-level breakdowns** — not just “Math: 650” but which skills pulled the score down
+- **Difficulty distribution** — how did the student perform on easy vs. medium vs. hard questions
+- **Module-level analysis** — Bluebook is adaptive; understanding baseline vs. adaptive module performance matters
+- **Shareable outputs** — tutors need to send reports to students and parents, not just view them internally That’s the brief. Now here’s what building it actually looked like.
+
+---
+
+## Iteration 1: SvelteKit + PocketBase
+
+The first version was built fast with a small team on **SvelteKit** for the frontend and **PocketBase** as the backend — a self-hosted Go binary that gives you a database, auth, file storage, and a REST API in a single deployable unit.  
+   
+The appeal was obvious: PocketBase is genuinely impressive for getting to a working product quickly. Schema changes through a GUI, auth out of the box, file storage without configuring S3. SvelteKit was the framework choice because of its simplicity and the compiler’s output being minimal JS by default.  
+   
+For an early internal tool, this worked. We could ingest uploaded score files, run extraction logic, and render a basic report view. The feedback loop was fast and we shipped something usable.  
+   
+**Where it started to strain:**
+
+- PocketBase is fantastic for small teams but starts to show limits when you need fine-grained control over the data layer and complex query patterns
+- The HTML and PDF extraction logic for crawling the uploaded Bluebook score documents was tightly coupled to the app — hard to test, hard to iterate on independently
+- SvelteKit, while excellent, narrowed the pool of developers who could contribute confidently. Onboarding new team members meant a framework learning curve on top of the domain complexity of the product itself ---
+
+## Iteration 2: The Migration to Next.js + Hono + FastAPI
+
+The second — and current — architecture was driven by one overarching principle: **build for the team, not just the technology**.  
+   
+The team’s collective expertise was strongest in the Next.js and React ecosystem. Migrating there wasn’t a rejection of SvelteKit — it was an acknowledgment that a product moves faster when the developers building it aren’t fighting an unfamiliar mental model on top of a complex domain.
+
+### The Architecture
+
+```plaintext
+┌─────────────────────────────────────────┐
+│              Next.js App                │
+│  ┌──────────────┐  ┌────────────────┐   │
+│  │  React UI    │  │  Hono Router   │   │
+│  │  shadcn/ui   │  │  (API proxy)   │   │
+│  │  Tables      │  │                │   │
+│  │  Charts      │  └───────┬────────┘   │
+│  └──────────────┘          │            │
+└───────────────────────────┼────────────┘
+                             │ proxied
+                    ┌────────▼────────┐
+                    │  Python FastAPI  │
+                    │  Lambda Function │
+                    │                 │
+                    │  HTML + PDF     │
+                    │  extraction     │
+                    │  Bluebook crawl │
+                    └─────────────────┘
+```
+
+**Next.js** handles the frontend and acts as the application shell. **Hono** runs as a lightweight router proxied through the Next.js backend — it manages the API layer cleanly without the overhead of a separate Express/Fastify process. **Python FastAPI** runs as a Lambda function and owns the extraction work: crawling the uploaded Bluebook score HTML, parsing PDF score cards, and returning structured data.  
+   
+The separation matters for a few reasons:
+
+- **Separation of concerns** — the extraction logic is genuinely complex, involving DOM parsing, PDF text extraction, and pattern matching against Bluebook’s document structure. Isolating that in a Python service meant it could be developed, tested, and deployed independently of the UI and API layer.
+- **Python is better for this job** — the ecosystem for PDF and HTML parsing in Python (BeautifulSoup, pdfplumber, etc.) is more mature than the Node equivalents. Using the right tool for the right job, rather than forcing everything into JavaScript.
+- **Lambda for cost and scalability** — report generation is bursty and not latency-sensitive. A Lambda function is exactly the right shape: scales to zero, costs nothing when idle, handles concurrent uploads without provisioning.
+- **Easier deployment** — a single Next.js app on Vercel (or equivalent) with one Lambda function is a dramatically simpler operational story than managing a PocketBase instance, a SvelteKit app, and extraction jobs as separate services.
+
+---
+
+## Auth: Lucia
+
+Authentication is handled with **Lucia** — a TypeScript auth library that gives you full control over sessions without abstracting away the database layer. No magic, no vendor lock-in. Sessions are stored in the database, and Lucia handles the cookie/session lifecycle.
+
+This was the right call for a product that needed:
+
+- Internal user accounts (tutors, students)
+- Controlled sharing between internal users
+- Public shareable links with expiry
+
+---
+
+## The Sharing System
+
+The sharing model was one of the more interesting features to design. A generated report needs to be accessible in three distinct contexts:  
+   
+**1. The report owner** — authenticated, full access, can manage the report.   
+**2. Internal user sharing** — a tutor can share a report with a specific internal user (e.g., a student or a colleague). These shares are controlled: the owner can revoke access, and shares can be set to expire on a date of their choosing. This covers the tutor-to-student handoff without making the report fully public.  
+**3. Public shareable links** — a one-time or persistent link that works without authentication. Useful for sharing with parents or external reviewers. These links are also expirable — the owner sets a TTL and the link stops working after that date.  
+   
+The key constraint that shaped the implementation: **the owner stays in control at all times**. They can expire a link, revoke an internal share, or let things run indefinitely — all from within the report view.
+
+---
+
+## The UI: shadcn Tables and Charts
+
+The report view is built entirely with **shadcn/ui** components — specifically the data table and chart primitives.  
+   
+For a data-heavy product like this, shadcn’s table component (built on TanStack Table) was a natural fit. You get sorting, filtering, column visibility toggles, and pagination — all the things you’d otherwise build from scratch for a data analysis tool. The chart components handle the visual breakdown of scores by domain, difficulty, and module.  
+   
+The design philosophy throughout was density-without-clutter: tutors using this tool are looking at multiple student reports in a session. The UI needs to surface the important numbers fast without requiring them to hunt for the data that matters.
+
+---
+
+## What the Report Actually Contains
+
+When a student uploads their two Bluebook documents, the system generates:
+
+- **Overall score summary** — total score, Math score, Reading & Writing score
+- **Domain-level breakdown** — performance across Algebra, Advanced Math, Problem Solving & Data Analysis, and the RW domains
+- **Skill-level breakdown** — granular view into specific skills within each domain
+- **Difficulty distribution** — how the student performed on easy, medium, and hard questions within each module
+- **Adaptive module analysis** — baseline vs. adaptive section performance, which is critical for understanding where a student’s score is actually won or lost in the adaptive test format
+- **Score card comparison** — cross-referencing the self-reported score details with the official College Board score card
+
+---
+
+## What Each Iteration Taught Us
+
+**SvelteKit + PocketBase** taught us what the product needed to be. You can’t design the right system until you’ve shipped something wrong. The first version clarified the data model, the user flow, and where the real technical complexity lived (extraction, not rendering).  
+   
+**The migration** taught us that framework choice is a team decision, not a personal one. The “best” framework is the one your team can move fast in, debug confidently, and onboard new members to without a month-long ramp. Next.js won not because SvelteKit lost, but because the team’s existing expertise made the tradeoff obvious.  
+   
+**The Python Lambda** taught us that microservices have a place — but only when the boundary is real. HTML and PDF extraction is genuinely a different problem from the API and UI layer. It has different dependencies, a different failure mode, and benefits from independent deployment. That’s a real boundary. Splitting for the sake of splitting isn’t.
+
+---
+
+## The Product Context
+
+Bluebook Insights exists inside a broader ecosystem. EdisonOS helps SAT and ACT tutors with test prep, mock exams, score tracking, and now — with tools like this — deep diagnostic analysis of official College Board practice tests. The Bluebook Insights report is the analytical layer that sits on top of what College Board provides, giving tutors the data they need to move from generic instruction to genuinely personalised prep.  
+   
+The product is free to use. The bet is that a tutor who runs their students’ Bluebook reports through Insights, sees the depth of the analysis, and starts thinking about what a full EdisonOS subscription would unlock — is a warmer prospect than one who’s never seen the product work.
+
+---
+
+## Final Thoughts
+
+Most write-ups about rewrites frame the first version as a mistake. This one wasn’t. SvelteKit and PocketBase were the right tools for figuring out what we were building. The migration to Next.js + Hono + FastAPI was the right call for scaling the team that builds it.  
+   
+The lesson isn’t “use Next.js.” The lesson is: build with enough intentionality to know when the thing that got you here isn’t the thing that takes you further — and be honest about whether the constraint is technical or human.  
+   
+In this case, it was human. And that’s a completely valid reason to rewrite.

@@ -1,0 +1,142 @@
+---
+title: "Building a Frontend Mentor Age Calculator — Vanilla JS, Proper Validation, Animated Numbers"
+summary: "No framework, no library. Just HTML, CSS, and JavaScript doing exactly what they're supposed to do."
+date: 2026-04-26T08:02:12Z
+updatedDate: 2026-05-01T07:46:29Z
+coverImage: "../../../assets/images/projects/age-calculator/cover.png"
+featured: false
+status: "active"
+links:
+  - type: link
+    url: "https://sid-agecalculator.vercel.app/"
+  - type: github
+    url: "https://github.com/sidarth-23/agecalculator"
+tags: ["html", "css", "js", "figma"]
+seo:
+  title: "Building a Frontend Mentor Age Calculator — Vanilla JS, Proper Validation, Animated Numbers"
+  description: "No framework, no library. Just HTML, CSS, and JavaScript doing exactly what they're supposed to do."
+locale: "en"
+---
+The [Frontend Mentor](https://www.frontendmentor.io) age calculator challenge is a deceptively simple brief: take a date of birth, output the age in years, months, and days. One input, one output. It sounds like twenty minutes of work.  
+   
+It isn’t. The validation requirements alone make this a proper exercise, and the bonus animated counter is where things actually get interesting. Here’s how I approached it.
+
+---
+
+## The Stack
+
+No framework, no build tool, no dependencies. Pure vanilla:
+
+- **HTML** — structure and form
+- **CSS** — layout, responsive design, hover and focus states
+- **JavaScript** — date logic, validation, DOM manipulation, animation This was intentional. Frontend Mentor challenges are a good place to practice the fundamentals without reaching for a library every time the problem gets slightly uncomfortable. Doing date math and form validation in vanilla JS is more instructive than wrapping everything in a React controlled component.
+
+---
+
+## The Challenge Requirements
+
+The spec was clear about what users needed to be able to do:
+
+- Enter a day, month, and year separately (not a date picker)
+- Submit the form and see their age broken down into years, months, and days
+- Get specific validation errors — not just “invalid date” — for each failure case The validation cases are what make this non-trivial. An empty field, an out-of-range day (1–31), an out-of-range month (1–12), a future year, and a logically invalid date like 31 April all need to be caught and surfaced as distinct, field-level errors. That last one — calendar-aware date validation — requires actual thought, not just a range check.
+
+---
+
+## The Date Logic
+
+JavaScript’s `Date` object has a useful quirk: if you pass it an invalid date, it rolls over rather than throwing. `new Date(1991, 3, 31)` — April 31st — gives you May 1st instead of an error. That behaviour is normally a footgun, but here it’s a useful detection mechanism:
+
+```javascript
+function isValidDate(day, month, year) {
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+}
+```
+
+If the date you get back doesn’t match what you put in, the input was invalid. Simple, reliable, no third-party date library needed.  
+   
+The age calculation itself is straightforward in principle but needs care around month and day boundaries. The approach: subtract birth year from current year to get a candidate year count, then adjust down by one if the birthday hasn’t occurred yet this year. Months and days follow the same logic — calculate the difference and borrow from the higher unit when it goes negative.
+
+---
+
+## Validation — Field-Level, Not Form-Level
+
+A common mistake with form validation is treating the whole form as a single unit — one error message for everything. The challenge spec wanted field-level errors: the day field shows its own error, the month field shows its own, the year field shows its own. Each input gets a red border and a specific message beneath it when it fails.  
+   
+The validation runs on submit, not on input, which means the user can type freely without being interrupted. On submit, each field is checked in sequence, errors are rendered inline, and if any field fails the age calculation doesn’t run. Fixing a field and resubmitting clears only that field’s error state.
+
+```javascript
+function validateInputs(day, month, year) {
+  let isValid = true;
+ 
+  if (!day) {
+    showError("day", "This field is required");
+    isValid = false;
+  } else if (day < 1 || day > 31) {
+    showError("day", "Must be a valid day");
+    isValid = false;
+  }
+ 
+  // month and year checks follow the same pattern...
+ 
+  if (isValid && !isValidDate(day, month, year)) {
+    showError("day", "Must be a valid date");
+    isValid = false;
+  }
+ 
+  return isValid;
+}
+```
+
+---
+
+## The Animated Counter — The Bonus Worth Doing
+
+The bonus requirement: when the form is submitted, the output numbers animate up from zero to their final value rather than just snapping into place. This is a small detail that makes the result feel satisfying rather than abrupt.  
+   
+The implementation is a simple counter that uses `requestAnimationFrame` for smooth, frame-rate-aware animation:
+
+```javascript
+function animateValue(element, target, duration) {
+  const start = performance.now();
+ 
+  function update(currentTime) {
+    const elapsed = currentTime - start;
+    const progress = Math.min(elapsed / duration, 1);
+    element.textContent = Math.floor(progress * target);
+ 
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      element.textContent = target;
+    }
+  }
+ 
+  requestAnimationFrame(update);
+}
+```
+
+`requestAnimationFrame` is the right tool here rather than `setInterval` — it ties the animation to the browser’s actual render cycle, so it stays smooth regardless of the tab’s visibility or system load, and it automatically pauses when the tab is in the background. The duration is fixed (600ms felt right), and a linear easing keeps it clean without overshoot.
+
+---
+
+## Responsive Layout
+
+The design called for two layouts: a wider desktop view with the date inputs in a row, and a stacked mobile layout. CSS Grid handles the form inputs, and a single media query swaps between them. The style guide in the repo (a Frontend Mentor convention) specified the exact colour tokens, font sizes, and breakpoints, which made this straightforward.  
+   
+The focus and hover states on the inputs and submit button were explicitly required — tab navigation through the form works correctly, and the active state on the arrow button is visually distinct.
+
+---
+
+## What This Kind of Project Is Actually Good For
+
+Frontend Mentor challenges don’t result in something you’d ship to a client or add to a product portfolio. What they do is force you to sit with a specific, constrained problem until it’s properly solved — including the edge cases, the error states, and the responsive behaviour that are easy to skip in a tutorial context.  
+   
+Date validation sounds boring until you’re handling February 29th in a non-leap year. Form errors sound basic until you’re managing five independent error states on three fields. The animated counter sounds optional until you realise how much better the UX feels with it.  
+   
+Small scope, real craft. That’s the point of these challenges.
