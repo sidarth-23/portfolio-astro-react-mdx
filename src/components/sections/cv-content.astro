@@ -21,9 +21,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
+} from "@/components/ui/card/index"
+import { Badge } from "@/components/ui/badge/index"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table/index"
 import { SkillIcon } from "@/components/icons/skill-icons"
 import avatarImage from "@/assets/images/avatar.jpg"
 import type { CollectionEntry } from "astro:content"
@@ -96,7 +96,7 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
 
 <div class="space-y-14">
   <Card
-    className="border-primary/20 bg-linear-to-br from-card via-card to-primary/5"
+    class="border-primary/20 bg-linear-to-br from-card via-card to-primary/5"
   >
     <CardHeader>
       <div class="flex items-center gap-4">
@@ -108,17 +108,17 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
           decoding="async"
         />
         <div>
-          <CardTitle className="text-xl md:text-2xl"
+          <CardTitle class="text-xl md:text-2xl"
             >{data.profile.name}</CardTitle
           >
-          <CardDescription className="text-sm"
+          <CardDescription class="text-sm"
             >{data.profile.role}</CardDescription
           >
         </div>
       </div>
     </CardHeader>
-    <CardContent className="space-y-4">
-      <CardDescription className="max-w-3xl text-sm leading-6">
+    <CardContent class="space-y-4">
+      <CardDescription class="max-w-3xl text-sm leading-6">
         {data.profile.summary}
       </CardDescription>
       <div class="flex flex-wrap gap-2">
@@ -166,8 +166,8 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
                 {getExperiencePeriodLabel(item.roles)}
               </TimelineDate>
 
-              <Card size="sm" className="border-border/70">
-                <CardContent className="py-4">
+              <Card size="sm" class="border-border/70">
+                <CardContent class="py-4">
                   {item.roles.length > 1 ? (
                     <Timeline
                       defaultValue={item.roles.length}
@@ -254,13 +254,13 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
     <div class="grid gap-4 md:grid-cols-3">
       {
         data.skills.map((group) => (
-          <Card size="sm" className="h-full">
+          <Card size="sm" class="h-full">
             <CardHeader>
               <CardTitle>{group.title}</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">
+            <CardContent class="flex flex-wrap gap-2">
               {group.items.map((skill) => (
-                <Badge variant="outline" className="gap-1.5">
+                <Badge variant="outline" class="gap-1.5">
                   <SkillIcon icon={skill.icon} />
                   {skill.label}
                 </Badge>
@@ -279,14 +279,14 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
         Certifications
       </h2>
     </div>
-    <Card size="sm" className="max-w-2xl border-primary/20">
-      <CardContent className="pt-1">
+    <Card size="sm" class="max-w-2xl border-primary/20">
+      <CardContent class="pt-1">
         <Table>
           <TableBody>
             {
               data.certifications.map((cert) => (
                 <TableRow>
-                  <TableCell className="font-medium text-foreground">
+                  <TableCell class="font-medium text-foreground">
                     <a
                       href={cert.url}
                       target="_blank"
@@ -297,7 +297,7 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
                       {cert.title}
                     </a>
                   </TableCell>
-                  <TableCell className="w-12 text-right">
+                  <TableCell class="w-12 text-right">
                     <a
                       href={cert.url}
                       target="_blank"
