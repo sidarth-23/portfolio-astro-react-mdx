@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { filterBySearch, filterByTag, paginate } from "./serialization"
+import { filterBySearch, filterByTags, paginate } from "./serialization"
 import type { SerializedBlogPost } from "./serialization"
 
 const mockPosts: SerializedBlogPost[] = [
@@ -60,18 +60,27 @@ describe("filterBySearch", () => {
   })
 })
 
-describe("filterByTag", () => {
-  it("returns all items when tag is null", () => {
-    expect(filterByTag(mockPosts, null)).toHaveLength(3)
+describe("filterByTags", () => {
+  it("returns all items when tags is null", () => {
+    expect(filterByTags(mockPosts, null)).toHaveLength(3)
   })
 
-  it("filters by tag", () => {
-    const result = filterByTag(mockPosts, "tutorial")
+  it("returns all items when tags is empty", () => {
+    expect(filterByTags(mockPosts, [])).toHaveLength(3)
+  })
+
+  it("filters by single tag", () => {
+    const result = filterByTags(mockPosts, ["tutorial"])
     expect(result).toHaveLength(2)
   })
 
-  it("returns empty array for non-matching tag", () => {
-    expect(filterByTag(mockPosts, "vue")).toHaveLength(0)
+  it("filters by multiple tags with OR logic", () => {
+    const result = filterByTags(mockPosts, ["react", "typescript"])
+    expect(result).toHaveLength(2)
+  })
+
+  it("returns empty array for non-matching tags", () => {
+    expect(filterByTags(mockPosts, ["vue"])).toHaveLength(0)
   })
 })
 

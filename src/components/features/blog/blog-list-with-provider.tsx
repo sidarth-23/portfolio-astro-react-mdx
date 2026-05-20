@@ -10,24 +10,33 @@ interface BlogListWithProviderProps {
   dehydratedState: DehydratedState
   locale: Locale
   tags: string[]
+  categories: string[]
   initialSearch: string
-  initialTag: string | null
+  initialTags: string[]
+  initialCategories: string[]
+  initialSortBy: string | null
 }
 
 export function BlogListWithProvider({
   dehydratedState,
   locale,
   tags,
+  categories,
   initialSearch,
-  initialTag,
+  initialTags,
+  initialCategories,
+  initialSortBy,
 }: BlogListWithProviderProps) {
   return (
     <ItemListWithProvider<SerializedBlogPost>
       dehydratedState={dehydratedState}
       locale={locale}
       tags={tags}
+      categories={categories}
       initialSearch={initialSearch}
-      initialTag={initialTag}
+      initialTags={initialTags}
+      initialCategories={initialCategories}
+      initialSortBy={initialSortBy}
       endpoint="/api/blog.json"
       gridClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
       skeletonCount={4}

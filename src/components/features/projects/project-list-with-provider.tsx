@@ -10,24 +10,33 @@ interface ProjectListWithProviderProps {
   dehydratedState: DehydratedState
   locale: Locale
   tags: string[]
+  categories: string[]
   initialSearch: string
-  initialTag: string | null
+  initialTags: string[]
+  initialCategories: string[]
+  initialSortBy: string | null
 }
 
 export function ProjectListWithProvider({
   dehydratedState,
   locale,
   tags,
+  categories,
   initialSearch,
-  initialTag,
+  initialTags,
+  initialCategories,
+  initialSortBy,
 }: ProjectListWithProviderProps) {
   return (
     <ItemListWithProvider<SerializedProject>
       dehydratedState={dehydratedState}
       locale={locale}
       tags={tags}
+      categories={categories}
       initialSearch={initialSearch}
-      initialTag={initialTag}
+      initialTags={initialTags}
+      initialCategories={initialCategories}
+      initialSortBy={initialSortBy}
       endpoint="/api/projects.json"
       gridClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       skeletonCount={3}

@@ -20,6 +20,7 @@ const card = createBlogCardView({
   category: post.data.category,
   formattedDate: formatShortDate(post.data.date, locale),
   description: post.data.description,
+  tags: post.data.tags,
   coverImage: {
     src: post.data.coverImage.src,
     width: post.data.coverImage.width,
@@ -30,7 +31,7 @@ const card = createBlogCardView({
 
 <a href={card.href} class="group block h-full">
   <article
-    class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-all hover:-translate-y-0.5 hover:shadow-md"
+    class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:ring-foreground/20 hover:shadow-md"
   >
     <BlurBackdropImage
       src={post.data.coverImage}
@@ -49,7 +50,7 @@ const card = createBlogCardView({
         )
       }
       <h3
-        class="text-lg leading-snug font-medium transition-colors group-hover:text-primary"
+        class="text-lg leading-snug font-medium"
       >
         {card.title}
       </h3>
@@ -58,28 +59,34 @@ const card = createBlogCardView({
           {card.formattedDate}
         </Badge>
       </div>
-      <p class="mt-3 line-clamp-2 text-sm text-muted-foreground/80">
+      <p class="mt-3 line-clamp-2 text-sm text-muted-foreground/80 flex-1">
         {card.description}
       </p>
-      <div class="mt-auto pt-4">
-        <span class="inline-flex items-center text-sm font-medium text-primary">
-          {card.readMoreLabel}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="ml-1 transition-transform group-hover:translate-x-1"
-          >
-            <path d="M5 12h14"></path>
-            <path d="m12 5 7 7-7 7"></path>
-          </svg>
-        </span>
+      {
+        card.tags.length > 0 && (
+          <div class="mt-3 flex flex-wrap gap-1.5">
+            {card.tags.map((tag) => (
+              <Badge variant="secondary">#{tag}</Badge>
+            ))}
+          </div>
+        )
+      }
+      <div class="mt-auto pt-4 flex justify-end">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-primary transition-transform group-hover:translate-x-1"
+        >
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
       </div>
     </div>
   </article>

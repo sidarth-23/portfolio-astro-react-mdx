@@ -26,6 +26,7 @@ export interface SerializedProject {
   updatedDate?: string
   featured: boolean
   status: string
+  category?: string
   tags: string[]
   coverImage: SerializedImage
 }
@@ -82,6 +83,7 @@ export async function serializeProject(
     updatedDate: project.data.updatedDate?.toISOString(),
     featured: project.data.featured,
     status: project.data.status,
+    category: project.data.category,
     tags: project.data.tags,
     coverImage: {
       src: optimizedImage.src,
@@ -112,12 +114,44 @@ export function filterBySearch<T extends { title: string }>(
   )
 }
 
-export function filterByTag<T extends { tags: string[] }>(
+export function filterByTags<T extends { tags: string[] }>(
   items: T[],
-  tag: string | null
+  tags: string[] | null
 ): T[] {
-  if (!tag || tag.trim() === "") return items
-  return items.filter((item) => item.tags.includes(tag))
+  if (!tags || tags.length === 0) return items
+  return items.filter((item) => tags.some((tag) => item.tags.includes(tag)))
+}
+
+export function filterByCategories<T extends { category?: string }>(
+  items: T[],
+  categories: string[] | null
+): T[] {
+  if (!categories || categories.length === 0) return items
+  return items.filter(
+    (item) => item.category && categories.includes(item.category)
+  )
+}
+
+export type SortMode = "newest" | "oldest" | "title"
+
+export function sortItems<T extends { date: string; title: string }>(
+  items: T[],
+  sort: SortMode | null
+): T[] {
+  if (!sort || sort === "newest") {
+    return [...items].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
+  }
+  if (sort === "oldest") {
+    return [...items].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    )
+  }
+  if (sort === "title") {
+    return [...items].sort((a, b) => a.title.localeCompare(b.title))
+  }
+  return items
 }
 
 export function paginate<T>(

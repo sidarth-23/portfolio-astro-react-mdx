@@ -17,7 +17,7 @@ const card = createProjectCardView({
   locale,
   slug: project.slug.split("/").slice(1).join("/"),
   title: project.data.title,
-  featured: project.data.featured,
+  category: project.data.category,
   formattedDate: formatShortDate(project.data.date, locale),
   summary: project.data.summary,
   tags: project.data.tags,
@@ -31,7 +31,7 @@ const card = createProjectCardView({
 
 <a href={card.href} class="group block h-full">
   <article
-    class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-all hover:-translate-y-0.5 hover:shadow-md"
+    class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:ring-foreground/20 hover:shadow-md"
   >
     <BlurBackdropImage
       src={project.data.coverImage}
@@ -42,37 +42,52 @@ const card = createProjectCardView({
       imageClass="transition-transform duration-300 group-hover:scale-105"
     />
     <div class="flex flex-1 flex-col p-5">
-      <div class="flex items-start justify-between gap-2">
-        <h3
-          class="text-lg leading-snug font-medium transition-colors group-hover:text-primary"
-        >
-          {card.title}
-        </h3>
-        {
-          card.featured && (
-            <Badge variant="secondary" class="shrink-0">
-              {card.featuredLabel}
-            </Badge>
-          )
-        }
-      </div>
-      <div class="mt-1">
+      {
+        card.category && (
+          <Badge variant="default" class="mb-2 w-fit capitalize">
+            {card.category}
+          </Badge>
+        )
+      }
+      <h3
+        class="text-lg leading-snug font-medium"
+      >
+        {card.title}
+      </h3>
+      <div class="mt-2">
         <Badge variant="outline" class="w-fit text-muted-foreground/80">
           {card.formattedDate}
         </Badge>
       </div>
-      <p class="mt-3 line-clamp-2 flex-1 text-sm text-muted-foreground/80">
+      <p class="mt-3 line-clamp-2 text-sm text-muted-foreground/80 flex-1">
         {card.summary}
       </p>
       {
         card.tags.length > 0 && (
-          <div class="mt-4 flex flex-wrap gap-1.5">
+          <div class="mt-3 flex flex-wrap gap-1.5">
             {card.tags.map((tag) => (
               <Badge variant="secondary">#{tag}</Badge>
             ))}
           </div>
         )
       }
+      <div class="mt-auto pt-4 flex justify-end">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-primary transition-transform group-hover:translate-x-1"
+        >
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+      </div>
     </div>
   </article>
 </a>

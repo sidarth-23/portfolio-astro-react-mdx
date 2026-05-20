@@ -7,8 +7,10 @@ import type { PaginatedResponse } from "@/lib/api"
 interface UseInfiniteItemsOptions {
   endpoint: string
   locale: string
-  tag: string | null
+  tags: string[]
+  categories: string[]
   search: string | null
+  sort: string | null
   limit: number
   enabled?: boolean
 }
@@ -16,21 +18,26 @@ interface UseInfiniteItemsOptions {
 export function useInfiniteItems<T>({
   endpoint,
   locale,
-  tag,
+  tags,
+  categories,
   search,
+  sort,
   limit,
   enabled = true,
 }: UseInfiniteItemsOptions) {
   const query = useInfiniteQuery({
-    queryKey: [endpoint, locale, tag, search, limit],
+    queryKey: [endpoint, locale, tags, categories, search, sort, limit],
     queryFn: async ({ pageParam = 1 }) => {
       const params = new URLSearchParams({
         locale,
         page: String(pageParam),
         limit: String(limit),
       })
-      if (tag) params.set("tag", tag)
+      if (tags.length > 0) params.set("tags", tags.join(","))
+      if (categories.length > 0)
+        params.set("categories", categories.join(","))
       if (search) params.set("search", search)
+      if (sort) params.set("sort", sort)
 
       const response = await fetch(`${endpoint}?${params}`)
       if (!response.ok) throw new Error("Failed to fetch")
@@ -42,6 +49,7 @@ export function useInfiniteItems<T>({
     },
     initialPageParam: 1,
     enabled,
+    placeholderData: (previousData) => previousData,
   })
 
   const { hasNextPage, isFetchingNextPage, fetchNextPage } = query

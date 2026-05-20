@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useState, type ComponentType } from "react"
+import { motion, AnimatePresence } from "motion/react"
 import { SearchFilterBar } from "@/components/listing/listing-search-filter-bar"
 import { useInfiniteItems } from "@/hooks/use-infinite-items"
 import { Skeleton } from "@/components/ui/react"
@@ -11,8 +12,11 @@ import { t } from "@/i18n/ui"
 interface ItemListClientProps<T> {
   locale: Locale
   tags: string[]
+  categories: string[]
   initialSearch: string
-  initialTag: string | null
+  initialTags: string[]
+  initialCategories: string[]
+  initialSortBy: string | null
   endpoint: string
   gridClassName: string
   skeletonCount: number
@@ -20,11 +24,20 @@ interface ItemListClientProps<T> {
   getItemKey: (item: T) => string
 }
 
+const itemVariants = {
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -4, scale: 0.98 },
+}
+
 export function ItemListClient<T>({
   locale,
   tags,
+  categories,
   initialSearch,
-  initialTag,
+  initialTags,
+  initialCategories,
+  initialSortBy,
   endpoint,
   gridClassName,
   skeletonCount,
@@ -32,7 +45,11 @@ export function ItemListClient<T>({
   getItemKey,
 }: ItemListClientProps<T>) {
   const [search, setSearch] = useState(initialSearch)
-  const [activeTag, setActiveTag] = useState<string | null>(initialTag)
+  const [activeTags, setActiveTags] = useState<string[]>(initialTags)
+  const [activeCategories, setActiveCategories] = useState<string[]>(
+    initialCategories
+  )
+  const [sortBy, setSortBy] = useState<string | null>(initialSortBy)
 
   const {
     allItems,
@@ -44,15 +61,26 @@ export function ItemListClient<T>({
   } = useInfiniteItems<T>({
     endpoint,
     locale,
-    tag: activeTag,
+    tags: activeTags,
+    categories: activeCategories,
     search,
+    sort: sortBy,
     limit: 12,
   })
 
+  const isLoadingFilters = isFetching && !isFetchingNextPage && allItems.length > 0
+
   const handleFiltersChange = useCallback(
-    (newSearch: string, newTag: string | null) => {
+    (
+      newSearch: string,
+      newTags: string[],
+      newCategories: string[],
+      newSortBy: string | null
+    ) => {
       setSearch(newSearch)
-      setActiveTag(newTag)
+      setActiveTags(newTags)
+      setActiveCategories(newCategories)
+      setSortBy(newSortBy)
 
       const url = new URL(window.location.href)
       if (newSearch) {
@@ -60,10 +88,20 @@ export function ItemListClient<T>({
       } else {
         url.searchParams.delete("search")
       }
-      if (newTag) {
-        url.searchParams.set("tag", newTag)
+      if (newTags.length > 0) {
+        url.searchParams.set("tags", newTags.join(","))
       } else {
-        url.searchParams.delete("tag")
+        url.searchParams.delete("tags")
+      }
+      if (newCategories.length > 0) {
+        url.searchParams.set("categories", newCategories.join(","))
+      } else {
+        url.searchParams.delete("categories")
+      }
+      if (newSortBy) {
+        url.searchParams.set("sort", newSortBy)
+      } else {
+        url.searchParams.delete("sort")
       }
       window.history.replaceState({}, "", url)
     },
@@ -75,40 +113,80 @@ export function ItemListClient<T>({
       <SearchFilterBar
         locale={locale}
         tags={tags}
+        categories={categories}
         initialSearch={initialSearch}
-        initialTag={initialTag}
+        initialTags={initialTags}
+        initialCategories={initialCategories}
+        initialSortBy={initialSortBy}
         onFiltersChange={handleFiltersChange}
       />
 
-      {isPending ? (
+      {isPending && allItems.length === 0 ? (
         <div className={gridClassName}>
           {Array.from({ length: 12 }).map((_, i) => (
-            <Skeleton key={`skeleton-${i}`} className="h-[400px] w-full rounded-xl" />
+            <motion.div
+              key={`skeleton-${i}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: i * 0.03 }}
+            >
+              <Skeleton className="h-[400px] w-full rounded-xl" />
+            </motion.div>
           ))}
         </div>
       ) : allItems.length === 0 ? (
-        <p className="text-center text-muted-foreground py-12">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center text-muted-foreground py-12"
+        >
           {t(locale, "filters.noResults")}
-        </p>
+        </motion.p>
       ) : (
         <>
           <div className={`relative ${gridClassName}`}>
-            {isFetching && !isFetchingNextPage && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
-                <Spinner className="size-8" />
-              </div>
-            )}
-            {allItems.map((item) => (
-              <CardComponent
-                key={getItemKey(item)}
-                item={item}
-                locale={locale}
-              />
-            ))}
-            {isFetchingNextPage &&
-              Array.from({ length: skeletonCount }).map((_, i) => (
-                <Skeleton key={`skeleton-${i}`} className="h-[400px] w-full rounded-xl" />
+            <AnimatePresence mode="popLayout">
+              {allItems.map((item) => (
+                <motion.div
+                  key={getItemKey(item)}
+                  layout
+                  variants={itemVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <CardComponent item={item} locale={locale} />
+                </motion.div>
               ))}
+              {isFetchingNextPage &&
+                Array.from({ length: skeletonCount }).map((_, i) => (
+                  <motion.div
+                    key={`skeleton-next-${i}`}
+                    layout
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2, delay: i * 0.05 }}
+                  >
+                    <Skeleton className="h-[400px] w-full rounded-xl" />
+                  </motion.div>
+                ))}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {isLoadingFilters && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl"
+                >
+                  <Spinner className="size-8" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {hasNextPage && (

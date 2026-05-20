@@ -7,8 +7,10 @@ export const prerender = false
 
 export const GET: APIRoute = async ({ url }) => {
   const locale = (url.searchParams.get("locale") ?? "en") as Locale
-  const tag = url.searchParams.get("tag")
+  const tagsParam = url.searchParams.get("tags")
+  const categoriesParam = url.searchParams.get("categories")
   const search = url.searchParams.get("search")
+  const sort = url.searchParams.get("sort")
   const page = Math.max(1, parseInt(url.searchParams.get("page") ?? "1", 10))
   const limit = Math.max(1, parseInt(url.searchParams.get("limit") ?? "12", 10))
 
@@ -19,8 +21,12 @@ export const GET: APIRoute = async ({ url }) => {
     })
   }
 
+  const tags = tagsParam ? tagsParam.split(",") : null
+  const categories = categoriesParam ? categoriesParam.split(",") : null
+  const sortMode = sort && ["newest", "oldest", "title"].includes(sort) ? sort as "newest" | "oldest" | "title" : null
+
   try {
-    const result = await fetchBlogPage(locale, tag, search, page, limit)
+    const result = await fetchBlogPage(locale, tags, categories, search, sortMode, page, limit)
 
     return new Response(JSON.stringify(result), {
       status: 200,

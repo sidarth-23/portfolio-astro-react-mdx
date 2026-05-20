@@ -10,8 +10,11 @@ interface ItemListWithProviderProps<T> {
   dehydratedState: DehydratedState
   locale: Locale
   tags: string[]
+  categories: string[]
   initialSearch: string
-  initialTag: string | null
+  initialTags: string[]
+  initialCategories: string[]
+  initialSortBy: string | null
   endpoint: string
   gridClassName: string
   skeletonCount: number
@@ -23,8 +26,11 @@ export function ItemListWithProvider<T>({
   dehydratedState,
   locale,
   tags,
+  categories,
   initialSearch,
-  initialTag,
+  initialTags,
+  initialCategories,
+  initialSortBy,
   endpoint,
   gridClassName,
   skeletonCount,
@@ -36,8 +42,11 @@ export function ItemListWithProvider<T>({
       <ItemListClient
         locale={locale}
         tags={tags}
+        categories={categories}
         initialSearch={initialSearch}
-        initialTag={initialTag}
+        initialTags={initialTags}
+        initialCategories={initialCategories}
+        initialSortBy={initialSortBy}
         endpoint={endpoint}
         gridClassName={gridClassName}
         skeletonCount={skeletonCount}

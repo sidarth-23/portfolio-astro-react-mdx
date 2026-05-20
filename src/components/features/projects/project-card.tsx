@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/react"
 import {
   Card,
   CardContent,
+  CardFooter,
   CardTitle,
   CardDescription,
 } from "@/components/ui/react"
@@ -22,7 +23,7 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
     locale,
     slug: item.slug,
     title: item.title,
-    featured: item.featured,
+    category: item.category,
     formattedDate: formatShortDate(new Date(item.date), locale),
     summary: item.summary,
     tags: item.tags,
@@ -31,7 +32,7 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
 
   return (
     <a href={card.href} className="group block h-full">
-      <Card className="p-0 gap-0 h-full transition-all hover:-translate-y-0.5 hover:shadow-md">
+      <Card className="p-0 gap-0 h-full transition-colors transition-shadow hover:shadow-md">
         <div className="relative overflow-hidden bg-black/5 aspect-video w-full">
           <img
             src={card.coverImage.src}
@@ -51,18 +52,16 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
             className="relative z-10 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-        <CardContent className="flex flex-1 flex-col pt-4">
-          <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-lg leading-snug font-medium transition-colors group-hover:text-primary">
-              {card.title}
-            </CardTitle>
-            {card.featured && (
-              <Badge variant="secondary" className="shrink-0">
-                {card.featuredLabel}
-              </Badge>
-            )}
-          </div>
-          <div className="mt-1">
+        <CardContent className="flex flex-1 flex-col pt-4 pb-0">
+          {card.category && (
+            <Badge variant="default" className="mb-2 w-fit capitalize">
+              {card.category}
+            </Badge>
+          )}
+          <CardTitle className="text-lg leading-snug font-medium">
+            {card.title}
+          </CardTitle>
+          <div className="mt-2">
             <Badge variant="outline" className="w-fit text-muted-foreground/80">
               {card.formattedDate}
             </Badge>
@@ -71,7 +70,7 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
             {card.summary}
           </CardDescription>
           {card.tags.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-1.5">
+            <div className="mt-3 flex flex-wrap gap-1.5">
               {card.tags.map((tag) => (
                 <Badge key={tag} variant="secondary">
                   #{tag}
@@ -80,6 +79,23 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
             </div>
           )}
         </CardContent>
+        <CardFooter className="mt-auto justify-end border-0 bg-transparent pb-4 pt-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-primary transition-transform group-hover:translate-x-1"
+          >
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </CardFooter>
       </Card>
     </a>
   )

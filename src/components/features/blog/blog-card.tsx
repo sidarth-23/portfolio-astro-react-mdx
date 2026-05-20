@@ -26,12 +26,13 @@ export function BlogCard({ item, locale }: BlogCardProps) {
     category: item.category,
     formattedDate: formatShortDate(new Date(item.date), locale),
     description: item.description,
+    tags: item.tags,
     coverImage: item.coverImage,
   })
 
   return (
     <a href={card.href} className="group block h-full">
-      <Card className="p-0 gap-0 h-full transition-all hover:-translate-y-0.5 hover:shadow-md">
+      <Card className="p-0 gap-0 h-full transition-colors transition-shadow hover:ring-foreground/20 hover:shadow-md">
         <div className="relative overflow-hidden bg-black/5 aspect-video w-full">
           <img
             src={card.coverImage.src}
@@ -51,13 +52,13 @@ export function BlogCard({ item, locale }: BlogCardProps) {
             className="relative z-10 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-        <CardContent className="flex flex-1 flex-col pt-4">
+        <CardContent className="flex flex-1 flex-col pt-4 pb-0">
           {card.category && (
             <Badge variant="default" className="mb-2 w-fit capitalize">
               {card.category}
             </Badge>
           )}
-          <CardTitle className="text-lg leading-snug font-medium transition-colors group-hover:text-primary">
+          <CardTitle className="text-lg leading-snug font-medium">
             {card.title}
           </CardTitle>
           <div className="mt-2">
@@ -65,29 +66,35 @@ export function BlogCard({ item, locale }: BlogCardProps) {
               {card.formattedDate}
             </Badge>
           </div>
-          <CardDescription className="mt-3 line-clamp-2">
+          <CardDescription className="mt-3 line-clamp-2 flex-1">
             {card.description}
           </CardDescription>
+          {card.tags.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {card.tags.map((tag) => (
+                <Badge key={tag} variant="secondary">
+                  #{tag}
+                </Badge>
+              ))}
+            </div>
+          )}
         </CardContent>
-        <CardFooter className="mt-auto pt-0 pb-4 border-0 bg-transparent">
-          <span className="inline-flex items-center text-sm font-medium text-primary">
-            {card.readMoreLabel}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="ml-1 transition-transform group-hover:translate-x-1"
-            >
-              <path d="M5 12h14"></path>
-              <path d="m12 5 7 7-7 7"></path>
-            </svg>
-          </span>
+        <CardFooter className="mt-auto justify-end border-0 bg-transparent pb-4 pt-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-primary transition-transform group-hover:translate-x-1"
+          >
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
         </CardFooter>
       </Card>
     </a>

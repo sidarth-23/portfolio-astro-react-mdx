@@ -151,3 +151,27 @@ export function getAllProjectTags(
   }
   return Array.from(tags).sort()
 }
+
+export function getAllCategories(
+  posts: CollectionEntry<"blog">[]
+): string[] {
+  const categories = new Set<string>()
+  for (const post of posts) {
+    if (post.data.category) {
+      categories.add(post.data.category)
+    }
+  }
+  return Array.from(categories).sort()
+}
+
+export function getAllProjectCategories(
+  projects: CollectionEntry<"projects">[]
+): string[] {
+  const categories = new Set<string>()
+  for (const project of projects) {
+    if (project.data.category) {
+      categories.add(project.data.category)
+    }
+  }
+  return Array.from(categories).sort()
+}

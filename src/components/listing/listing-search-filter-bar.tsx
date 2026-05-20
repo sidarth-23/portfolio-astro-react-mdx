@@ -2,91 +2,231 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { Search01Icon, Cancel01Icon, SlidersHorizontalIcon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/react"
 import { Badge } from "@/components/ui/react"
+import { Button } from "@/components/ui/react"
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
 interface SearchFilterBarProps {
   locale: Locale
   tags: string[]
+  categories: string[]
   initialSearch: string
-  initialTag: string | null
-  onFiltersChange: (search: string, tag: string | null) => void
+  initialTags: string[]
+  initialCategories: string[]
+  initialSortBy: string | null
+  onFiltersChange: (
+    search: string,
+    tags: string[],
+    categories: string[],
+    sortBy: string | null
+  ) => void
 }
+
+const SORT_OPTIONS = [
+  { value: "newest", labelKey: "filters.newest" },
+  { value: "oldest", labelKey: "filters.oldest" },
+  { value: "title", labelKey: "filters.titleAZ" },
+] as const
 
 export function SearchFilterBar({
   locale,
   tags,
+  categories,
   initialSearch,
-  initialTag,
+  initialTags,
+  initialCategories,
+  initialSortBy,
   onFiltersChange,
 }: SearchFilterBarProps) {
   const [search, setSearch] = useState(initialSearch)
-  const [activeTag, setActiveTag] = useState<string | null>(initialTag)
+  const [activeTags, setActiveTags] = useState<string[]>(initialTags)
+  const [activeCategories, setActiveCategories] = useState<string[]>(
+    initialCategories
+  )
+  const [sortBy, setSortBy] = useState<string | null>(initialSortBy)
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
-      onFiltersChange(search, activeTag)
+      onFiltersChange(search, activeTags, activeCategories, sortBy)
     }, 300)
     return () => clearTimeout(timer)
-  }, [search, activeTag, onFiltersChange])
+  }, [search, activeTags, activeCategories, sortBy, onFiltersChange])
 
-  const handleTagClick = useCallback(
-    (tag: string) => {
-      setActiveTag((current) => (current === tag ? null : tag))
-    },
-    []
-  )
+  const handleTagToggle = useCallback((tag: string) => {
+    setActiveTags((current) =>
+      current.includes(tag)
+        ? current.filter((t) => t !== tag)
+        : [...current, tag]
+    )
+  }, [])
+
+  const handleCategoryToggle = useCallback((category: string) => {
+    setActiveCategories((current) =>
+      current.includes(category)
+        ? current.filter((c) => c !== category)
+        : [...current, category]
+    )
+  }, [])
+
+  const handleSortToggle = useCallback((value: string) => {
+    setSortBy((current) => (current === value ? null : value))
+  }, [])
 
   const handleClear = useCallback(() => {
     setSearch("")
-    setActiveTag(null)
+    setActiveTags([])
+    setActiveCategories([])
+    setSortBy(null)
   }, [])
 
-  const hasFilters = search || activeTag
+  const hasFilters =
+    search || activeTags.length > 0 || activeCategories.length > 0 || sortBy
+
+  const activeFiltersCount =
+    activeTags.length + activeCategories.length + (sortBy ? 1 : 0)
 
   return (
     <div className="mb-8 space-y-4">
-      <div className="relative">
-        <HugeiconsIcon
-          icon={Search01Icon}
-          size={16}
-          strokeWidth={2}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-        />
-        <Input
-          type="text"
-          placeholder={t(locale, "filters.searchPlaceholder")}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10"
-        />
-        {search && (
-          <button
-            onClick={() => setSearch("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          >
-            <HugeiconsIcon icon={Cancel01Icon} size={16} strokeWidth={2} />
-          </button>
-        )}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <HugeiconsIcon
+            icon={Search01Icon}
+            size={16}
+            strokeWidth={2}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            type="text"
+            placeholder={t(locale, "filters.searchPlaceholder")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <HugeiconsIcon icon={Cancel01Icon} size={16} strokeWidth={2} />
+            </button>
+          )}
+        </div>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" className="shrink-0 relative">
+              <HugeiconsIcon
+                icon={SlidersHorizontalIcon}
+                size={18}
+                strokeWidth={2}
+              />
+              {activeFiltersCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                  {activeFiltersCount}
+                </span>
+              )}
+              <span className="sr-only">{t(locale, "filters.title")}</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-full sm:max-w-sm">
+            <SheetHeader>
+              <SheetTitle>{t(locale, "filters.title")}</SheetTitle>
+            </SheetHeader>
+            <div className="flex-1 overflow-auto space-y-6 px-4 py-2">
+              {/* Sort */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-medium">
+                  {t(locale, "filters.sortBy")}
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {SORT_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleSortToggle(option.value)}
+                      className="cursor-pointer"
+                    >
+                      <Badge
+                        variant={sortBy === option.value ? "default" : "outline"}
+                      >
+                        {t(locale, option.labelKey)}
+                      </Badge>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tags */}
+              {tags.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium">
+                    {t(locale, "filters.tags")}
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <button
+                        key={tag}
+                        onClick={() => handleTagToggle(tag)}
+                        className="cursor-pointer"
+                      >
+                        <Badge
+                          variant={
+                            activeTags.includes(tag) ? "default" : "outline"
+                          }
+                        >
+                          #{tag}
+                        </Badge>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <SheetFooter className="px-4 pb-4 pt-2">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  setActiveTags([])
+                  setSortBy(null)
+                  setSheetOpen(false)
+                }}
+                disabled={activeTags.length === 0 && !sortBy}
+              >
+                {t(locale, "filters.clearFilters")}
+              </Button>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </div>
 
-      {tags.length > 0 && (
+      {/* Category pills below search */}
+      {categories.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
-          {tags.map((tag) => (
+          {categories.map((category) => (
             <button
-              key={tag}
-              onClick={() => handleTagClick(tag)}
+              key={category}
+              onClick={() => handleCategoryToggle(category)}
               className="cursor-pointer"
             >
               <Badge
-                variant={activeTag === tag ? "default" : "outline"}
-                className="text-muted-foreground/80 transition-colors"
+                variant={
+                  activeCategories.includes(category) ? "default" : "outline"
+                }
+                className="capitalize"
               >
-                #{tag}
+                {category}
               </Badge>
             </button>
           ))}
