@@ -1,4 +1,5 @@
-import { ExternalLink } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import type { z } from "zod"
 import type { linkSchema } from "@/lib/schemas"
 
@@ -34,7 +35,7 @@ export function ProjectLinkButtons({ links }: { links: Link[] }) {
           {link.type === "github" ? (
             <GitHubIcon className="size-4" />
           ) : (
-            <ExternalLink className="size-4" />
+            <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={2} />
           )}
           <span className="text-xs text-muted-foreground">
             {link.type === "github" ? "GitHub" : "Live"}

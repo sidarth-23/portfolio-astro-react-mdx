@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Search01Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { X, Search } from "lucide-react"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
@@ -50,7 +51,12 @@ export function SearchFilterBar({
   return (
     <div className="mb-8 space-y-4">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <HugeiconsIcon
+          icon={Search01Icon}
+          size={16}
+          strokeWidth={2}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+        />
         <Input
           type="text"
           placeholder={t(locale, "filters.searchPlaceholder")}
@@ -63,7 +69,7 @@ export function SearchFilterBar({
             onClick={() => setSearch("")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
-            <X className="h-4 w-4" />
+            <HugeiconsIcon icon={Cancel01Icon} size={16} strokeWidth={2} />
           </button>
         )}
       </div>

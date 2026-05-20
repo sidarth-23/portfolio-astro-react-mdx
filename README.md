@@ -1,36 +1,98 @@
-# Astro + React + TypeScript + shadcn/ui
+# Sid's Hub - Astro + MDX Portfolio
 
-This is a template for a new Astro project with React, TypeScript, and shadcn/ui.
+[![Live Site](https://img.shields.io/badge/Live-sidshub.in-0b7285?style=flat-square)](https://sidshub.in)
+[![Bun](https://img.shields.io/badge/Bun-1.2%2B-f9f1e1?logo=bun&logoColor=111&style=flat-square)](https://bun.sh)
+[![Astro](https://img.shields.io/badge/Astro-5.x-1e1b4b?logo=astro&style=flat-square)](https://astro.build)
 
-## Adding components
+This repository powers [sidshub.in](https://sidshub.in) as a content-driven Astro site.
 
-To add components to your app, run the following command:
+The project has moved away from CMS-driven content and now uses **MDX + Astro content collections** as the source of truth, with React used only for interactive islands.
+
+## What changed
+
+- Old direction: Astro + external CMS workflow.
+- Current direction: Astro + MDX-only content workflow inside this repo.
+- Team rule: prefer Fulldev UI patterns/components first; use React/shadcn only where interactivity is required.
+
+## Stack
+
+- Astro 5 + TypeScript (strict)
+- MDX (`@astrojs/mdx`)
+- React islands (`@astrojs/react`) for interactive components
+- Tailwind CSS 4
+- Bun as the required package manager/runtime
+
+## Content model
+
+Astro content collections are defined in `src/content.config.ts`:
+
+- `blog` (MDX)
+- `projects` (MDX)
+- `cv` (JSON data)
+- `cvExperience` (Markdown)
+
+Content lives under `src/content/**` and is locale-aware.
+
+## Internationalization
+
+- Supported locales: `en`, `es`, `fr`
+- Locale-prefixed routing is enabled (including default locale).
+- Root route redirects to `/${defaultLocale}`.
+
+When editing content, keep localized entries synchronized across `en`, `es`, and `fr`.
+
+## Local development
 
 ```bash
-npx shadcn@latest add button
+# install dependencies (bun only)
+bun install
+
+# start dev server
+bun run dev
 ```
 
-This will place the ui components in the `src/components` directory.
+## Quality checks
 
-## Using components
+Run this full validation pass before pushing:
 
-To use the components in your app, import them in an `.astro` file:
-
-```astro
----
-import { Button } from "@/components/ui/button"
----
-
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Astro App</title>
-  </head>
-  <body>
-    <div class="grid h-screen place-items-center content-center">
-      <Button>Button</Button>
-    </div>
-  </body>
-</html>
+```bash
+bun run lint && bun run typecheck && bun run build
 ```
+
+Other useful commands:
+
+```bash
+bun run format          # format .ts/.tsx/.astro
+bun run preview         # preview static build
+bun run start           # run built server output (dist/server/entry.mjs)
+```
+
+## Translation workflow
+
+Build includes a translation consistency check; missing/stale translations fail the build.
+
+To regenerate translations:
+
+```bash
+AI_API_KEY=... bun run translate
+# or force refresh
+AI_API_KEY=... bun run translate:force
+```
+
+Optional environment variables:
+
+- `AI_MODEL` (default: `gpt-4o-mini`)
+- `AI_API_URL` (custom provider endpoint)
+
+## Project structure (high signal)
+
+- `src/pages/**` - routes and API endpoints
+- `src/layouts/**` - layout shells
+- `src/components/**` - UI and interactive islands
+- `src/content/**` - localized content source
+- `src/integrations/translate.ts` - build-time translation check integration
+
+## Notes
+
+- Do not edit generated output in `dist/`.
+- `npm/yarn/pnpm` install is intentionally blocked; use Bun.
