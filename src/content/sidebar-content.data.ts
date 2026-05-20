@@ -1,9 +1,9 @@
 import type { Locale } from "@/i18n/config"
 
 export interface SidebarNavigationContentItem {
-  titleKey: "nav.home" | "nav.projects" | "nav.blog" | "nav.cv"
+  titleKey: "nav.home" | "nav.projects" | "nav.blog" | "nav.profile"
   path: (locale: Locale) => string
-  icon: "home" | "projects" | "blog" | "cv"
+  icon: "home" | "projects" | "blog" | "profile"
 }
 
 export interface SidebarSecondaryContentItem {
@@ -42,9 +42,9 @@ export const sidebarNavigationContent: SidebarNavigationContentItem[] = [
     icon: "blog",
   },
   {
-    titleKey: "nav.cv",
-    path: (locale) => `/${locale}/cv`,
-    icon: "cv",
+    titleKey: "nav.profile",
+    path: (locale) => `/${locale}/profile`,
+    icon: "profile",
   },
 ]
 

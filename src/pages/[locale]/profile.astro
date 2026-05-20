@@ -14,7 +14,7 @@ const entry =
 
 if (!entry) {
   throw new Error(
-    "CV content is missing. Add files under src/content/cv/*.json"
+    "Profile content is missing. Add files under src/content/cv/*.json"
   )
 }
 
@@ -28,6 +28,6 @@ const experiences = experienceEntries.map((item) => ({
 }))
 ---
 
-<ContentLayout title="CV — Sidarth G" headerTitle="CV" locale={locale}>
+<ContentLayout title="Profile — Sidarth G" headerTitle="Profile" locale={locale}>
   <CvContent data={entry.data} experiences={experiences} />
 </ContentLayout>

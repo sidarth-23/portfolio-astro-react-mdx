@@ -11,7 +11,7 @@ const translations: Record<Locale, unknown> = {
       home: "Home",
       projects: "Projects",
       blog: "Blog",
-      cv: "CV",
+      profile: "Profile",
       archive: "Archive Site",
       downloadResume: "Resume",
     },
@@ -63,7 +63,7 @@ const translations: Record<Locale, unknown> = {
       description:
         "I build fast, reliable products with modern web tech and cloud infrastructure. Turning complex problems into elegant solutions — from robust APIs to seamless user experiences. Always learning, always shipping.",
       connect: "Let's Connect",
-      resume: "View Resume",
+      resume: "View Profile",
       imageAlt: "Sidarth G — Backend & Full-Stack Developer",
     },
   },
@@ -72,7 +72,7 @@ const translations: Record<Locale, unknown> = {
       home: "Inicio",
       projects: "Proyectos",
       blog: "Blog",
-      cv: "CV",
+      profile: "Perfil",
       archive: "Sitio Archivo",
       downloadResume: "Currículum",
     },
@@ -126,7 +126,7 @@ const translations: Record<Locale, unknown> = {
       description:
         "Construyo productos rápidos y confiables con tecnologías web modernas e infraestructura en la nube. Transformo problemas complejos en soluciones elegantes — desde API robustas hasta experiencias de usuario fluidas. Siempre aprendiendo, siempre enviando.",
       connect: "Conectemos",
-      resume: "Ver Currículum",
+      resume: "Ver Perfil",
       imageAlt: "Sidarth G — Desarrollador Backend y Full-Stack",
     },
   },
@@ -135,10 +135,9 @@ const translations: Record<Locale, unknown> = {
       home: "Accueil",
       projects: "Projets",
       blog: "Blog",
-      cv: "CV",
+      profile: "Profil",
       archive: "Site Archive",
-      downloadResume: "CV",
-    },
+      downloadResume: "Profil",    },
     footer: {
       designedBy: "Designed by Sidarth",
     },
@@ -189,8 +188,7 @@ const translations: Record<Locale, unknown> = {
       description:
         "Je construis des produits rapides et fiables avec des technologies web modernes et une infrastructure cloud. Transformer des problèmes complexes en solutions élégantes — des API robustes aux expériences utilisateur fluides. Toujours en apprentissage, toujours en production.",
       connect: "Me Contacter",
-      resume: "Voir le CV",
-      imageAlt: "Sidarth G — Développeur Backend & Full-Stack",
+      resume: "Voir le Profil",      imageAlt: "Sidarth G — Développeur Backend & Full-Stack",
     },
   },
 }

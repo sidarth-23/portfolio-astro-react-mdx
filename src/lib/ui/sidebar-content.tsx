@@ -44,7 +44,7 @@ export interface SidebarContent {
   social: SocialLink[]
 }
 
-function navIcon(icon: "home" | "projects" | "blog" | "cv"): ReactNode {
+function navIcon(icon: "home" | "projects" | "blog" | "profile"): ReactNode {
   switch (icon) {
     case "home":
       return <HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={2} />
@@ -52,7 +52,7 @@ function navIcon(icon: "home" | "projects" | "blog" | "cv"): ReactNode {
       return <HugeiconsIcon icon={FolderCodeIcon} size={16} strokeWidth={2} />
     case "blog":
       return <HugeiconsIcon icon={BookOpen02Icon} size={16} strokeWidth={2} />
-    case "cv":
+    case "profile":
       return <HugeiconsIcon icon={File02Icon} size={16} strokeWidth={2} />
   }
 }
