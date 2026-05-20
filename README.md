@@ -84,22 +84,18 @@ Optional environment variables:
 - `AI_MODEL` (default: `gpt-4o-mini`)
 - `AI_API_URL` (custom provider endpoint)
 
-## Project structure (high signal)
+## Features
 
-- `src/pages/**` - routes and API endpoints
-- `src/layouts/**` - layout shells
-- `src/components/features/**` - domain and page-level components
-- `src/components/ui/react/**` - interactive React UI primitives
-- `src/components/ui/astro/**` - static Astro UI primitives
-- `src/content/**` - localized content source
-- `src/lib/content/**` - content querying and date helpers
-- `src/lib/api/**` - API serialization and fetcher logic
-- `src/lib/i18n/**` - translation tooling and provider adapters
-- `src/lib/seo/**` - metadata helpers
-- `src/lib/ui/**` - UI view-model helpers
-- `src/integrations/translate.ts` - build-time translation check integration
-
-See `docs/architecture/frontend-structure.md` for naming rules and migration notes.
+- **Multi-language support** — Content available in English, Spanish, and French with locale-prefixed routing and automatic redirection.
+- **Content-driven blog** — MDX-based blog posts with search, tag filtering, and infinite scroll pagination.
+- **Project showcase** — Filterable project listings with search, tags, and pagination; each project has its own detailed MDX page.
+- **Interactive CV** — Structured resume generated from JSON and Markdown content collections, including work experience.
+- **Collapsible sidebar navigation** — Profile info, primary navigation, social links (GitHub, LinkedIn, RSS, Email), and quick actions (archive, download resume).
+- **Responsive design** — Mobile-friendly layout built with Tailwind CSS.
+- **SEO optimized** — Metadata helpers and structured content for search engines.
+- **RSS feeds** — Per-locale RSS feed generation.
+- **Build-time translation checks** — Automated validation ensuring content stays synchronized across all locales.
+- **API endpoints** — JSON API for blog and project data with pagination, search, and tag filtering.
 
 ## Notes
 

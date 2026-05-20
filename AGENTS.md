@@ -23,6 +23,12 @@
 - Shared layout shell: `src/layouts/Layout.astro` + `src/components/layout/app-shell.tsx`.
 - Client-side filtered lists use API + React Query: `src/pages/api/*.json.ts` + `src/components/*/*-list-with-provider.tsx`.
 
+## Agent Rules
+- Write comments only to explain why code is written in a non-obvious way; do not write organizational or summarizing comments.
+- Prefer adding functionality to existing files unless the change is a new logical component. Avoid creating many small files.
+- Write unit tests and e2e tests for all new functionality and bug fixes.
+- Always verify the code you wrote by running the appropriate checks (lint, typecheck, build) before considering a task complete.
+
 ## Guardrails
 - Do not edit generated output in `dist/`.
 - Keep locale/content changes synchronized across `en`, `es`, and `fr` to avoid translation-check build failures.
