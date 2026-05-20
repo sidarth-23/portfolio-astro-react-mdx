@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useSidebar } from "@/components/ui/sidebar"
+import { useSidebar } from "@/components/ui/sidebar-context"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PanelLeft } from "@hugeicons/core-free-icons"
 import { ThemeToggle } from "./theme-toggle"

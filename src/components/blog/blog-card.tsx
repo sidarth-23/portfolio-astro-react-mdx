@@ -11,7 +11,7 @@ import {
 import type { SerializedBlogPost } from "@/lib/api-serialization"
 import type { Locale } from "@/i18n/config"
 import { formatShortDate } from "@/lib/date-formatting"
-import { t } from "@/i18n/ui"
+import { createBlogCardView } from "@/components/shared/card-presenters"
 
 interface BlogCardProps {
   item: SerializedBlogPost
@@ -19,15 +19,22 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ item, locale }: BlogCardProps) {
+  const card = createBlogCardView({
+    locale,
+    slug: item.slug,
+    title: item.title,
+    category: item.category,
+    formattedDate: formatShortDate(new Date(item.date), locale),
+    description: item.description,
+    coverImage: item.coverImage,
+  })
+
   return (
-    <a
-      href={`/${locale}/blog/${item.slug}`}
-      className="group block h-full"
-    >
+    <a href={card.href} className="group block h-full">
       <Card className="p-0 gap-0 h-full transition-all hover:-translate-y-0.5 hover:shadow-md">
         <div className="relative overflow-hidden bg-black/5 aspect-video w-full">
           <img
-            src={item.coverImage.src}
+            src={card.coverImage.src}
             alt=""
             aria-hidden="true"
             width={64}
@@ -35,36 +42,36 @@ export function BlogCard({ item, locale }: BlogCardProps) {
             className="absolute inset-0 h-full w-full object-cover blur-2xl scale-110"
           />
           <img
-            src={item.coverImage.src}
-            alt={item.title}
-            width={item.coverImage.width}
-            height={item.coverImage.height}
+            src={card.coverImage.src}
+            alt={card.title}
+            width={card.coverImage.width}
+            height={card.coverImage.height}
             loading="lazy"
             decoding="async"
             className="relative z-10 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
         <CardContent className="flex flex-1 flex-col pt-4">
-          {item.category && (
+          {card.category && (
             <Badge variant="default" className="mb-2 w-fit capitalize">
-              {item.category}
+              {card.category}
             </Badge>
           )}
           <CardTitle className="text-lg leading-snug font-medium transition-colors group-hover:text-primary">
-            {item.title}
+            {card.title}
           </CardTitle>
           <div className="mt-2">
             <Badge variant="outline" className="w-fit text-muted-foreground/80">
-              {formatShortDate(new Date(item.date), locale)}
+              {card.formattedDate}
             </Badge>
           </div>
           <CardDescription className="mt-3 line-clamp-2">
-            {item.description}
+            {card.description}
           </CardDescription>
         </CardContent>
         <CardFooter className="mt-auto pt-0 pb-4 border-0 bg-transparent">
           <span className="inline-flex items-center text-sm font-medium text-primary">
-            {t(locale, "blog.readMore")}
+            {card.readMoreLabel}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
