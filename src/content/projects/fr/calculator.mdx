@@ -21,17 +21,23 @@ This project has an honest origin story, right there in the README:
 
 > “I started this project when I was learning the fundamentals of HTML, CSS and JS. I wanted to implement the core functionalities of a web app in vanilla tech stack before diving deep into highly composed libraries like React where the core functionality is wrapped deep inside the core module that it is not visible to the average eye.”  
 >    
-> That’s the whole point. Not to build the most impressive calculator on the internet — but to build one where you understand every single line of it. ---
+> That’s the whole point. Not to build the most impressive calculator on the internet — but to build one where you understand every single line of it.
+
+---
 
 ## The Stack
 
 - **HTML** — structure
 - **CSS** — layout, theming, button styles
-- **JavaScript** — calculator logic, theme switching, keyboard support No bundler, no npm, no build step. Open `index.html` in a browser and it works.  
+- **JavaScript** — calculator logic, theme switching, keyboard support
+
+No bundler, no npm, no build step. Open `index.html` in a browser and it works.
    
 --- ## What It Does A functional calculator with the full standard set of operations: addition, subtraction, multiplication, division, decimal support, and chained calculations. The display shows the running input and updates as you type.  
    
-Two keyboard shortcuts worth calling out: **`e`**** to reset** and **`d`**** to delete**. These are small additions but they make the calculator feel like something you’d actually use — no reaching for the mouse to clear a mistaken entry. ---
+Two keyboard shortcuts worth calling out: **`e`**** to reset** and **`d`**** to delete**. These are small additions but they make the calculator feel like something you’d actually use — no reaching for the mouse to clear a mistaken entry.
+
+---
 
 ## Three Themes
 
@@ -71,7 +77,9 @@ toggle.addEventListener("click", () => {
 });
 ```
 
-One attribute on `<html>`, three complete visual personalities. ---
+One attribute on `<html>`, three complete visual personalities.
+
+---
 
 ## The Calculator Logic
 
@@ -85,7 +93,9 @@ The logic is the more instructive half of this project. A calculator that feels 
    
 **Decimal guarding.** The `.` button should do nothing if a decimal already exists in the current number. A simple `includes(".")` check on the display string handles this, but it has to be there.  
    
-None of this is complicated, but all of it is invisible in a React component where the state transitions are abstracted away. Writing it in vanilla JS means you own every transition explicitly. ---
+None of this is complicated, but all of it is invisible in a React component where the state transitions are abstracted away. Writing it in vanilla JS means you own every transition explicitly.
+
+---
 
 ## Why Vanilla Before Frameworks
 

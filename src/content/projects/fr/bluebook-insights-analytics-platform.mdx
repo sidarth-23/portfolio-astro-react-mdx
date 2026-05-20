@@ -33,7 +33,9 @@ What tutors actually needed was:
 - **Domain and skill-level breakdowns** — not just “Math: 650” but which skills pulled the score down
 - **Difficulty distribution** — how did the student perform on easy vs. medium vs. hard questions
 - **Module-level analysis** — Bluebook is adaptive; understanding baseline vs. adaptive module performance matters
-- **Shareable outputs** — tutors need to send reports to students and parents, not just view them internally That’s the brief. Now here’s what building it actually looked like.
+- **Shareable outputs** — tutors need to send reports to students and parents, not just view them internally
+
+That’s the brief. Now here’s what building it actually looked like.
 
 ---
 
@@ -49,7 +51,9 @@ For an early internal tool, this worked. We could ingest uploaded score files, r
 
 - PocketBase is fantastic for small teams but starts to show limits when you need fine-grained control over the data layer and complex query patterns
 - The HTML and PDF extraction logic for crawling the uploaded Bluebook score documents was tightly coupled to the app — hard to test, hard to iterate on independently
-- SvelteKit, while excellent, narrowed the pool of developers who could contribute confidently. Onboarding new team members meant a framework learning curve on top of the domain complexity of the product itself ---
+- SvelteKit, while excellent, narrowed the pool of developers who could contribute confidently. Onboarding new team members meant a framework learning curve on top of the domain complexity of the product itself
+
+---
 
 ## Iteration 2: The Migration to Next.js + Hono + FastAPI
 
