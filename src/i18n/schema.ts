@@ -32,6 +32,13 @@ export const TranslationSchema = z.object({
     updated: z.string(),
     minRead: z.string(),
   }),
+  filters: z.object({
+    searchPlaceholder: z.string(),
+    clearFilters: z.string(),
+    noResults: z.string(),
+    loading: z.string(),
+    loadMore: z.string(),
+  }),
   lang: z.object({
     aiGenerated: z.string(),
     selector: z.string(),

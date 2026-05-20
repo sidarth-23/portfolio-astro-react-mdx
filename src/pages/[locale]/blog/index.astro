@@ -1,40 +1,55 @@
 ---
+export const prerender = false
+
 import ContentLayout from "@/layouts/ContentLayout.astro"
-import BlogCard from "@/components/blog/blog-card.astro"
-import { Badge } from "@/components/ui/badge"
+import { BlogListWithProvider } from "@/components/blog/blog-list-with-provider"
 import { getPublishedBlogPosts, getAllTags } from "@/lib/content"
-import { locales, type Locale } from "@/i18n/config"
+import { fetchBlogPage } from "@/lib/fetchers"
+import { dehydrate } from "@tanstack/react-query"
+import { createQueryClient } from "@/lib/query-client"
+import type { PaginatedResponse } from "@/lib/api-serialization"
+import type { SerializedBlogPost } from "@/lib/api-serialization"
+import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
-export async function getStaticPaths() {
-  return locales.map((locale) => ({ params: { locale } }))
-}
-
 const { locale } = Astro.params as { locale: Locale }
+const url = Astro.url
+
+const search = url.searchParams.get("search") ?? ""
+const tag = url.searchParams.get("tag")
+const limit = 12
 
 const posts = await getPublishedBlogPosts(locale)
 const tags = getAllTags(posts)
+
+const queryClient = createQueryClient()
+
+await queryClient.prefetchInfiniteQuery({
+  queryKey: ["/api/blog.json", locale, tag, search, limit],
+  queryFn: ({ pageParam = 1 }) => fetchBlogPage(locale, tag, search, pageParam, limit),
+  initialPageParam: 1,
+  getNextPageParam: (
+    lastPage: PaginatedResponse<SerializedBlogPost>,
+    allPages: PaginatedResponse<SerializedBlogPost>[]
+  ) => {
+    if (!lastPage.hasMore) return undefined
+    return allPages.length + 1
+  },
+})
+
+const dehydratedState = dehydrate(queryClient)
 ---
 
 <ContentLayout title={t(locale, "blog.title") + " — Sid"} locale={locale}>
   <h1 class="text-3xl font-bold tracking-tight mb-2">{t(locale, "blog.title")}</h1>
   <p class="text-muted-foreground mb-8">{t(locale, "blog.description")}</p>
 
-  {
-    tags.length > 0 && (
-      <div class="mb-8 flex flex-wrap gap-1.5">
-        {tags.map((tag) => (
-          <Badge variant="outline" className="text-muted-foreground/80">#{tag}</Badge>
-        ))}
-      </div>
-    )
-  }
-
-  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    {
-      posts.map((post) => (
-        <BlogCard post={post} locale={locale} />
-      ))
-    }
-  </div>
+  <BlogListWithProvider
+    client:load
+    dehydratedState={dehydratedState}
+    locale={locale}
+    tags={tags}
+    initialSearch={search}
+    initialTag={tag}
+  />
 </ContentLayout>

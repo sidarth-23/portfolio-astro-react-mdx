@@ -39,6 +39,13 @@ const translations: Record<Locale, unknown> = {
       updated: "Updated",
       minRead: "min read",
     },
+    filters: {
+      searchPlaceholder: "Search...",
+      clearFilters: "Clear filters",
+      noResults: "No results found",
+      loading: "Loading...",
+      loadMore: "Load more",
+    },
     lang: {
       aiGenerated: "AI Translated",
       selector: "Language",
@@ -93,6 +100,13 @@ const translations: Record<Locale, unknown> = {
       published: "Publicado",
       updated: "Actualizado",
       minRead: "min de lectura",
+    },
+    filters: {
+      searchPlaceholder: "Buscar...",
+      clearFilters: "Limpiar filtros",
+      noResults: "No se encontraron resultados",
+      loading: "Cargando...",
+      loadMore: "Cargar más",
     },
     lang: {
       aiGenerated: "Traducido por IA",
@@ -149,6 +163,13 @@ const translations: Record<Locale, unknown> = {
       published: "Publié",
       updated: "Mis à jour",
       minRead: "min de lecture",
+    },
+    filters: {
+      searchPlaceholder: "Rechercher...",
+      clearFilters: "Effacer les filtres",
+      noResults: "Aucun résultat trouvé",
+      loading: "Chargement...",
+      loadMore: "Charger plus",
     },
     lang: {
       aiGenerated: "Traduit par IA",

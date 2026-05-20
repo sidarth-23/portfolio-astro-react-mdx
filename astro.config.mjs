@@ -5,19 +5,17 @@ import { defineConfig } from "astro/config"
 import react from "@astrojs/react"
 import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
+import node from "@astrojs/node"
 import rehypeSlug from "rehype-slug"
 import { translateIntegration } from "./src/integrations/translate"
-import { filenameTransformer } from "./src/lib/shiki/transformers.ts"
 
 // https://astro.build/config
 export default defineConfig({
+  adapter: node({
+    mode: "standalone",
+  }),
   vite: {
     plugins: [tailwindcss()],
-  },
-  markdown: {
-    shikiConfig: {
-      transformers: [filenameTransformer()],
-    },
   },
   integrations: [
     react(),
