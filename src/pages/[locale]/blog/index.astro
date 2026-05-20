@@ -2,13 +2,13 @@
 export const prerender = false
 
 import ContentLayout from "@/layouts/ContentLayout.astro"
-import { BlogListWithProvider } from "@/components/blog/blog-list-with-provider"
-import { getPublishedBlogPosts, getAllTags } from "@/lib/content"
-import { fetchBlogPage } from "@/lib/fetchers"
+import { BlogListWithProvider } from "@/components/features/blog/blog-list-with-provider"
+import { getPublishedBlogPosts, getAllTags } from "@/lib/content/queries"
+import { fetchBlogPage } from "@/lib/api"
 import { dehydrate } from "@tanstack/react-query"
 import { createQueryClient } from "@/lib/query-client"
-import type { PaginatedResponse } from "@/lib/api-serialization"
-import type { SerializedBlogPost } from "@/lib/api-serialization"
+import type { PaginatedResponse } from "@/lib/api"
+import type { SerializedBlogPost } from "@/lib/api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 

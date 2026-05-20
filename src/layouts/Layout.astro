@@ -1,6 +1,6 @@
 ---
 import "@/styles/global.css"
-import { resolveSeo } from "@/lib/seo"
+import { resolveSeo } from "@/lib/content/seo"
 import { AppShell } from "@/components/layout/app-shell"
 import avatarImage from "@/assets/images/avatar.jpg"
 import { ClientRouter } from "astro:transitions"
@@ -10,7 +10,7 @@ interface Props {
   title: string
   description?: string
   image?: string
-  seo?: import("@/lib/seo").SeoData
+  seo?: import("@/lib/content/seo").SeoData
   headerTitle?: string
   locale?: Locale
 }

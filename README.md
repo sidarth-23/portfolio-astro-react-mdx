@@ -88,9 +88,18 @@ Optional environment variables:
 
 - `src/pages/**` - routes and API endpoints
 - `src/layouts/**` - layout shells
-- `src/components/**` - UI and interactive islands
+- `src/components/features/**` - domain and page-level components
+- `src/components/ui/react/**` - interactive React UI primitives
+- `src/components/ui/astro/**` - static Astro UI primitives
 - `src/content/**` - localized content source
+- `src/lib/content/**` - content querying and date helpers
+- `src/lib/api/**` - API serialization and fetcher logic
+- `src/lib/i18n/**` - translation tooling and provider adapters
+- `src/lib/seo/**` - metadata helpers
+- `src/lib/ui/**` - UI view-model helpers
 - `src/integrations/translate.ts` - build-time translation check integration
+
+See `docs/architecture/frontend-structure.md` for naming rules and migration notes.
 
 ## Notes
 

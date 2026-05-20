@@ -1,12 +1,12 @@
 ---
-import Layout from "./Layout.astro"
+import Layout from "@/layouts/Layout.astro"
 import type { Locale } from "@/i18n/config"
 
 interface Props {
   title: string
   description?: string
   image?: string
-  seo?: import("@/lib/seo").SeoData
+  seo?: import("@/lib/content/seo").SeoData
   headerTitle?: string
   locale?: Locale
 }

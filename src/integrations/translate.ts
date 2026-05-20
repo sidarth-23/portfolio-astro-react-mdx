@@ -1,7 +1,7 @@
 import type { AstroIntegration } from "astro"
-import type { ProviderConfig } from "../lib/ai-providers"
-import { checkTranslations, formatReport } from "../lib/check-translations"
-import { translateAll } from "../lib/translate"
+import type { ProviderConfig } from "../lib/i18n"
+import { checkTranslations, formatReport } from "../lib/i18n"
+import { translateAll } from "../lib/i18n"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -63,7 +63,7 @@ export function translateIntegration(
                       console.log("\n✅ Translations generated")
                     } else {
                       throw new Error(
-                        "Translation check failed. Run `npm run translate` to fix, or enable autoTranslate in the integration config."
+                        "Translation check failed. Run `bun run translate` to fix, or enable autoTranslate in the integration config."
                       )
                     }
                   }

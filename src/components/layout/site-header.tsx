@@ -1,12 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { useSidebar } from "@/components/ui/sidebar-context"
+import { useSidebar } from "@/components/ui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PanelLeft } from "@hugeicons/core-free-icons"
-import { ThemeToggle } from "./theme-toggle"
-import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/layout/theme-toggle"
+import { Separator } from "@/components/ui/react"
+import { Button } from "@/components/ui/react"
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -15,15 +15,15 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+} from "@/components/ui/react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { LanguageSelector } from "./language-selector"
-import { resolvePageTitle } from "@/lib/sidebar-content"
+} from "@/components/ui/react"
+import { LanguageSelector } from "@/components/layout/language-selector"
+import { resolvePageTitle } from "@/lib/ui"
 import { defaultLocale, isValidLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 

@@ -3,15 +3,15 @@
  * Translation script for MDX content.
  *
  * Usage:
- *   AI_API_KEY=sk-xxx npm run translate
- *   AI_API_KEY=sk-xxx npm run translate -- --force
+ *   AI_API_KEY=sk-xxx bun run translate
+ *   AI_API_KEY=sk-xxx bun run translate --force
  *
- * This is a thin CLI wrapper around src/lib/translate.ts.
+ * This is a thin CLI wrapper around src/lib/i18n/translate.ts.
  */
 
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import { translateAll } from "../src/lib/translate"
+import { translateAll } from "../src/lib/i18n/translate"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, "..")
@@ -23,7 +23,7 @@ async function main() {
 
   if (!AI_API_KEY) {
     console.error("Error: AI_API_KEY environment variable is required")
-    console.error("Example: AI_API_KEY=sk-xxx npm run translate")
+    console.error("Example: AI_API_KEY=sk-xxx bun run translate")
     process.exit(1)
   }
 

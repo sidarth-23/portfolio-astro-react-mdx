@@ -2,17 +2,17 @@
 
 import * as React from "react"
 
-import { NavLinks } from "./nav-links"
-import { NavSecondary } from "./nav-secondary"
+import { NavLinks } from "@/components/layout/nav-links"
+import { NavSecondary } from "@/components/layout/nav-secondary"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarSeparator,
-} from "@/components/ui/sidebar"
-import { sidebarContent } from "@/lib/sidebar-content"
-import { NavFooter } from "./nav-footer"
+} from "@/components/ui/react"
+import { sidebarContent } from "@/lib/ui"
+import { NavFooter } from "@/components/layout/nav-footer"
 import type { Locale } from "@/i18n/config"
 
 export function AppSidebar({

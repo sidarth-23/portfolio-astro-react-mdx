@@ -2,9 +2,9 @@
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import Hero from "@/components/sections/hero.astro"
 import heroImage from "@/assets/images/hero-image.png"
-import BlogCard from "@/components/blog/blog-card.astro"
-import ProjectCard from "@/components/project/project-card.astro"
-import { getPublishedBlogPosts, getFeaturedProjects } from "@/lib/content"
+import BlogCard from "@/components/features/blog/blog-card.astro"
+import ProjectCard from "@/components/features/projects/project-card.astro"
+import { getPublishedBlogPosts, getFeaturedProjects } from "@/lib/content/queries"
 import { locales, defaultLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 

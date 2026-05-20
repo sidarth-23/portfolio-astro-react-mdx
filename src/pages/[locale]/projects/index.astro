@@ -2,13 +2,13 @@
 export const prerender = false
 
 import ContentLayout from "@/layouts/ContentLayout.astro"
-import { ProjectListWithProvider } from "@/components/project/project-list-with-provider"
-import { getAllProjects, getAllProjectTags } from "@/lib/content"
-import { fetchProjectPage } from "@/lib/fetchers"
+import { ProjectListWithProvider } from "@/components/features/projects/project-list-with-provider"
+import { getAllProjects, getAllProjectTags } from "@/lib/content/queries"
+import { fetchProjectPage } from "@/lib/api"
 import { dehydrate } from "@tanstack/react-query"
 import { createQueryClient } from "@/lib/query-client"
-import type { PaginatedResponse } from "@/lib/api-serialization"
-import type { SerializedProject } from "@/lib/api-serialization"
+import type { PaginatedResponse } from "@/lib/api"
+import type { SerializedProject } from "@/lib/api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 

@@ -1,5 +1,5 @@
 import rss, { type RSSFeedItem } from "@astrojs/rss"
-import { getPublishedBlogPosts } from "@/lib/content"
+import { getPublishedBlogPosts } from "@/lib/content/queries"
 import { locales, defaultLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 

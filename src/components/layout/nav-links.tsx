@@ -4,7 +4,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/react"
 import { isActiveLink } from "@/lib/utils"
 
 export function NavLinks({

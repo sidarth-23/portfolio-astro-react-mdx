@@ -4,8 +4,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/react"
+import { Button } from "@/components/ui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Sun02Icon,

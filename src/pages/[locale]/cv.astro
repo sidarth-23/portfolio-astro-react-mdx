@@ -2,7 +2,7 @@
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import CvContent from "@/components/sections/cv-content.astro"
 import { defaultLocale, locales, type Locale } from "@/i18n/config"
-import { getCvByLocale, getCvExperienceByLocale } from "@/lib/content"
+import { getCvByLocale, getCvExperienceByLocale } from "@/lib/content/queries"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))

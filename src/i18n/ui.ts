@@ -1,9 +1,9 @@
-import type { Locale } from "./config"
+import type { Locale } from "@/i18n/config"
 import {
   type TranslationSchema,
   type TranslationKey,
   validateTranslations,
-} from "./schema"
+} from "@/i18n/schema"
 
 const translations: Record<Locale, unknown> = {
   en: {

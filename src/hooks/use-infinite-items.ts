@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useEffect, useRef } from "react"
-import type { PaginatedResponse } from "@/lib/api-serialization"
+import type { PaginatedResponse } from "@/lib/api"
 
 interface UseInfiniteItemsOptions {
   endpoint: string

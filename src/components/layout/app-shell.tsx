@@ -1,10 +1,10 @@
 import * as React from "react"
 
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { AppSidebar } from "./app-sidebar"
-import { SiteHeader } from "./site-header"
-import { Footer } from "./footer"
+import { SidebarProvider, SidebarInset } from "@/components/ui/react"
+import { TooltipProvider } from "@/components/ui/react"
+import { AppSidebar } from "@/components/layout/app-sidebar"
+import { SiteHeader } from "@/components/layout/site-header"
+import { Footer } from "@/components/layout/footer"
 import type { Locale } from "@/i18n/config"
 
 export function AppShell({

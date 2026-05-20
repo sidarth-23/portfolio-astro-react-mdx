@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro"
-import { fetchProjectPage } from "@/lib/fetchers"
+import { fetchProjectPage } from "@/lib/api"
 import type { Locale } from "@/i18n/config"
 import { locales } from "@/i18n/config"
 

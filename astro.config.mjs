@@ -7,7 +7,7 @@ import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
 import node from "@astrojs/node"
 import rehypeSlug from "rehype-slug"
-import { filenameTransformer } from "./src/lib/shiki/transformers"
+import { filenameTransformer } from "./src/lib/codeblock/shiki"
 import { translateIntegration } from "./src/integrations/translate"
 
 // https://astro.build/config
