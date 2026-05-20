@@ -1,71 +1,63 @@
 import * as React from "react"
-import { useState, useRef, useLayoutEffect } from "react"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 
-interface CodeTab {
+interface CodePanel {
   id: string
   filename: string
+  element: React.ReactElement
+}
+
+function extractPanels(children: React.ReactNode): CodePanel[] {
+  const panels: CodePanel[] = []
+  let index = 0
+
+  function walk(node: React.ReactNode) {
+    if (!node) return
+
+    if (React.isValidElement(node)) {
+      const props = node.props as Record<string, unknown>
+      const filename = props["data-filename"] as string | undefined
+
+      // Any element with data-filename is a code panel (MDX may wrap pre)
+      if (filename) {
+        panels.push({
+          id: String(index++),
+          filename,
+          element: node,
+        })
+        return
+      }
+
+      // Recurse into children
+      const childNodes = React.Children.toArray(
+        (node.props as Record<string, React.ReactNode>)?.children
+      )
+      childNodes.forEach(walk)
+    }
+  }
+
+  React.Children.toArray(children).forEach(walk)
+  return panels
 }
 
 export function CodeGroup({ children }: { children: React.ReactNode }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [tabs, setTabs] = useState<CodeTab[]>([])
-  const [activeTab, setActiveTab] = useState("0")
+  const panels = React.useMemo(() => extractPanels(children), [children])
+  const [activeTab, setActiveTab] = useState(panels[0]?.id ?? "0")
   const [copied, setCopied] = useState(false)
-
-  // Scan for pre elements after hydration (before paint)
-  useLayoutEffect(() => {
-    if (!containerRef.current) return
-
-    // Pre elements might be inside astro-slot
-    const preElements = containerRef.current.querySelectorAll(
-      "pre[data-filename]"
-    )
-
-    const newTabs = Array.from(preElements).map((pre, index) => ({
-      id: String(index),
-      filename: pre.getAttribute("data-filename") || `File ${index + 1}`,
-    }))
-
-    setTabs(newTabs)
-
-    // Style all panels
-    preElements.forEach((pre, index) => {
-      const el = pre as HTMLElement
-      el.style.display = index === 0 ? "block" : "none"
-      el.style.margin = "0"
-      el.style.borderRadius = "0"
-      el.style.border = "none"
-    })
-  }, [])
-
-  // Update visibility when active tab changes
-  useLayoutEffect(() => {
-    if (!containerRef.current) return
-
-    const preElements = containerRef.current.querySelectorAll(
-      "pre[data-filename]"
-    )
-
-    preElements.forEach((pre, index) => {
-      const el = pre as HTMLElement
-      el.style.display = index === parseInt(activeTab) ? "block" : "none"
-    })
-  }, [activeTab])
+  const containerRef = React.useRef<HTMLDivElement>(null)
 
   const handleCopy = () => {
     if (!containerRef.current) return
 
-    const preElements = containerRef.current.querySelectorAll(
-      "pre[data-filename]"
+    const activePanel = containerRef.current.querySelector(
+      `[data-panel-id="${activeTab}"]`
     )
-    const activePre = preElements[parseInt(activeTab)]
-    if (!activePre) return
+    if (!activePanel) return
 
-    const codeElement = activePre.querySelector("code")
+    const codeElement = activePanel.querySelector("code")
     if (!codeElement) return
 
     const code = codeElement.textContent || ""
@@ -78,15 +70,22 @@ export function CodeGroup({ children }: { children: React.ReactNode }) {
   return (
     <div className="code-group" ref={containerRef} data-code-group="">
       <div className="code-group-header">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            {tabs.map((tab) => (
-              <TabsTrigger key={tab.id} value={tab.id}>
-                {tab.filename}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <div className="code-group-tabs" role="tablist">
+          {panels.map((panel) => (
+            <button
+              key={panel.id}
+              type="button"
+              role="tab"
+              className={`code-group-tab ${
+                panel.id === activeTab ? "active" : ""
+              }`}
+              onClick={() => setActiveTab(panel.id)}
+              aria-selected={panel.id === activeTab}
+            >
+              {panel.filename}
+            </button>
+          ))}
+        </div>
         <Button
           variant="ghost"
           size="icon-xs"
@@ -100,7 +99,23 @@ export function CodeGroup({ children }: { children: React.ReactNode }) {
           />
         </Button>
       </div>
-      {children}
+      <div className="code-group-panels">
+        {panels.length > 0 ? (
+          panels.map((panel) => (
+            <div
+              key={panel.id}
+              data-panel-id={panel.id}
+              role="tabpanel"
+              hidden={panel.id !== activeTab}
+              className="code-group-panel"
+            >
+              {panel.element}
+            </div>
+          ))
+        ) : (
+          <div className="code-group-panel">{children}</div>
+        )}
+      </div>
     </div>
   )
 }

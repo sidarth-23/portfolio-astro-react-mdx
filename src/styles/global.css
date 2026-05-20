@@ -214,23 +214,35 @@
   /* No background, no border */
 }
 
-.code-group-header [data-slot="tabs-list"] {
-  background: transparent !important;
-  padding: 0 !important;
-  height: auto !important;
+.code-group-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.code-group-header [data-variant="default"] {
-  background: transparent !important;
+.code-group-tab {
+  height: 1.75rem;
+  padding: 0 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
-.code-group-header [data-slot="tabs-trigger"] {
-  height: 1.75rem !important;
-  padding: 0 0.625rem !important;
-  font-size: 0.8125rem !important;
+.code-group-tab:hover {
+  color: var(--foreground);
 }
 
-.code-group-panels > [data-state="inactive"] {
+.code-group-tab.active {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.code-group-panel[hidden] {
   display: none;
 }
 
