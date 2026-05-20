@@ -10,7 +10,10 @@ import type { CarouselApi } from "@/components/ui/carousel.types"
 
 type GalleryImage = {
   src: string
+  blurSrc: string
   alt: string
+  width: number
+  height: number
 }
 
 interface ImageGalleryCarouselProps {
@@ -40,7 +43,7 @@ export function ImageGalleryCarousel({ images }: ImageGalleryCarouselProps) {
   if (images.length === 0) return null
 
   return (
-    <section className="mb-10 w-full md:mx-auto md:w-3/4">
+    <section className="not-prose mb-10 w-full md:mx-auto md:w-3/4">
       <Carousel
         setApi={setApi}
         opts={{ loop: images.length > 1 }}
@@ -51,13 +54,22 @@ export function ImageGalleryCarousel({ images }: ImageGalleryCarouselProps) {
           {images.map((image, index) => (
             <CarouselItem key={`${image.src}-${index}`}>
               <div className="overflow-hidden rounded-xl border border-border/70 bg-card">
-                <div className="aspect-4/3 w-full">
+                <div
+                  className="relative w-full overflow-hidden bg-black/5"
+                  style={{ aspectRatio: `${image.width} / ${image.height}` }}
+                >
+                  <img
+                    src={image.blurSrc}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 m-0 h-full w-full scale-110 object-cover blur-2xl"
+                  />
                   <img
                     src={image.src}
                     alt={image.alt}
                     loading="lazy"
                     decoding="async"
-                    className="size-full object-cover"
+                    className="absolute inset-0 z-10 m-0 h-full w-full object-contain"
                   />
                 </div>
               </div>

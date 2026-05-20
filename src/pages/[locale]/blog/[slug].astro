@@ -4,7 +4,7 @@ import TableOfContents from "@/components/toc/table-of-contents.astro"
 import MobileToc from "@/components/toc/mobile-toc.astro"
 import TocScrollspy from "@/components/toc/toc-scrollspy.astro"
 import { Badge } from "@/components/ui/badge"
-import { Image } from "astro:assets"
+import BlurBackdropImage from "@/components/media/blur-backdrop-image.astro"
 import {
   getPublishedBlogPosts,
   formatDate,
@@ -103,13 +103,13 @@ const readingTime = estimateReadingTime(post.body)
       }
     </header>
 
-    <Image
+    <BlurBackdropImage
       src={post.data.coverImage}
       alt={post.data.title}
       width={1280}
       height={720}
       format="webp"
-      class="mb-10 aspect-video w-full rounded-xl object-cover"
+      class="mb-10 aspect-video w-full rounded-xl"
     />
 
     <div class="prose prose-lg max-w-none prose-zinc dark:prose-invert">

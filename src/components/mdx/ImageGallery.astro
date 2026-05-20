@@ -12,17 +12,27 @@ const { images, title = "Image Gallery" } = Astro.props as Props
 
 const optimizedImages = await Promise.all(
   images.map(async (image, index) => {
-    const optimized = await getImage({
-      src: image,
-      width: 1200,
-      height: 900,
-      fit: "cover",
-      format: "webp",
-    })
+    const [main, blur] = await Promise.all([
+      getImage({
+        src: image,
+        width: 1600,
+        format: "webp",
+        quality: 80,
+      }),
+      getImage({
+        src: image,
+        width: 48,
+        format: "webp",
+        quality: 25,
+      }),
+    ])
 
     return {
-      src: optimized.src,
+      src: main.src,
+      blurSrc: blur.src,
       alt: `${title} image ${index + 1}`,
+      width: image.width,
+      height: image.height,
     }
   })
 )
