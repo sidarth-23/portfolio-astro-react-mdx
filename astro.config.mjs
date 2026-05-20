@@ -8,6 +8,8 @@ import sitemap from "@astrojs/sitemap"
 import node from "@astrojs/node"
 import rehypeSlug from "rehype-slug"
 import { filenameTransformer } from "./src/lib/codeblock/shiki"
+import { rehypeCodeBlocks } from "./src/lib/codeblock/rehype"
+import { remarkCodeGroup } from "./src/lib/codeblock/remark"
 import { translateIntegration } from "./src/integrations/translate"
 
 // https://astro.build/config
@@ -21,7 +23,8 @@ export default defineConfig({
   integrations: [
     react(),
     mdx({
-      rehypePlugins: [rehypeSlug],
+      remarkPlugins: [remarkCodeGroup],
+      rehypePlugins: [rehypeSlug, rehypeCodeBlocks],
     }),
     sitemap(),
     translateIntegration({

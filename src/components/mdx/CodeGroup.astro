@@ -1,0 +1,15 @@
+---
+import CodeGroupClient, { type CodePanel } from "./CodeGroupClient"
+
+type Props = {
+  panels?: CodePanel[]
+  panelsJson?: string
+}
+
+const { panels, panelsJson } = Astro.props
+const parsedPanels = panels ?? (panelsJson ? JSON.parse(panelsJson) : [])
+---
+
+<CodeGroupClient client:load panels={parsedPanels}>
+  <slot />
+</CodeGroupClient>

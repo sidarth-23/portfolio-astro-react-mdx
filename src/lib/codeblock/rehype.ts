@@ -1,161 +1,184 @@
-import { visit } from "unist-util-visit"
-import type { Element, Root, Text } from "hast"
+import type { Element, Root } from "hast"
 
-function isPreWithFilename(node: unknown): node is Element {
+function isElement(node: unknown): node is Element {
   return (
     typeof node === "object" &&
     node !== null &&
-    (node as Element).type === "element" &&
-    (node as Element).tagName === "pre" &&
-    (node as Element).properties?.["data-filename"] !== undefined
+    (node as Element).type === "element"
   )
 }
 
-function isWhitespaceText(node: unknown): boolean {
-  return (
-    typeof node === "object" &&
-    node !== null &&
-    (node as Text).type === "text" &&
-    /^\s*$/.test((node as Text).value)
-  )
+function isPre(node: unknown): node is Element {
+  return isElement(node) && node.tagName === "pre"
 }
 
-interface Target {
-  parent: Element | Root
-  index: number
+function isInsideCodeGroup(ancestors: unknown[]): boolean {
+  return ancestors.some((ancestor) => {
+    if (typeof ancestor !== "object" || ancestor === null) return false
+    const node = ancestor as {
+      type?: string
+      name?: string
+      properties?: Record<string, unknown>
+    }
+    return (
+      (node.type === "mdxJsxFlowElement" && node.name === "CodeGroup") ||
+      node.properties?.["data-code-group"] !== undefined
+    )
+  })
 }
 
-/**
- * Rehype plugin that groups consecutive `<pre data-filename>` blocks
- * into a tabbed code block container.
- *
- * Single blocks with filenames still get a tab bar (one tab).
- * Blocks without filenames pass through unchanged.
- */
-export function rehypeCodeTabs() {
+function getFilename(pre: Element): string | null {
+  const filename = pre.properties?.["data-filename"]
+  return typeof filename === "string" && filename.length > 0 ? filename : null
+}
+
+function copyIcon(): Element {
+  return {
+    type: "element",
+    tagName: "svg",
+    properties: {
+      xmlns: "http://www.w3.org/2000/svg",
+      width: "14",
+      height: "14",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": "2",
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      "data-copy-icon": "",
+    },
+    children: [
+      {
+        type: "element",
+        tagName: "rect",
+        properties: { x: "9", y: "9", width: "13", height: "13", rx: "2" },
+        children: [],
+      },
+      {
+        type: "element",
+        tagName: "path",
+        properties: {
+          d: "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1",
+        },
+        children: [],
+      },
+    ],
+  }
+}
+
+function checkIcon(): Element {
+  return {
+    type: "element",
+    tagName: "svg",
+    properties: {
+      xmlns: "http://www.w3.org/2000/svg",
+      width: "14",
+      height: "14",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": "2",
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      class: "hidden",
+      "data-check-icon": "",
+    },
+    children: [
+      {
+        type: "element",
+        tagName: "polyline",
+        properties: { points: "20 6 9 17 4 12" },
+        children: [],
+      },
+    ],
+  }
+}
+
+function copyButton(isFloating: boolean): Element {
+  return {
+    type: "element",
+    tagName: "button",
+    properties: {
+      type: "button",
+      "aria-label": "Copy code",
+      class: [
+        "inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+        isFloating ? "absolute right-1.5 top-1.5 z-10" : "shrink-0",
+      ].join(" "),
+      onclick:
+        "(function(btn){var root=btn.closest('[data-code-block]');var code=root&&root.querySelector('code');if(!code)return;navigator.clipboard.writeText(code.textContent||'').then(function(){var copy=btn.querySelector('[data-copy-icon]');var check=btn.querySelector('[data-check-icon]');if(copy)copy.classList.add('hidden');if(check)check.classList.remove('hidden');setTimeout(function(){if(copy)copy.classList.remove('hidden');if(check)check.classList.add('hidden')},2000)})})(this)",
+    },
+    children: [copyIcon(), checkIcon()],
+  }
+}
+
+function codeBlockWrapper(pre: Element): Element {
+  const filename = getFilename(pre)
+  const hasFilename = filename !== null
+  pre.properties = {
+    ...pre.properties,
+    class: [pre.properties?.class, "!m-0 rounded-none border-0"]
+      .filter(Boolean)
+      .join(" "),
+  }
+
+  return {
+    type: "element",
+    tagName: "div",
+    properties: {
+      class: "relative my-6 overflow-hidden rounded-lg border",
+      "data-code-block": "",
+    },
+    children: hasFilename
+      ? [
+          {
+            type: "element",
+            tagName: "div",
+            properties: {
+              class: "flex items-center justify-between gap-3 px-3 py-2",
+            },
+            children: [
+              {
+                type: "element",
+                tagName: "span",
+                properties: {
+                  class:
+                    "truncate font-mono text-xs font-medium text-muted-foreground",
+                },
+                children: [{ type: "text", value: filename }],
+              },
+              copyButton(false),
+            ],
+          },
+          pre,
+        ]
+      : [copyButton(true), pre],
+  }
+}
+
+function walk(node: Root | Element, ancestors: unknown[] = []) {
+  const children = "children" in node ? node.children : []
+  for (let index = 0; index < children.length; index++) {
+    const child = children[index]
+    if (isPre(child) && !isInsideCodeGroup(ancestors)) {
+      children.splice(index, 1, codeBlockWrapper(child))
+      continue
+    }
+    if (
+      typeof child === "object" &&
+      child !== null &&
+      "children" in child &&
+      Array.isArray((child as { children?: unknown }).children)
+    ) {
+      walk(child as Root | Element, [...ancestors, child])
+    }
+  }
+}
+
+/** Wraps standalone code blocks at build time. Code groups are handled by CodeGroup. */
+export function rehypeCodeBlocks() {
   return (tree: Root) => {
-    // Collect all pre elements with data-filename
-    const targets: Target[] = []
-
-    visit(tree, "element", (node, index, parent) => {
-      if (isPreWithFilename(node) && parent && typeof index === "number") {
-        targets.push({ parent, index })
-      }
-    })
-
-    if (targets.length === 0) return
-
-    // Group targets that are in the same parent and separated only by whitespace
-    const groups: Array<{ targets: Target[]; endIndex: number }> = []
-    const visited = new Set<number>()
-
-    for (let i = 0; i < targets.length; i++) {
-      if (visited.has(i)) continue
-
-      const groupTargets: Target[] = [targets[i]]
-      visited.add(i)
-      let endIndex = targets[i].index
-
-      // Look ahead for more targets in the same parent
-      for (let j = i + 1; j < targets.length; j++) {
-        if (visited.has(j)) continue
-        if (targets[j].parent !== targets[i].parent) break
-
-        // Check if everything between endIndex and targets[j].index is whitespace
-        let allWhitespace = true
-        for (let k = endIndex + 1; k < targets[j].index; k++) {
-          if (!isWhitespaceText(targets[i].parent.children[k])) {
-            allWhitespace = false
-            break
-          }
-        }
-
-        if (allWhitespace) {
-          groupTargets.push(targets[j])
-          visited.add(j)
-          endIndex = targets[j].index
-        } else {
-          break
-        }
-      }
-
-      groups.push({ targets: groupTargets, endIndex })
-    }
-
-    // Process groups in reverse order to preserve indices
-    for (let g = groups.length - 1; g >= 0; g--) {
-      const { targets: groupTargets, endIndex } = groups[g]
-      const parent = groupTargets[0].parent
-      const startIndex = groupTargets[0].index
-
-      const filenames = groupTargets.map((t) => {
-        const node = t.parent.children[t.index]
-        return node.type === "element"
-          ? String(node.properties?.["data-filename"] ?? "")
-          : ""
-      })
-
-      // Create tab buttons
-      const tabButtons = filenames.map((filename, i) => ({
-        type: "element" as const,
-        tagName: "button",
-        properties: {
-          type: "button",
-          role: "tab",
-          "data-tab": String(i),
-          class: i === 0 ? "code-tabs-trigger active" : "code-tabs-trigger",
-          "aria-selected": i === 0 ? "true" : "false",
-        },
-        children: [{ type: "text" as const, value: filename }],
-      }))
-
-      // Create tab panels wrapping each pre element
-      const tabPanels = groupTargets.map((t, i) => ({
-        type: "element" as const,
-        tagName: "div",
-        properties: {
-          role: "tabpanel",
-          "data-tab-panel": String(i),
-          class: i === 0 ? "code-tabs-panel active" : "code-tabs-panel",
-        },
-        children: [t.parent.children[t.index] as Element],
-      }))
-
-      // Tab list container
-      const tabList: Element = {
-        type: "element",
-        tagName: "div",
-        properties: {
-          class: "code-tabs-list",
-          role: "tablist",
-        },
-        children: tabButtons,
-      }
-
-      // Panels container
-      const panelsContainer: Element = {
-        type: "element",
-        tagName: "div",
-        properties: {
-          class: "code-tabs-panels",
-        },
-        children: tabPanels,
-      }
-
-      // Outer container
-      const container: Element = {
-        type: "element",
-        tagName: "div",
-        properties: {
-          class: "code-tabs",
-          "data-code-tabs": "",
-        },
-        children: [tabList, panelsContainer],
-      }
-
-      // Calculate how many nodes to remove (including whitespace between blocks)
-      const removeCount = endIndex - startIndex + 1
-      parent.children.splice(startIndex, removeCount, container)
-    }
+    walk(tree)
   }
 }
