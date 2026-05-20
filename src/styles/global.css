@@ -129,3 +129,113 @@
     @apply font-sans;
     }
 }
+
+/* ── Code Blocks ── */
+.code-block-wrapper {
+  margin: 1.5rem 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+}
+
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  /* No background, no border */
+}
+
+.code-block-filename {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+/* shadcn Button ghost icon-xs styling */
+.code-block-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  /* Match shadcn Button ghost hover */
+}
+
+.code-block-copy:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.code-block-wrapper > pre {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+/* No filename - copy button absolutely positioned */
+.code-block-wrapper[data-has-filename="false"] {
+  padding-top: 0;
+}
+
+.code-block-wrapper[data-has-filename="false"] .code-block-header {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  padding: 0;
+  z-index: 10;
+}
+
+.code-block-wrapper[data-has-filename="false"] .code-block-copy {
+  background: transparent;
+}
+
+/* ── Code Group (explicit multi-file tabs) ── */
+.code-group {
+  margin: 1.5rem 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.code-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  /* No background, no border */
+}
+
+.code-group-header [data-slot="tabs-list"] {
+  background: transparent !important;
+  padding: 0 !important;
+  height: auto !important;
+}
+
+.code-group-header [data-variant="default"] {
+  background: transparent !important;
+}
+
+.code-group-header [data-slot="tabs-trigger"] {
+  height: 1.75rem !important;
+  padding: 0 0.625rem !important;
+  font-size: 0.8125rem !important;
+}
+
+.code-group-panels > [data-state="inactive"] {
+  display: none;
+}
+
+.code-group-panels pre {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+}

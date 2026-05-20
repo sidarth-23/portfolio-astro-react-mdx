@@ -16,6 +16,7 @@ seo:
 locale: "es"
 ---
 import ImageGallery from "@/components/mdx/ImageGallery.astro"
+import { CodeGroup } from "@/components/mdx/CodeGroup"
 import gallery1 from "@/assets/images/projects/elecsavers-ecommerce-platform/gallery-1.png"
 import gallery2 from "@/assets/images/projects/elecsavers-ecommerce-platform/gallery-2.png"
 import gallery3 from "@/assets/images/projects/elecsavers-ecommerce-platform/gallery-3.png"
@@ -49,9 +50,39 @@ To achieve this, we selected a cutting-edge, edge-compatible stack:
 
 Using Drizzle ORM, we defined a schema that supports complex e-commerce requirements like multi-vendor support and GST-compliant invoicing, all while remaining lean enough for SQLite.
 
-```typescript
+<CodeGroup client:load>
+```typescript filename="schema.ts"
+import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core"
 
+export const products = sqliteTable("products", {
+  id: integer("id").primaryKey(),
+  name: text("name").notNull(),
+  price: real("price").notNull(),
+  category: text("category").notNull(),
+})
+
+export const orders = sqliteTable("orders", {
+  id: integer("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  total: real("total").notNull(),
+  status: text("status").notNull().default("pending"),
+})
 ```
+
+```typescript filename="queries.ts"
+import { eq } from "drizzle-orm"
+import { db } from "./db"
+import { products, orders } from "./schema"
+
+export async function getProductById(id: number) {
+  return db.select().from(products).where(eq(products.id, id)).get()
+}
+
+export async function getOrdersByUser(userId: string) {
+  return db.select().from(orders).where(eq(orders.userId, userId)).all()
+}
+```
+</CodeGroup>
 
 ### 2. Performance-First Admin Dashboard
 

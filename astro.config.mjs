@@ -7,11 +7,17 @@ import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
 import rehypeSlug from "rehype-slug"
 import { translateIntegration } from "./src/integrations/translate"
+import { filenameTransformer } from "./src/lib/shiki/transformers.ts"
 
 // https://astro.build/config
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
+  },
+  markdown: {
+    shikiConfig: {
+      transformers: [filenameTransformer()],
+    },
   },
   integrations: [
     react(),
