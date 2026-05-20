@@ -41,7 +41,7 @@ const projects = defineCollection({
       status: z.enum(["active", "archived", "concept"]).default("active"),
       links: z.array(linkSchema).default([]),
       tags: z.array(tagSchema).default([]),
-      category: z.string().min(1).optional(),
+      category: z.string().min(1),
       seo: seoSchema.optional(),
       locale: z.enum(locales).default("en"),
     }),

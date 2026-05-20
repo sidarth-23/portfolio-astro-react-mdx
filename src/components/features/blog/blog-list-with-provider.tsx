@@ -38,7 +38,7 @@ export function BlogListWithProvider({
       initialCategories={initialCategories}
       initialSortBy={initialSortBy}
       endpoint="/api/blog.json"
-      gridClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      gridClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       skeletonCount={4}
       CardComponent={BlogCard}
       getItemKey={(item) => item.slug}

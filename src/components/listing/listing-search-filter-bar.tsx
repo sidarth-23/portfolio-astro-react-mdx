@@ -2,10 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, Cancel01Icon, SlidersHorizontalIcon } from "@hugeicons/core-free-icons"
+import {
+  Search01Icon,
+  Cancel01Icon,
+  SlidersHorizontalIcon,
+} from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/react"
 import { Badge } from "@/components/ui/react"
 import { Button } from "@/components/ui/react"
+import { ScrollArea, ScrollBar } from "@/components/ui/react"
+import { Separator } from "@/components/ui/react"
 import {
   Sheet,
   SheetTrigger,
@@ -51,9 +57,8 @@ export function SearchFilterBar({
 }: SearchFilterBarProps) {
   const [search, setSearch] = useState(initialSearch)
   const [activeTags, setActiveTags] = useState<string[]>(initialTags)
-  const [activeCategories, setActiveCategories] = useState<string[]>(
-    initialCategories
-  )
+  const [activeCategories, setActiveCategories] =
+    useState<string[]>(initialCategories)
   const [sortBy, setSortBy] = useState<string | null>(initialSortBy)
   const [sheetOpen, setSheetOpen] = useState(false)
 
@@ -106,7 +111,7 @@ export function SearchFilterBar({
             icon={Search01Icon}
             size={16}
             strokeWidth={2}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
           />
           <Input
             type="text"
@@ -118,7 +123,7 @@ export function SearchFilterBar({
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               <HugeiconsIcon icon={Cancel01Icon} size={16} strokeWidth={2} />
             </button>
@@ -126,7 +131,7 @@ export function SearchFilterBar({
         </div>
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="shrink-0 relative">
+            <Button variant="outline" size="icon" className="relative shrink-0">
               <HugeiconsIcon
                 icon={SlidersHorizontalIcon}
                 size={18}
@@ -144,7 +149,7 @@ export function SearchFilterBar({
             <SheetHeader>
               <SheetTitle>{t(locale, "filters.title")}</SheetTitle>
             </SheetHeader>
-            <div className="flex-1 overflow-auto space-y-6 px-4 py-2">
+            <div className="flex-1 space-y-6 overflow-auto px-4 py-2">
               {/* Sort */}
               <div className="space-y-3">
                 <h4 className="text-sm font-medium">
@@ -158,7 +163,9 @@ export function SearchFilterBar({
                       className="cursor-pointer"
                     >
                       <Badge
-                        variant={sortBy === option.value ? "default" : "outline"}
+                        variant={
+                          sortBy === option.value ? "default" : "outline"
+                        }
                       >
                         {t(locale, option.labelKey)}
                       </Badge>
@@ -193,7 +200,7 @@ export function SearchFilterBar({
                 </div>
               )}
             </div>
-            <SheetFooter className="px-4 pb-4 pt-2">
+            <SheetFooter className="px-4 pt-2 pb-4">
               <Button
                 variant="outline"
                 className="w-full"
@@ -213,27 +220,38 @@ export function SearchFilterBar({
 
       {/* Category pills below search */}
       {categories.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => handleCategoryToggle(category)}
-              className="cursor-pointer"
-            >
-              <Badge
-                variant={
-                  activeCategories.includes(category) ? "default" : "outline"
-                }
-                className="capitalize"
-              >
-                {category}
-              </Badge>
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          <span className="shrink-0 text-sm font-medium text-muted-foreground">
+            {t(locale, "filters.categories")}
+          </span>
+          <Separator orientation="vertical" />
+          <ScrollArea className="flex-1 whitespace-nowrap">
+            <div className="flex items-center gap-1.5 py-1">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryToggle(category)}
+                  className="shrink-0 cursor-pointer"
+                >
+                  <Badge
+                    variant={
+                      activeCategories.includes(category)
+                        ? "default"
+                        : "outline"
+                    }
+                    className="capitalize"
+                  >
+                    {category}
+                  </Badge>
+                </button>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
           {hasFilters && (
             <button
               onClick={handleClear}
-              className="ml-2 text-sm text-muted-foreground underline-offset-4 hover:underline"
+              className="shrink-0 text-sm text-muted-foreground underline-offset-4 hover:underline"
             >
               {t(locale, "filters.clearFilters")}
             </button>
