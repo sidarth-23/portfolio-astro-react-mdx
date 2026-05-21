@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <g stroke-width="2.5">
+    <!-- Desk surface -->
+    <path d="M120 480 Q400 490 680 480" stroke-width="3"/>
+    <path d="M140 480 L140 520" stroke-width="2"/>
+    <path d="M660 480 L660 520" stroke-width="2"/>
+    
+    <!-- Laptop base -->
+    <path d="M280 460 L520 460 Q540 460 535 475 L510 485 Q400 495 290 485 L265 475 Q260 460 280 460Z" stroke-width="2.5"/>
+    
+    <!-- Laptop screen -->
+    <path d="M300 460 L310 320 Q315 300 335 300 L465 300 Q485 300 490 320 L500 460" stroke-width="2.5"/>
+    <path d="M325 315 L475 315" stroke-width="1.5"/>
+    
+    <!-- Code on screen -->
+    <path d="M340 340 L360 355 L340 370" stroke-width="2"/>
+    <path d="M375 340 L395 355 L375 370" stroke-width="2"/>
+    <path d="M410 345 L450 345" stroke-width="1.5"/>
+    <path d="M410 365 L440 365" stroke-width="1.5"/>
+    <path d="M410 385 L430 385" stroke-width="1.5"/>
+    
+    <!-- Person - head -->
+    <path d="M380 280 Q370 250 390 230 Q410 210 440 220 Q470 230 475 260 Q480 290 460 300 Q440 310 410 300 Q390 295 380 280Z" stroke-width="2.5"/>
+    
+    <!-- Hair -->
+    <path d="M380 260 Q370 230 390 210 Q420 190 450 200 Q480 215 485 250 Q488 270 480 280" stroke-width="2.5"/>
+    <path d="M390 220 Q410 200 435 205" stroke-width="2"/>
+    <path d="M400 215 Q420 195 445 200" stroke-width="2"/>
+    
+    <!-- Face features -->
+    <path d="M410 255 Q415 260 420 255" stroke-width="2"/>
+    <path d="M445 255 Q450 260 455 255" stroke-width="2"/>
+    <path d="M425 275 Q432 282 440 275" stroke-width="2"/>
+    
+    <!-- Body/Torso -->
+    <path d="M360 300 Q350 340 345 380 Q340 420 350 460" stroke-width="2.5"/>
+    <path d="M480 300 Q490 340 495 380 Q500 420 490 460" stroke-width="2.5"/>
+    <path d="M350 460 Q420 470 490 460" stroke-width="2.5"/>
+    
+    <!-- Arms -->
+    <path d="M360 330 Q340 370 320 400 Q300 430 290 450" stroke-width="2.5"/>
+    <path d="M480 330 Q500 370 520 400 Q540 430 550 450" stroke-width="2.5"/>
+    
+    <!-- Hands on keyboard -->
+    <path d="M290 450 Q300 460 310 455 Q320 450 315 465" stroke-width="2"/>
+    <path d="M550 450 Q540 460 530 455 Q520 450 525 465" stroke-width="2"/>
+    
+    <!-- Coffee cup -->
+    <path d="M580 440 L580 470 Q580 480 595 480 Q610 480 610 470 L610 440" stroke-width="2"/>
+    <path d="M610 450 Q625 450 625 460 Q625 470 610 470" stroke-width="2"/>
+    <path d="M585 435 Q595 425 605 435" stroke-width="1.5"/>
+    <path d="M590 430 Q595 420 600 430" stroke-width="1.5"/>
+    
+    <!-- Notebook -->
+    <path d="M180 470 L250 465 Q260 465 258 475 L250 485 Q200 490 175 485 Q170 475 180 470Z" stroke-width="2"/>
+    <path d="M185 475 L245 470" stroke-width="1"/>
+    <path d="M190 480 L240 476" stroke-width="1"/>
+    
+    <!-- Floating code symbols -->
+    <!-- { } -->
+    <path d="M200 180 Q190 180 190 190 L190 200 Q190 210 180 210 Q190 210 190 220 L190 230 Q190 240 200 240" stroke-width="2.5"/>
+    <path d="M240 180 Q250 180 250 190 L250 200 Q250 210 260 210 Q250 210 250 220 L250 230 Q250 240 240 240" stroke-width="2.5"/>
+    
+    <!-- </> -->
+    <path d="M520 160 L500 180 L520 200" stroke-width="2.5"/>
+    <path d="M560 160 L580 180 L560 200" stroke-width="2.5"/>
+    <path d="M535 150 L545 210" stroke-width="2"/>
+    
+    <!-- // -->
+    <path d="M280 140 L300 170" stroke-width="2"/>
+    <path d="M295 140 L315 170" stroke-width="2"/>
+    
+    <!-- ; -->
+    <path d="M620 260 Q625 265 620 270" stroke-width="2"/>
+    <path d="M618 280 L622 290" stroke-width="2"/>
+    
+    <!-- # -->
+    <path d="M150 320 L150 360" stroke-width="2"/>
+    <path d="M170 320 L170 360" stroke-width="2"/>
+    <path d="M140 335 L180 335" stroke-width="2"/>
+    <path d="M140 350 L180 350" stroke-width="2"/>
+    
+    <!-- [] -->
+    <path d="M480 120 L480 160 M480 120 L495 120 M480 160 L495 160" stroke-width="2"/>
+    <path d="M535 120 L535 160 M535 120 L520 120 M535 160 L520 160" stroke-width="2"/>
+    
+    <!-- Floating lines suggesting code/ideas -->
+    <path d="M250 120 Q260 115 270 120" stroke-width="1.5"/>
+    <path d="M580 280 Q590 275 600 280" stroke-width="1.5"/>
+    <path d="M160 400 Q170 395 180 400" stroke-width="1.5"/>
+    <path d="M630 380 Q640 375 650 380" stroke-width="1.5"/>
+    
+    <!-- Small decorative dots -->
+    <circle cx="230" cy="250" r="2" fill="currentColor" stroke="none"/>
+    <circle cx="620" cy="180" r="2" fill="currentColor" stroke="none"/>
+    <circle cx="200" cy="380" r="2" fill="currentColor" stroke="none"/>
+    <circle cx="600" cy="340" r="2" fill="currentColor" stroke="none"/>
+    
+    <!-- Plant on desk -->
+    <path d="M650 470 L650 430" stroke-width="2"/>
+    <path d="M640 470 L660 470 L655 450 L645 450 Z" stroke-width="2"/>
+    <path d="M650 430 Q630 410 635 390" stroke-width="2"/>
+    <path d="M650 430 Q670 400 665 380" stroke-width="2"/>
+    <path d="M650 420 Q640 400 645 385" stroke-width="2"/>
+    <path d="M650 420 Q660 395 655 375" stroke-width="2"/>
+    
+    <!-- Small sparkle accents -->
+    <path d="M300 100 L300 115 M292 107 L308 107" stroke-width="1.5"/>
+    <path d="M560 100 L560 112 M554 106 L566 106" stroke-width="1.5"/>
+  </g>
+</svg>

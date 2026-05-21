@@ -1,7 +1,8 @@
 ---
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import Hero from "@/components/sections/hero.astro"
-import heroImage from "@/assets/images/hero-image.png"
+import FeaturedListing from "@/components/sections/featured-listing.astro"
+import heroIllustration from "@/assets/images/hero-illustration.svg"
 import BlogCard from "@/components/features/blog/blog-card.astro"
 import ProjectCard from "@/components/features/projects/project-card.astro"
 import { getPublishedBlogPosts, getFeaturedProjects } from "@/lib/content/queries"
@@ -39,53 +40,54 @@ const latestPosts = posts.slice(0, 3)
         url: `/${locale}/profile`,
       },
     }}
-    image={heroImage}
-    imageAlt={t(locale, "hero.imageAlt")}
-  />
+  >
+    <img
+      slot="image"
+      src={heroIllustration.src}
+      alt={t(locale, "hero.imageAlt")}
+      width="800"
+      height="600"
+      class="max-h-150 w-full rounded-md object-contain lg:max-h-200 dark:invert"
+    />
+  </Hero>
 
   {
     latestPosts.length > 0 && (
-      <section class="mb-16">
-        <div class="mb-6 flex items-end justify-between gap-4">
-          <h2 class="text-sm font-semibold tracking-wider text-muted-foreground uppercase">
-            {t(locale, "blog.latest")}
-          </h2>
-          <a
-            href={`/${locale}/blog`}
-            class="inline-block text-sm font-medium text-primary hover:underline"
-          >
-            {t(locale, "blog.viewAll")}
-          </a>
-        </div>
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {latestPosts.map((post) => (
-            <BlogCard post={post} locale={locale} />
-          ))}
-        </div>
-      </section>
+      <FeaturedListing
+        title={t(locale, "blog.latest")}
+        viewAllHref={`/${locale}/blog`}
+        viewAllText={t(locale, "blog.viewAll")}
+      >
+        <BlogCard
+          slot="featured"
+          variant="featured"
+          post={latestPosts[0]}
+          locale={locale}
+        />
+        {latestPosts.slice(1).map((post) => (
+          <BlogCard variant="compact" post={post} locale={locale} />
+        ))}
+      </FeaturedListing>
     )
   }
 
   {
     projects.length > 0 && (
-      <section>
-        <div class="mb-6 flex items-end justify-between gap-4">
-          <h2 class="text-sm font-semibold tracking-wider text-muted-foreground uppercase">
-            {t(locale, "projects.featured")}
-          </h2>
-          <a
-            href={`/${locale}/projects`}
-            class="inline-block text-sm font-medium text-primary hover:underline"
-          >
-            {t(locale, "projects.viewAll")}
-          </a>
-        </div>
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.slice(0, 3).map((project) => (
-            <ProjectCard project={project} locale={locale} />
-          ))}
-        </div>
-      </section>
+      <FeaturedListing
+        title={t(locale, "projects.featured")}
+        viewAllHref={`/${locale}/projects`}
+        viewAllText={t(locale, "projects.viewAll")}
+      >
+        <ProjectCard
+          slot="featured"
+          variant="featured"
+          project={projects[0]}
+          locale={locale}
+        />
+        {projects.slice(1, 3).map((project) => (
+          <ProjectCard variant="compact" project={project} locale={locale} />
+        ))}
+      </FeaturedListing>
     )
   }
 </ContentLayout>

@@ -9,9 +9,10 @@ import { createProjectCardView } from "@/components/listing/card-presenters"
 interface Props {
   project: CollectionEntry<"projects">
   locale: Locale
+  variant?: "default" | "compact" | "featured"
 }
 
-const { project, locale } = Astro.props
+const { project, locale, variant = "default" } = Astro.props
 
 const card = createProjectCardView({
   locale,
@@ -27,67 +28,128 @@ const card = createProjectCardView({
     height: project.data.coverImage.height,
   },
 })
+
+const isFeatured = variant === "featured"
+const isCompact = variant === "compact"
 ---
 
 <a href={card.href} class="group block h-full">
-  <article
-    class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:ring-foreground/20 hover:shadow-md"
-  >
-    <BlurBackdropImage
-      src={project.data.coverImage}
-      alt={project.data.title}
-      width={600}
-      height={340}
-      class="aspect-video w-full"
-      imageClass="transition-transform duration-300 group-hover:scale-105"
-    />
-    <div class="flex flex-1 flex-col p-5">
-      {
-        card.category && (
-          <Badge variant="default" class="mb-2 w-fit capitalize">
-            {card.category}
-          </Badge>
-        )
-      }
-      <h3
-        class="text-lg leading-snug font-medium"
-      >
-        {card.title}
-      </h3>
-      <div class="mt-2">
-        <Badge variant="outline" class="w-fit text-muted-foreground/80">
-          {card.formattedDate}
-        </Badge>
-      </div>
-      <p class="mt-3 line-clamp-2 text-sm text-muted-foreground/80 flex-1">
-        {card.summary}
-      </p>
-      {
-        card.tags.length > 0 && (
-          <div class="mt-3 flex flex-wrap gap-1.5">
-            {card.tags.map((tag) => (
-              <Badge variant="secondary">#{tag}</Badge>
-            ))}
+  {
+    isFeatured ? (
+      <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:ring-foreground/20 hover:shadow-md sm:flex-row">
+        <div class="sm:w-[55%]">
+          <BlurBackdropImage
+            src={project.data.coverImage}
+            alt={project.data.title}
+            width={800}
+            height={450}
+            class="aspect-video w-full h-full sm:aspect-auto"
+            imageClass="transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+        <div class="flex flex-1 flex-col p-6 sm:p-8">
+          {card.category && (
+            <Badge variant="default" class="mb-3 w-fit capitalize">
+              {card.category}
+            </Badge>
+          )}
+          <h3 class="text-xl leading-snug font-medium sm:text-2xl">
+            {card.title}
+          </h3>
+          <div class="mt-2">
+            <Badge variant="outline" class="w-fit text-muted-foreground/80">
+              {card.formattedDate}
+            </Badge>
           </div>
-        )
-      }
-      <div class="mt-auto pt-4 flex justify-end">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="text-primary transition-transform group-hover:translate-x-1"
-        >
-          <path d="M5 12h14"></path>
-          <path d="m12 5 7 7-7 7"></path>
-        </svg>
-      </div>
-    </div>
-  </article>
+          <p class="mt-4 line-clamp-3 text-sm text-muted-foreground/80 leading-relaxed flex-1">
+            {card.summary}
+          </p>
+          {card.tags.length > 0 && (
+            <div class="mt-4 flex flex-wrap gap-1.5">
+              {card.tags.map((tag) => (
+                <Badge variant="secondary">#{tag}</Badge>
+              ))}
+            </div>
+          )}
+          <div class="mt-auto pt-5 flex justify-end">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-primary transition-transform group-hover:translate-x-1"
+            >
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </div>
+        </div>
+      </article>
+    ) : (
+      <article
+        class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:ring-foreground/20 hover:shadow-md"
+      >
+        <BlurBackdropImage
+          src={project.data.coverImage}
+          alt={project.data.title}
+          width={600}
+          height={340}
+          class="aspect-video w-full"
+          imageClass="transition-transform duration-300 group-hover:scale-105"
+        />
+        <div class="flex flex-1 flex-col p-5">
+          {card.category && (
+            <Badge variant="default" class="mb-2 w-fit capitalize">
+              {card.category}
+            </Badge>
+          )}
+          <h3 class="text-lg leading-snug font-medium">
+            {card.title}
+          </h3>
+          <div class="mt-2">
+            <Badge variant="outline" class="w-fit text-muted-foreground/80">
+              {card.formattedDate}
+            </Badge>
+          </div>
+          
+          {!isCompact && (
+            <p class="mt-3 line-clamp-2 text-sm text-muted-foreground/80 flex-1">
+              {card.summary}
+            </p>
+          )}
+          
+          {!isCompact && card.tags.length > 0 && (
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              {card.tags.map((tag) => (
+                <Badge variant="secondary">#{tag}</Badge>
+              ))}
+            </div>
+          )}
+          
+          <div class="mt-auto pt-4 flex justify-end">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-primary transition-transform group-hover:translate-x-1"
+            >
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </div>
+        </div>
+      </article>
+    )
+  }
 </a>

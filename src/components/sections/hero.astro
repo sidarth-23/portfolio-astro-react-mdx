@@ -1,7 +1,4 @@
 ---
-import { Image } from "astro:assets"
-import type { ImageMetadata } from "astro"
-
 interface Props {
   heading: string
   role: string
@@ -17,12 +14,10 @@ interface Props {
       url: string
     }
   }
-  image: ImageMetadata
-  imageAlt: string
   className?: string
 }
 
-const { heading, role, description, buttons, image, imageAlt, className } = Astro.props
+const { heading, role, description, buttons, className } = Astro.props
 ---
 
 <section class:list={["flex min-h-[calc(100vh-4rem)] items-center", className]}>
@@ -56,13 +51,7 @@ const { heading, role, description, buttons, image, imageAlt, className } = Astr
       </div>
     </div>
     <div class="flex">
-      <Image
-        src={image}
-        alt={imageAlt}
-        width={800}
-        height={800}
-        class="max-h-150 w-full rounded-md object-cover lg:max-h-200"
-      />
+      <slot name="image" />
     </div>
   </div>
 </section>

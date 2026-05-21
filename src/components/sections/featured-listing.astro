@@ -1,0 +1,36 @@
+---
+interface Props {
+  title: string
+  viewAllHref: string
+  viewAllText: string
+}
+
+const { title, viewAllHref, viewAllText } = Astro.props
+const hasGridItems = Astro.slots.has("default")
+---
+
+<section class="mb-16">
+  <div class="mb-6 flex items-end justify-between gap-4">
+    <h2 class="text-sm font-semibold tracking-wider text-muted-foreground uppercase">
+      {title}
+    </h2>
+    <a
+      href={viewAllHref}
+      class="inline-block text-sm font-medium text-primary hover:underline"
+    >
+      {viewAllText}
+    </a>
+  </div>
+
+  <div class="mb-6">
+    <slot name="featured" />
+  </div>
+
+  {
+    hasGridItems && (
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <slot />
+      </div>
+    )
+  }
+</section>
