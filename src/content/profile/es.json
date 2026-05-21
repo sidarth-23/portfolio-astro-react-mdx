@@ -66,19 +66,19 @@
   "certifications": [
     {
       "title": "Learn Go",
-      "url": "https://www.boot.dev/courses/learn-go"
+      "url": "https://www.boot.dev/certificate/lostboot50/3b39d0f6-f944-4f1b-832d-a1daba32eda4"
     },
     {
       "title": "CS50's Introduction to Computer Science",
-      "url": "https://cs50.harvard.edu/x/"
+      "url": "https://certificates.cs50.io/bf85e0a3-fe88-4281-badc-948d55a269d1.pdf"
     },
     {
       "title": "Google Project Management: Professional Certificate",
-      "url": "https://www.coursera.org/professional-certificates/google-project-management"
+      "url": "https://www.coursera.org/account/accomplishments/specialization/certificate/PAEF3VXVBNB4"
     },
     {
       "title": "IBM Full Stack Software Developer Professional Certificate",
-      "url": "https://www.coursera.org/professional-certificates/ibm-full-stack-cloud-developer"
+      "url": "https://www.coursera.org/account/accomplishments/specialization/certificate/NLAT8P4VQJS9"
     }
   ]
 }
