@@ -28,8 +28,8 @@ Astro content collections are defined in `src/content.config.ts`:
 
 - `blog` (MDX)
 - `projects` (MDX)
-- `cv` (JSON data)
-- `cvExperience` (Markdown)
+- `profile` (JSON data)
+- `profileExperience` (Markdown)
 
 Content lives under `src/content/**` and is locale-aware.
 
@@ -89,7 +89,7 @@ Optional environment variables:
 - **Multi-language support** — Content available in English, Spanish, and French with locale-prefixed routing and automatic redirection.
 - **Content-driven blog** — MDX-based blog posts with search, tag filtering, and infinite scroll pagination.
 - **Project showcase** — Filterable project listings with search, tags, and pagination; each project has its own detailed MDX page.
-- **Interactive CV** — Structured resume generated from JSON and Markdown content collections, including work experience.
+- **Interactive Profile** — Structured resume generated from JSON and Markdown content collections, including work experience.
 - **Collapsible sidebar navigation** — Profile info, primary navigation, social links (GitHub, LinkedIn, RSS, Email), and quick actions (archive, download resume).
 - **Responsive design** — Mobile-friendly layout built with Tailwind CSS.
 - **SEO optimized** — Metadata helpers and structured content for search engines.

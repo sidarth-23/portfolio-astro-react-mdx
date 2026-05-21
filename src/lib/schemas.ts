@@ -22,16 +22,16 @@ export const dateSchema = z
   .union([z.date(), z.string().datetime()])
   .transform((val) => (val instanceof Date ? val : new Date(val)))
 
-export const cvSkillIconSchema = z.object({
+export const profileSkillIconSchema = z.object({
   source: z.enum(["simple", "huge", "custom"]),
   name: z.string().min(1),
 })
 
-const cvMonthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, {
+const profileMonthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, {
   message: "Expected month in YYYY-MM format",
 })
 
-export const cvSchema = z.object({
+export const profileSchema = z.object({
   locale: z.enum(["en", "es", "fr"]),
   profile: z.object({
     name: z.string().min(1),
@@ -48,7 +48,7 @@ export const cvSchema = z.object({
           .array(
             z.object({
               label: z.string().min(1),
-              icon: cvSkillIconSchema,
+              icon: profileSkillIconSchema,
             })
           )
           .min(1),
@@ -65,12 +65,12 @@ export const cvSchema = z.object({
     .min(1),
 })
 
-const cvExperienceRoleSchema = z
+const profileExperienceRoleSchema = z
   .object({
     title: z.string().min(1),
     location: z.string().min(1).optional(),
-    start: cvMonthSchema,
-    end: cvMonthSchema.nullable().optional(),
+    start: profileMonthSchema,
+    end: profileMonthSchema.nullable().optional(),
     currentlyWorking: z.boolean().default(false),
     highlights: z.array(z.string().min(1)).min(1),
   })
@@ -79,10 +79,10 @@ const cvExperienceRoleSchema = z
     path: ["end"],
   })
 
-export const cvExperienceSchema = z.object({
+export const profileExperienceSchema = z.object({
   id: z.number().int().positive(),
   locale: z.enum(["en", "es", "fr"]),
   company: z.string().min(1),
   location: z.string().min(1),
-  roles: z.array(cvExperienceRoleSchema).min(1),
+  roles: z.array(profileExperienceRoleSchema).min(1),
 })

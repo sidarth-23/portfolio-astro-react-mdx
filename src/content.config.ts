@@ -5,8 +5,8 @@ import {
   linkSchema,
   tagSchema,
   dateSchema,
-  cvSchema,
-  cvExperienceSchema,
+  profileSchema,
+  profileExperienceSchema,
 } from "@/lib/schemas"
 import { locales } from "@/i18n/config"
 
@@ -47,19 +47,19 @@ const projects = defineCollection({
     }),
 })
 
-const cv = defineCollection({
+const profile = defineCollection({
   type: "data",
-  schema: cvSchema,
+  schema: profileSchema,
 })
 
-const cvExperience = defineCollection({
+const profileExperience = defineCollection({
   type: "content",
-  schema: cvExperienceSchema,
+  schema: profileExperienceSchema,
 })
 
 export const collections = {
   blog,
   projects,
-  cv,
-  cvExperience,
+  profile,
+  profileExperience,
 }

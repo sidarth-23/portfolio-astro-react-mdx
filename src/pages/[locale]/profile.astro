@@ -1,8 +1,8 @@
 ---
 import ContentLayout from "@/layouts/ContentLayout.astro"
-import CvContent from "@/components/sections/cv-content.astro"
+import ProfileContent from "@/components/sections/profile-content.astro"
 import { defaultLocale, locales, type Locale } from "@/i18n/config"
-import { getCvByLocale, getCvExperienceByLocale } from "@/lib/content/queries"
+import { getProfileByLocale, getProfileExperienceByLocale } from "@/lib/content/queries"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))
@@ -10,18 +10,18 @@ export async function getStaticPaths() {
 
 const { locale } = Astro.params as { locale: Locale }
 const entry =
-  (await getCvByLocale(locale)) ?? (await getCvByLocale(defaultLocale))
+  (await getProfileByLocale(locale)) ?? (await getProfileByLocale(defaultLocale))
 
 if (!entry) {
   throw new Error(
-    "Profile content is missing. Add files under src/content/cv/*.json"
+    "Profile content is missing. Add files under src/content/profile/*.json"
   )
 }
 
 const experienceEntries =
-  (await getCvExperienceByLocale(locale)).length > 0
-    ? await getCvExperienceByLocale(locale)
-    : await getCvExperienceByLocale(defaultLocale)
+  (await getProfileExperienceByLocale(locale)).length > 0
+    ? await getProfileExperienceByLocale(locale)
+    : await getProfileExperienceByLocale(defaultLocale)
 
 const experiences = experienceEntries.map((item) => ({
   data: item.data,
@@ -29,5 +29,5 @@ const experiences = experienceEntries.map((item) => ({
 ---
 
 <ContentLayout title="Profile — Sidarth G" headerTitle="Profile" locale={locale}>
-  <CvContent data={entry.data} experiences={experiences} />
+  <ProfileContent data={entry.data} experiences={experiences} />
 </ContentLayout>

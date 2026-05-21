@@ -28,7 +28,7 @@ import { SkillIcon } from "@/components/icon/skill-icons"
 import avatarImage from "@/assets/images/avatar.jpg"
 import type { CollectionEntry } from "astro:content"
 
-type CvData = CollectionEntry<"cv">["data"]
+type ProfileData = CollectionEntry<"profile">["data"]
 
 type ExperienceRole = {
   title: string
@@ -52,7 +52,7 @@ type ExperienceItem = {
 }
 
 interface Props {
-  data: CvData
+  data: ProfileData
   experiences: ExperienceItem[]
 }
 

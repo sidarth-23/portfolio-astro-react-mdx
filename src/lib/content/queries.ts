@@ -108,16 +108,16 @@ export async function getProjectsByTag(tag: Tag, locale: Locale = "en") {
   return filtered.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
 
-export async function getCvByLocale(
+export async function getProfileByLocale(
   locale: Locale = "en"
-): Promise<CollectionEntry<"cv"> | null> {
-  const entries = await getCollection("cv")
+): Promise<CollectionEntry<"profile"> | null> {
+  const entries = await getCollection("profile")
   const entry = entries.find((item) => item.data.locale === locale)
   return entry ?? null
 }
 
-export async function getCvExperienceByLocale(locale: Locale = "en") {
-  const entries = (await getCollection("cvExperience" as never)) as Array<{
+export async function getProfileExperienceByLocale(locale: Locale = "en") {
+  const entries = (await getCollection("profileExperience" as never)) as Array<{
     data: {
       id: number
       locale: Locale
