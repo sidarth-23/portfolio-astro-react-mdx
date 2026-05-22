@@ -110,14 +110,14 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
           <CardTitle class="text-xl md:text-2xl"
             >{data.profile.name}</CardTitle
           >
-          <CardDescription class="text-sm"
+          <CardDescription class="text-base"
             >{data.profile.role}</CardDescription
           >
         </div>
       </div>
     </CardHeader>
     <CardContent class="space-y-4">
-      <CardDescription class="max-w-3xl text-sm leading-6">
+      <CardDescription class="max-w-3xl text-base leading-6">
         {data.profile.summary}
       </CardDescription>
       <div class="flex flex-wrap gap-2">
@@ -160,7 +160,7 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
             </TimelineHeader>
 
             <TimelineContent>
-              <p class="text-sm font-medium text-foreground">{item.location}</p>
+              <p class="text-base font-medium text-foreground">{item.location}</p>
               <TimelineDate className="mt-1 mb-4">
                 {getExperiencePeriodLabel(item.roles)}
               </TimelineDate>
@@ -168,10 +168,10 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
               <div class="space-y-6 border-l border-border/20 pl-5">
                 {item.roles.map((role, index) => (
                   <div class={index > 0 ? "border-t border-border/40 pt-6" : ""}>
-                    <h4 class="text-sm font-semibold text-foreground">
+                    <h4 class="text-base font-semibold text-foreground">
                       {role.title}
                     </h4>
-                    <TimelineDate className="mt-1 mb-2 text-xs">
+                    <TimelineDate className="mt-1 mb-2 text-sm">
                       {getPeriodLabel(
                         role.start,
                         role.end,
@@ -179,11 +179,11 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
                       )}
                     </TimelineDate>
                     {role.location && (
-                      <p class="mb-2 text-xs font-medium text-foreground">
+                      <p class="mb-2 text-sm font-medium text-foreground">
                         {role.location}
                       </p>
                     )}
-                    <ul class="list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+                    <ul class="list-disc space-y-1 pl-4 text-base text-muted-foreground">
                       {role.highlights.map((highlight) => (
                         <li>{highlight}</li>
                       ))}
@@ -211,7 +211,7 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
         {
           data.skills.map((group) => (
             <div class="py-4 first:pt-3 last:pb-3">
-              <h3 class="mb-3 text-sm font-semibold">{group.title}</h3>
+              <h3 class="mb-3 text-base font-semibold">{group.title}</h3>
               <div class="flex flex-wrap gap-2">
                 {group.items.map((skill) => (
                   <Badge variant="outline" class="gap-1.5">
@@ -241,7 +241,7 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
             href={cert.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center justify-between py-3 text-sm font-medium text-foreground underline-offset-4 transition hover:underline"
+            class="flex items-center justify-between py-3 text-base font-medium text-foreground underline-offset-4 transition hover:underline"
             aria-label={`Open ${cert.title}`}
           >
             {cert.title}
