@@ -46,9 +46,8 @@ export function ItemListClient<T>({
 }: ItemListClientProps<T>) {
   const [search, setSearch] = useState(initialSearch)
   const [activeTags, setActiveTags] = useState<string[]>(initialTags)
-  const [activeCategories, setActiveCategories] = useState<string[]>(
-    initialCategories
-  )
+  const [activeCategories, setActiveCategories] =
+    useState<string[]>(initialCategories)
   const [sortBy, setSortBy] = useState<string | null>(initialSortBy)
 
   const {
@@ -68,7 +67,8 @@ export function ItemListClient<T>({
     limit: 12,
   })
 
-  const isLoadingFilters = isFetching && !isFetchingNextPage && allItems.length > 0
+  const isLoadingFilters =
+    isFetching && !isFetchingNextPage && allItems.length > 0
 
   const handleFiltersChange = useCallback(
     (
@@ -130,7 +130,7 @@ export function ItemListClient<T>({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: i * 0.03 }}
             >
-              <Skeleton className="h-[400px] w-full rounded-xl" />
+              <Skeleton className="h-100 w-full rounded-xl" />
             </motion.div>
           ))}
         </div>
@@ -138,7 +138,7 @@ export function ItemListClient<T>({
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center text-muted-foreground py-12"
+          className="py-12 text-center text-muted-foreground"
         >
           {t(locale, "filters.noResults")}
         </motion.p>
@@ -169,7 +169,7 @@ export function ItemListClient<T>({
                     exit={{ opacity: 0, y: -4 }}
                     transition={{ duration: 0.2, delay: i * 0.05 }}
                   >
-                    <Skeleton className="h-[400px] w-full rounded-xl" />
+                    <Skeleton className="h-100 w-full rounded-xl" />
                   </motion.div>
                 ))}
             </AnimatePresence>
@@ -181,7 +181,7 @@ export function ItemListClient<T>({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl"
+                  className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-background/60 backdrop-blur-sm"
                 >
                   <Spinner className="size-8" />
                 </motion.div>
@@ -189,9 +189,7 @@ export function ItemListClient<T>({
             </AnimatePresence>
           </div>
 
-          {hasNextPage && (
-            <div ref={sentinelRef} className="h-10 mt-8" />
-          )}
+          {hasNextPage && <div ref={sentinelRef} className="mt-8 h-10" />}
         </>
       )}
     </div>

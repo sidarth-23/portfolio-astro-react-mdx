@@ -35,6 +35,10 @@ RUN bun install --production --frozen-lockfile
 # Copy the built app
 COPY --from=builder /app/dist ./dist
 
+# Copy source images for SSR image optimization (required by astro:assets getImage() in API routes)
+COPY --from=builder /app/src/content ./src/content
+COPY --from=builder /app/src/assets ./src/assets
+
 # Astro standalone env
 ENV HOST=0.0.0.0
 ENV PORT=4321
