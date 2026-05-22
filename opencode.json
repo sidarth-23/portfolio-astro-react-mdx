@@ -7,7 +7,11 @@
     },
     "dokploy-mcp": {
       "type": "local",
-      "command": ["npx", "-y", "@dokploy/mcp"]
+      "command": ["npx", "-y", "@dokploy/mcp"],
+      "environment": {
+        "DOKPLOY_API_KEY": "${DOKPLOY_API_KEY}",
+        "DOKPLOY_URL": "${DOKPLOY_URL}"
+      }
     }
   }
 }
