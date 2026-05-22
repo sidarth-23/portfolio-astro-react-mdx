@@ -10,8 +10,6 @@ import rehypeSlug from "rehype-slug"
 import { filenameTransformer } from "./src/lib/codeblock/shiki"
 import { rehypeCodeBlocks } from "./src/lib/codeblock/rehype"
 import { remarkCodeGroup } from "./src/lib/codeblock/remark"
-import { translateIntegration } from "./src/integrations/translate"
-
 // https://astro.build/config
 export default defineConfig({
   adapter: node({
@@ -27,17 +25,6 @@ export default defineConfig({
       rehypePlugins: [rehypeSlug, rehypeCodeBlocks],
     }),
     sitemap(),
-    translateIntegration({
-      providerConfig: {
-        provider: "openai",
-        model: process.env.AI_MODEL || "gpt-4o-mini",
-        apiKey: process.env.AI_API_KEY,
-        baseURL: process.env.AI_API_URL,
-      },
-      // Set autoTranslate: true to generate missing translations during build.
-      // Off by default so builds are deterministic and don't consume API quota.
-      autoTranslate: false,
-    }),
   ],
   markdown: {
     shikiConfig: {

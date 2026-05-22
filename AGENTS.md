@@ -13,11 +13,6 @@
 - Production run after build: `bun run start` (serves `dist/server/entry.mjs`).
 - Formatting: `bun run format`.
 
-## Translation workflow (build-critical)
-- Build runs a translation consistency check via `translateIntegration`; missing/stale translations fail the build.
-- Fix content translations with `bun run translate` (or `bun run translate:force`).
-- Translation commands require `AI_API_KEY`; optional `AI_MODEL` / `AI_API_URL` are supported.
-
 ## Real entrypoints to edit
 - Pages/routes: `src/pages/**` (root redirects to `/${defaultLocale}` in `src/pages/index.astro`).
 - Shared layout shell: `src/layouts/Layout.astro` + `src/components/layout/app-shell.tsx`.
@@ -31,4 +26,3 @@
 
 ## Guardrails
 - Do not edit generated output in `dist/`.
-- Keep locale/content changes synchronized across `en`, `es`, and `fr` to avoid translation-check build failures.

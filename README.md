@@ -39,8 +39,6 @@ Content lives under `src/content/**` and is locale-aware.
 - Locale-prefixed routing is enabled (including default locale).
 - Root route redirects to `/${defaultLocale}`.
 
-When editing content, keep localized entries synchronized across `en`, `es`, and `fr`.
-
 ## Local development
 
 ```bash
@@ -67,23 +65,6 @@ bun run preview         # preview static build
 bun run start           # run built server output (dist/server/entry.mjs)
 ```
 
-## Translation workflow
-
-Build includes a translation consistency check; missing/stale translations fail the build.
-
-To regenerate translations:
-
-```bash
-AI_API_KEY=... bun run translate
-# or force refresh
-AI_API_KEY=... bun run translate:force
-```
-
-Optional environment variables:
-
-- `AI_MODEL` (default: `gpt-4o-mini`)
-- `AI_API_URL` (custom provider endpoint)
-
 ## Features
 
 - **Multi-language support** — Content available in English, Spanish, and French with locale-prefixed routing and automatic redirection.
@@ -94,7 +75,6 @@ Optional environment variables:
 - **Responsive design** — Mobile-friendly layout built with Tailwind CSS.
 - **SEO optimized** — Metadata helpers and structured content for search engines.
 - **RSS feeds** — Per-locale RSS feed generation.
-- **Build-time translation checks** — Automated validation ensuring content stays synchronized across all locales.
 - **API endpoints** — JSON API for blog and project data with pagination, search, and tag filtering.
 
 ## Notes
