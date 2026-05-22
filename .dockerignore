@@ -1,0 +1,57 @@
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+bun.lockb
+
+# Build output
+dist
+.astro
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Testing
+coverage
+.nyc_output
+
+# Logs
+logs
+*.log
+
+# Misc
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Playwright / E2E
+test-results
+playwright-report
+playwright/.cache
