@@ -5,8 +5,6 @@
 # ============================================================
 FROM oven/bun:1 AS deps
 WORKDIR /app
-
-# Copy package files
 COPY package.json bun.lockb* ./
 RUN bun install --frozen-lockfile
 
@@ -15,13 +13,8 @@ RUN bun install --frozen-lockfile
 # ============================================================
 FROM oven/bun:1 AS builder
 WORKDIR /app
-
-# Copy deps from previous stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Build the Astro app
-ENV NODE_ENV=production
 RUN bun run build
 
 # ============================================================
@@ -30,28 +23,23 @@ RUN bun run build
 FROM oven/bun:1-slim AS runtime
 WORKDIR /app
 
-# Install runtime libraries needed by sharp (libvips)
+# Runtime libs for sharp
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libvips42 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user for security
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+# Copy only production package.json and install ONLY production deps
+COPY --from=builder /app/package.json ./package.json
+RUN bun install --production --frozen-lockfile
 
-# Copy built application
-COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
-COPY --from=builder --chown=appuser:appgroup /app/package.json ./package.json
+# Copy the built app
+COPY --from=builder /app/dist ./dist
 
-# Switch to non-root user
-USER appuser
-
-# Expose the port Astro standalone runs on
-EXPOSE 4321
-
-# Bind to all interfaces so Docker/Dokploy can reach the container
+# Astro standalone env
 ENV HOST=0.0.0.0
 ENV PORT=4321
 ENV NODE_ENV=production
 
-# Start the Astro standalone server
+EXPOSE 4321
+
 CMD ["bun", "./dist/server/entry.mjs"]
