@@ -1,7 +1,7 @@
 // @ts-check
 
 import tailwindcss from "@tailwindcss/vite"
-import { defineConfig } from "astro/config"
+import { defineConfig, fontProviders } from "astro/config"
 import react from "@astrojs/react"
 import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
@@ -12,6 +12,14 @@ import { rehypeCodeBlocks } from "./src/lib/codeblock/rehype"
 import { remarkCodeGroup } from "./src/lib/codeblock/remark"
 // https://astro.build/config
 export default defineConfig({
+  security: { csp: true },
+  fonts: [
+    {
+      name: "Geist",
+      cssVariable: "--font-geist",
+      provider: fontProviders.fontsource(),
+    },
+  ],
   adapter: node({
     mode: "standalone",
   }),
