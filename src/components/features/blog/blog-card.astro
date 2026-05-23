@@ -1,10 +1,10 @@
 ---
-import BlurBackdropImage from "@/components/image/blur-backdrop-image.astro"
+import BlurBackdropImage from "@/components/providers/blur-backdrop-image.astro"
 import type { CollectionEntry } from "astro:content"
 import { Badge } from "@/components/ui/astro/badge"
 import { formatShortDate } from "@/lib/content"
 import type { Locale } from "@/i18n/config"
-import { createBlogCardView } from "@/components/listing/card-presenters"
+import { createBlogCardView } from "@/components/features/listing/card-presenters"
 
 interface Props {
   post: CollectionEntry<"blog">

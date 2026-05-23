@@ -11,7 +11,7 @@ import {
 import type { BlogListingItem } from "@/lib/api/listing-api"
 import type { Locale } from "@/i18n/config"
 import { formatShortDate } from "@/lib/content"
-import { createBlogCardView } from "@/components/listing/card-presenters"
+import { createBlogCardView } from "@/components/features/listing/card-presenters"
 
 interface BlogCardProps {
   item: BlogListingItem

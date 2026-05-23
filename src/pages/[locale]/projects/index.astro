@@ -1,8 +1,8 @@
 ---
 export const prerender = false
 
-import ContentLayout from "@/layouts/ContentLayout.astro"
-import { ProjectListWithProvider } from "@/components/features/projects/project-list-with-provider"
+import ContentLayout from "@/layouts/content/ContentLayout.astro"
+import { ProjectListWithProvider } from "@/components/providers/project-list"
 import { getProjectListing, getProjectFilters } from "@/lib/api/listing-api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
@@ -17,9 +17,10 @@ const sort = url.searchParams.get("sort")
 
 const tags = tagsParam ? tagsParam.split(",") : []
 const categories = categoriesParam ? categoriesParam.split(",") : []
-const sortMode = sort && ["newest", "oldest", "title"].includes(sort) 
-  ? sort as "newest" | "oldest" | "title" 
-  : null
+const sortMode =
+  sort && ["newest", "oldest", "title"].includes(sort)
+    ? (sort as "newest" | "oldest" | "title")
+    : null
 
 const [initialData, availableFilters] = await Promise.all([
   getProjectListing(locale, {

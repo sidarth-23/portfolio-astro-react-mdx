@@ -2,7 +2,7 @@
 
 import { useCallback, useState, type ComponentType } from "react"
 import { motion, AnimatePresence } from "motion/react"
-import { SearchFilterBar } from "@/components/listing/listing-search-filter-bar"
+import { SearchFilterBar } from "@/components/features/listing/listing-search-filter-bar"
 import { useListingQuery } from "@/hooks/use-listing-query"
 import { Skeleton } from "@/components/ui/react"
 import { Spinner } from "@/components/ui/react"

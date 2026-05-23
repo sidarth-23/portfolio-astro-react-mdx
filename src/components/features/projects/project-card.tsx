@@ -11,7 +11,7 @@ import {
 import type { ProjectListingItem } from "@/lib/api/listing-api"
 import type { Locale } from "@/i18n/config"
 import { formatShortDate } from "@/lib/content"
-import { createProjectCardView } from "@/components/listing/card-presenters"
+import { createProjectCardView } from "@/components/features/listing/card-presenters"
 
 interface ProjectCardProps {
   item: ProjectListingItem

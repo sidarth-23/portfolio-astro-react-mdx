@@ -4,7 +4,7 @@ import * as React from "react"
 import { useSidebar } from "@/components/ui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PanelLeft } from "@hugeicons/core-free-icons"
-import { ThemeToggle } from "@/components/layout/theme-toggle"
+import { ThemeToggle } from "@/layouts/shell/theme-toggle"
 import { Separator } from "@/components/ui/react"
 import { Button } from "@/components/ui/react"
 import {
@@ -22,7 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/react"
-import { LanguageSelector } from "@/components/layout/language-selector"
+import { LanguageSelector } from "@/layouts/shell/language-selector"
 import { resolvePageTitle } from "@/lib/ui"
 import { defaultLocale, isValidLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"

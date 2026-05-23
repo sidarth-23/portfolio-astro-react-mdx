@@ -2,8 +2,8 @@
 
 import * as React from "react"
 
-import { NavLinks } from "@/components/layout/nav-links"
-import { NavSecondary } from "@/components/layout/nav-secondary"
+import { NavLinks } from "@/layouts/shell/nav-links"
+import { NavSecondary } from "@/layouts/shell/nav-secondary"
 import {
   Sidebar,
   SidebarContent,
@@ -12,7 +12,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/react"
 import { sidebarContent } from "@/lib/ui"
-import { NavFooter } from "@/components/layout/nav-footer"
+import { NavFooter } from "@/layouts/shell/nav-footer"
 import type { Locale } from "@/i18n/config"
 
 export function AppSidebar({

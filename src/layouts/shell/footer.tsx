@@ -1,5 +1,5 @@
-import { ThemeToggle } from "@/components/layout/theme-toggle"
-import { LanguageSelector } from "@/components/layout/language-selector"
+import { ThemeToggle } from "@/layouts/shell/theme-toggle"
+import { LanguageSelector } from "@/layouts/shell/language-selector"
 import { RssIcon } from "@/components/icon"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"

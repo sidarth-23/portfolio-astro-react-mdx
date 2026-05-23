@@ -30,7 +30,9 @@ describe("ProjectCard", () => {
 
     expect(container.querySelectorAll("img")).toHaveLength(2)
     expect(container.querySelectorAll("picture source[type='image/webp']")).toHaveLength(2)
-    expect(container.querySelector("img[aria-hidden='true']")).toBeInTheDocument()
+    const blurImage = container.querySelector("img[aria-hidden='true']")
+    expect(blurImage).toBeInTheDocument()
+    expect(blurImage).toHaveClass("blur-2xl", "scale-110")
     expect(getByRole("img", { name: "My Project" })).toBeInTheDocument()
   })
 })

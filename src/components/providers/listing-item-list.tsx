@@ -1,6 +1,6 @@
 "use client"
 
-import { ItemListClient } from "@/components/listing/listing-item-list-client"
+import { ItemListClient } from "@/components/features/listing/listing-item-list-client"
 import { QueryProvider } from "@/components/providers/query-provider"
 import type { Locale } from "@/i18n/config"
 import type { ComponentType } from "react"

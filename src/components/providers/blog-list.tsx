@@ -1,11 +1,11 @@
 "use client"
 
-import { ProjectCard } from "@/components/features/projects/project-card"
-import { ItemListWithProvider } from "@/components/listing/listing-item-list-with-provider"
+import { BlogCard } from "@/components/features/blog/blog-card"
+import { ItemListWithProvider } from "@/components/providers/listing-item-list"
 import type { Locale } from "@/i18n/config"
-import type { ProjectListingItem, ListingResponse } from "@/lib/api/listing-api"
+import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
 
-interface ProjectListWithProviderProps {
+interface BlogListWithProviderProps {
   locale: Locale
   tags: string[]
   categories: string[]
@@ -13,10 +13,10 @@ interface ProjectListWithProviderProps {
   initialTags: string[]
   initialCategories: string[]
   initialSortBy: string | null
-  initialData?: ListingResponse<ProjectListingItem>
+  initialData?: ListingResponse<BlogListingItem>
 }
 
-export function ProjectListWithProvider({
+export function BlogListWithProvider({
   locale,
   tags,
   categories,
@@ -25,10 +25,10 @@ export function ProjectListWithProvider({
   initialCategories,
   initialSortBy,
   initialData,
-}: ProjectListWithProviderProps) {
+}: BlogListWithProviderProps) {
   return (
-    <ItemListWithProvider<ProjectListingItem>
-      endpoint={`/${locale}/api/projects.json`}
+    <ItemListWithProvider<BlogListingItem>
+      endpoint={`/${locale}/api/blog.json`}
       locale={locale}
       tags={tags}
       categories={categories}
@@ -38,8 +38,8 @@ export function ProjectListWithProvider({
       initialSortBy={initialSortBy}
       initialData={initialData}
       gridClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-      skeletonCount={3}
-      CardComponent={ProjectCard}
+      skeletonCount={4}
+      CardComponent={BlogCard}
       getItemKey={(item) => item.slug}
     />
   )
