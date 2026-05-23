@@ -25,6 +25,7 @@ import {
 import { Badge } from "@/components/ui/astro/badge"
 import { SkillIcon } from "@/components/icon/skill-icons"
 import avatarImage from "@/assets/images/avatar.jpg"
+import { Image } from "astro:assets"
 import type { CollectionEntry } from "astro:content"
 
 type ProfileData = CollectionEntry<"profile">["data"]
@@ -99,9 +100,13 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
   >
     <CardHeader>
       <div class="flex items-center gap-4">
-        <img
-          src={avatarImage.src}
+        <Image
+          src={avatarImage}
           alt={data.profile.name}
+          width={64}
+          height={64}
+          format="webp"
+          quality={80}
           class="size-14 rounded-full object-cover ring-1 ring-border md:size-16"
           loading="eager"
           decoding="async"

@@ -11,19 +11,26 @@ export function AppShell({
   children,
   currentPath,
   avatarSrc,
+  avatarSrcSet,
   pageTitle,
   locale = "en",
 }: {
   children: React.ReactNode
   currentPath: string
   avatarSrc: string
+  avatarSrcSet?: string
   pageTitle?: string
   locale?: Locale
 }) {
   return (
     <TooltipProvider>
       <SidebarProvider>
-        <AppSidebar currentPath={currentPath} avatarSrc={avatarSrc} locale={locale} />
+        <AppSidebar
+          currentPath={currentPath}
+          avatarSrc={avatarSrc}
+          avatarSrcSet={avatarSrcSet}
+          locale={locale}
+        />
         <SidebarInset>
           <SiteHeader currentPath={currentPath} pageTitle={pageTitle} locale={locale} />
           <div className="flex-1">

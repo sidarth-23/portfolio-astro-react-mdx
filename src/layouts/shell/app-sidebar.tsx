@@ -18,11 +18,13 @@ import type { Locale } from "@/i18n/config"
 export function AppSidebar({
   currentPath,
   avatarSrc,
+  avatarSrcSet,
   locale = "en",
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   currentPath: string
   avatarSrc: string
+  avatarSrcSet?: string
   locale?: Locale
 }) {
   const { profile, navigation, secondary, social } = sidebarContent(locale)
@@ -32,10 +34,14 @@ export function AppSidebar({
       <SidebarHeader className="flex flex-col items-center gap-3 px-4 py-6">
         <img
           src={avatarSrc}
+          srcSet={avatarSrcSet}
+          sizes="80px"
           alt={profile.name}
           className="size-20 rounded-full object-cover"
           loading="eager"
           decoding="sync"
+          width={80}
+          height={80}
         />
         <div className="flex flex-col items-center gap-1 text-center">
           <h3 className="font-semibold text-sidebar-foreground">

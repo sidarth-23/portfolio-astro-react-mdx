@@ -3,6 +3,7 @@ import "@/styles/global.css"
 import { resolveSeo } from "@/lib/content/seo"
 import { AppShell } from "@/layouts/shell/app-shell"
 import avatarImage from "@/assets/images/avatar.jpg"
+import { getImage } from "astro:assets"
 import { ClientRouter } from "astro:transitions"
 import type { Locale } from "@/i18n/config"
 
@@ -27,7 +28,24 @@ const {
 const resolved = resolveSeo({ title, description, image }, seo)
 const canonical = new URL(Astro.url.pathname, Astro.site)
 const currentPath = Astro.url.pathname
-const avatarSrc = avatarImage.src
+const [avatarSm, avatarLg] = await Promise.all([
+  getImage({
+    src: avatarImage,
+    width: 80,
+    height: 80,
+    format: "webp",
+    quality: 80,
+  }),
+  getImage({
+    src: avatarImage,
+    width: 160,
+    height: 160,
+    format: "webp",
+    quality: 80,
+  }),
+])
+const avatarSrc = avatarSm.src
+const avatarSrcSet = `${avatarSm.src} 1x, ${avatarLg.src} 2x`
 ---
 
 <html lang={locale} transition:animate="none">
@@ -96,6 +114,7 @@ const avatarSrc = avatarImage.src
       client:load
       currentPath={currentPath}
       avatarSrc={avatarSrc}
+      avatarSrcSet={avatarSrcSet}
       pageTitle={headerTitle}
       locale={locale}
     >
