@@ -152,13 +152,11 @@ function applyFilters<T extends { title: string; tags: string[]; category?: stri
       (item) =>
         item.title.toLowerCase().includes(query) ||
         ("description" in item &&
-          (item as unknown as { description: string }).description
-            .toLowerCase()
-            .includes(query)) ||
+          typeof item.description === "string" &&
+          item.description.toLowerCase().includes(query)) ||
         ("summary" in item &&
-          (item as unknown as { summary: string }).summary
-            .toLowerCase()
-            .includes(query)) ||
+          typeof item.summary === "string" &&
+          item.summary.toLowerCase().includes(query)) ||
         item.tags.some((tag) => tag.toLowerCase().includes(query))
     )
   }

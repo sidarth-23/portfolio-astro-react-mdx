@@ -1,6 +1,12 @@
 import type { Element, Root } from "hast"
+import type { Node } from "unist"
 
-function isElement(node: unknown): node is Element {
+type MdxFlowElementLike = Node & {
+  type: "mdxJsxFlowElement"
+  name?: string
+}
+
+function isElement(node: Node | null | undefined): node is Element {
   return (
     typeof node === "object" &&
     node !== null &&
@@ -8,21 +14,20 @@ function isElement(node: unknown): node is Element {
   )
 }
 
-function isPre(node: unknown): node is Element {
+function isPre(node: Node | null | undefined): node is Element {
   return isElement(node) && node.tagName === "pre"
 }
 
-function isInsideCodeGroup(ancestors: unknown[]): boolean {
+function isInsideCodeGroup(ancestors: Node[]): boolean {
   return ancestors.some((ancestor) => {
-    if (typeof ancestor !== "object" || ancestor === null) return false
-    const node = ancestor as {
-      type?: string
-      name?: string
-      properties?: Record<string, unknown>
+    if (ancestor.type === "mdxJsxFlowElement") {
+      const node = ancestor as MdxFlowElementLike
+      if (node.name === "CodeGroup") return true
     }
+
+    if (!isElement(ancestor)) return false
     return (
-      (node.type === "mdxJsxFlowElement" && node.name === "CodeGroup") ||
-      node.properties?.["data-code-group"] !== undefined
+      ancestor.properties?.["data-code-group"] !== undefined
     )
   })
 }
@@ -157,19 +162,20 @@ function codeBlockWrapper(pre: Element): Element {
   }
 }
 
-function walk(node: Root | Element, ancestors: unknown[] = []) {
-  const children = "children" in node ? node.children : []
+function walk(node: Root | Element, ancestors: Node[] = []) {
+  const children = node.children
   for (let index = 0; index < children.length; index++) {
-    const child = children[index]
+    const child = children[index] as Node
     if (isPre(child) && !isInsideCodeGroup(ancestors)) {
       children.splice(index, 1, codeBlockWrapper(child))
       continue
     }
     if (
-      typeof child === "object" &&
-      child !== null &&
-      "children" in child &&
-      Array.isArray((child as { children?: unknown }).children)
+      isElement(child) ||
+      (typeof child === "object" &&
+        child !== null &&
+        "children" in child &&
+        Array.isArray((child as Root).children))
     ) {
       walk(child as Root | Element, [...ancestors, child])
     }

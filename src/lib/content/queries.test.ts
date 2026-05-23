@@ -4,7 +4,8 @@ import type { CollectionEntry } from "astro:content"
 // Mock astro:content
 const mockGetCollection = vi.fn()
 vi.mock("astro:content", () => ({
-  getCollection: (...args: unknown[]) => mockGetCollection(...args),
+  getCollection: (...args: Parameters<typeof mockGetCollection>) =>
+    mockGetCollection(...args),
 }))
 
 import { getProfileExperienceByLocale } from "./queries"

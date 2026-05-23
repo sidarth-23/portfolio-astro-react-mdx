@@ -3,12 +3,13 @@ import { describe, expect, it, vi, beforeEach } from "vitest"
 // Mock astro:content
 const mockGetCollection = vi.fn()
 vi.mock("astro:content", () => ({
-  getCollection: (...args: unknown[]) => mockGetCollection(...args),
+  getCollection: (...args: Parameters<typeof mockGetCollection>) =>
+    mockGetCollection(...args),
 }))
 
 const mockGetImage = vi.fn()
 vi.mock("astro:assets", () => ({
-  getImage: (...args: unknown[]) => mockGetImage(...args),
+  getImage: (...args: Parameters<typeof mockGetImage>) => mockGetImage(...args),
 }))
 
 import { getBlogListing, getProjectListing, getBlogFilters, getProjectFilters } from "./listing-api"

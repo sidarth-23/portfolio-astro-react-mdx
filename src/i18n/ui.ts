@@ -5,7 +5,7 @@ import {
   validateTranslations,
 } from "@/i18n/schema"
 
-const translations: Record<Locale, unknown> = {
+const translations: Record<Locale, TranslationSchema> = {
   en: {
     nav: {
       home: "Home",
@@ -228,18 +228,19 @@ if (import.meta.env?.DEV ?? true) {
   }
 }
 
-/** Narrow the untyped record to typed after validation. */
-const ui = translations as Record<Locale, TranslationSchema>
+const ui = translations
+
+type TranslationNode = string | { [key: string]: TranslationNode }
 
 function getNestedValue(
   obj: TranslationSchema,
   path: string
 ): string | undefined {
   const parts = path.split(".")
-  let current: unknown = obj
+  let current: TranslationNode = obj as TranslationNode
   for (const part of parts) {
     if (current && typeof current === "object" && part in current) {
-      current = (current as Record<string, unknown>)[part]
+      current = current[part]
     } else {
       return undefined
     }

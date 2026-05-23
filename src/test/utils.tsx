@@ -7,7 +7,7 @@ import { createQueryClient } from "@/lib/query-client"
 
 export async function renderAstro(
   Component: AstroComponentFactory,
-  props?: Record<string, unknown>,
+  props?: Record<string, string | number | boolean | null | undefined | object>,
   slots?: Record<string, string>
 ) {
   const container = await AstroContainer.create()

@@ -1,5 +1,5 @@
 import { visit } from "unist-util-visit"
-import type { Code, Root } from "mdast"
+import type { Code, Paragraph, Root, RootContent } from "mdast"
 import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx"
 
 function hasFilename(node: Code): boolean {
@@ -12,28 +12,26 @@ function extractFilename(meta: string): string {
   return match ? match[1] : ""
 }
 
-function isWhitespaceNode(node: unknown): boolean {
-  if (typeof node !== "object" || node === null) return false
-  const n = node as Record<string, unknown>
-  if (n.type === "text" && typeof n.value === "string") {
-    return /^\s*$/.test(n.value)
-  }
-  if (n.type === "paragraph" && Array.isArray(n.children)) {
-    return n.children.every(
-      (child: unknown) =>
-        typeof child === "object" &&
-        child !== null &&
-        (child as Record<string, unknown>).type === "text" &&
-        /^\s*$/.test(String((child as Record<string, unknown>).value))
-    )
-  }
-  return false
+function isWhitespaceNode(node: RootContent): boolean {
+  if (node.type === "text") return /^\s*$/.test(node.value)
+  if (node.type !== "paragraph") return false
+
+  const paragraph = node as Paragraph
+  const textChildren = paragraph.children.filter((child) => child.type === "text")
+  return (
+    textChildren.length === paragraph.children.length &&
+    textChildren.every((child) => /^\s*$/.test(child.value))
+  )
+}
+
+type ParentWithChildren = {
+  children: RootContent[]
 }
 
 interface Group {
   start: number
   end: number
-  parent: Root | { children: unknown[] }
+  parent: ParentWithChildren
 }
 
 /**
@@ -50,6 +48,7 @@ export function remarkCodeGroup() {
     // First pass: identify groups (read-only)
     visit(tree, "code", (node, index, parent) => {
       if (!parent || typeof index !== "number") return
+      const parentWithChildren = parent as ParentWithChildren
       if (!hasFilename(node)) return
 
       const alreadyGrouped = groups.some(
@@ -60,13 +59,8 @@ export function remarkCodeGroup() {
       let currentEnd = index
 
       for (let i = index + 1; i < parent.children.length; i++) {
-        const sibling = parent.children[i]
-        if (
-          typeof sibling === "object" &&
-          sibling !== null &&
-          (sibling as Code).type === "code" &&
-          hasFilename(sibling as Code)
-        ) {
+        const sibling = parentWithChildren.children[i]
+        if (sibling.type === "code" && hasFilename(sibling)) {
           currentEnd = i
         } else if (isWhitespaceNode(sibling)) {
           currentEnd = i
@@ -75,15 +69,15 @@ export function remarkCodeGroup() {
         }
       }
 
-      groups.push({ start: index, end: currentEnd, parent })
+      groups.push({ start: index, end: currentEnd, parent: parentWithChildren })
     })
 
     // Second pass: replace groups in reverse order to preserve indices
     for (const group of groups.reverse()) {
       const { parent, start, end } = group
-      const codeNodes = (parent.children as unknown[])
+      const codeNodes = parent.children
         .slice(start, end + 1)
-        .filter((n) => (n as Code).type === "code") as Code[]
+        .filter((n): n is Code => n.type === "code")
 
       const panels = codeNodes.map((node) => ({
         filename: extractFilename(node.meta || ""),
@@ -104,11 +98,7 @@ export function remarkCodeGroup() {
         children: codeNodes as MdxJsxFlowElement["children"],
       }
 
-      ;(parent.children as unknown[]).splice(
-        start,
-        end - start + 1,
-        codeGroupElement
-      )
+      parent.children.splice(start, end - start + 1, codeGroupElement)
     }
   }
 }

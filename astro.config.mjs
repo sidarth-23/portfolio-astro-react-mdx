@@ -10,6 +10,7 @@ import rehypeSlug from "rehype-slug"
 import { filenameTransformer } from "./src/lib/codeblock/shiki"
 import { rehypeCodeBlocks } from "./src/lib/codeblock/rehype"
 import { remarkCodeGroup } from "./src/lib/codeblock/remark"
+
 // https://astro.build/config
 export default defineConfig({
   security: { csp: true },
@@ -17,7 +18,8 @@ export default defineConfig({
     mode: "standalone",
   }),
   vite: {
-    plugins: [/** @type {any} */ (tailwindcss())],
+    // @ts-expect-error Astro currently resolves a different Vite type instance than @tailwindcss/vite.
+    plugins: [tailwindcss()],
   },
   integrations: [
     react(),

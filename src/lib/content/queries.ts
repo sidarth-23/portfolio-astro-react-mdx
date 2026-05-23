@@ -117,24 +117,7 @@ export async function getProfileByLocale(
 }
 
 export async function getProfileExperienceByLocale(locale: Locale = "en") {
-  const entries = (await getCollection("profileExperience" as never)) as Array<{
-    data: {
-      id: number
-      locale: Locale
-      company: string
-      companyLocation: string
-      role: {
-        title: string
-        location?: string
-        start: string
-        end?: string | null
-        currentlyWorking: boolean
-        details: string
-      }
-    }
-    body: string
-    render: () => Promise<{ Content: unknown; headings: unknown[] }>
-  }>
+  const entries = await getCollection("profileExperience")
 
   const grouped = new Map<
     string,
@@ -162,7 +145,7 @@ export async function getProfileExperienceByLocale(locale: Locale = "en") {
     const existing = grouped.get(key)
     const role = {
       ...entry.data.role,
-      details: entry.body.trim(),
+      details: (entry.body ?? "").trim(),
     }
 
     if (existing) {

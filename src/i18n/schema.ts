@@ -99,7 +99,7 @@ export type TranslationKey = Paths<TranslationSchema>
  */
 export function validateTranslations(
   locale: string,
-  data: unknown
+  data: z.input<typeof TranslationSchema>
 ): TranslationSchema {
   const result = TranslationSchema.safeParse(data)
   if (!result.success) {
