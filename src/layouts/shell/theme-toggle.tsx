@@ -12,6 +12,7 @@ import {
   Moon02Icon,
   ComputerIcon,
   ArrowDown01Icon,
+  Tick02Icon,
 } from "@hugeicons/core-free-icons"
 
 type Theme = "light" | "dark" | "system"
@@ -134,13 +135,15 @@ export function ThemeToggle({
             <DropdownMenuItem
               key={t}
               onClick={() => handleThemeChange(t)}
-              className="gap-2"
+              className="gap-3 px-3 py-2"
             >
+              <span className="flex w-4 items-center justify-center">
+                {theme === t && (
+                  <HugeiconsIcon icon={Tick02Icon} size={14} strokeWidth={2} />
+                )}
+              </span>
               <HugeiconsIcon icon={Icon} strokeWidth={2} className="size-4" />
               <span>{themeConfig[t].label}</span>
-              {theme === t && (
-                <span className="ml-auto text-xs text-muted-foreground">✓</span>
-              )}
             </DropdownMenuItem>
           )
         })}
