@@ -27,6 +27,12 @@ describe("isActiveLink", () => {
     expect(isActiveLink("/en", "/")).toBe(false)
   })
 
+  it("matches root path with trailing slash normalization", () => {
+    expect(isActiveLink("/en/", "/en")).toBe(true)
+    expect(isActiveLink("/en", "/en/")).toBe(true)
+    expect(isActiveLink("/en/", "/en/")).toBe(true)
+  })
+
   it("matches exact path", () => {
     expect(isActiveLink("/en/blog", "/en/blog")).toBe(true)
     expect(isActiveLink("/en/blog", "/en/projects")).toBe(false)
@@ -35,6 +41,7 @@ describe("isActiveLink", () => {
   it("prefix-matches for non-root paths with multiple segments", () => {
     expect(isActiveLink("/en/blog/post-1", "/en/blog")).toBe(true)
     expect(isActiveLink("/en/blog", "/en/blog")).toBe(true)
+    expect(isActiveLink("/en/blog/post-1/", "/en/blog/")).toBe(true)
   })
 
   it("does not prefix-match root-like paths", () => {
