@@ -12,6 +12,10 @@
         "DOKPLOY_API_KEY": "${DOKPLOY_API_KEY}",
         "DOKPLOY_URL": "${DOKPLOY_URL}"
       }
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
     }
   }
 }
