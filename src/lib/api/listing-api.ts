@@ -1,11 +1,8 @@
 import { getCollection } from "astro:content"
+import { getImage } from "astro:assets"
+import type { ImageMetadata } from "astro"
 import type { Locale } from "@/i18n/config"
 import { locales } from "@/i18n/config"
-import {
-  getOptimizedImageSet,
-  generateSrcSet,
-  generateSizes,
-} from "./image-manifest"
 
 export interface ListingImage {
   src: string
@@ -27,6 +24,17 @@ export interface BlogListingItem {
   coverImage: ListingImage
 }
 
+interface BlogListingItemBase {
+  slug: string
+  title: string
+  description: string
+  date: string
+  updatedDate?: string
+  category?: string
+  tags: string[]
+  coverImageSource: ImageMetadata
+}
+
 export interface ProjectListingItem {
   slug: string
   title: string
@@ -38,6 +46,19 @@ export interface ProjectListingItem {
   category?: string
   tags: string[]
   coverImage: ListingImage
+}
+
+interface ProjectListingItemBase {
+  slug: string
+  title: string
+  summary: string
+  date: string
+  updatedDate?: string
+  featured: boolean
+  status: string
+  category?: string
+  tags: string[]
+  coverImageSource: ImageMetadata
 }
 
 export interface ListingResponse<T> {
@@ -75,29 +96,36 @@ function getContentSlug(slug: string): string {
 }
 
 async function createListingImage(
-  originalPath: string,
+  source: ImageMetadata,
   alt: string
 ): Promise<ListingImage> {
-  const optimizedSet = await getOptimizedImageSet(originalPath)
-
-  if (optimizedSet) {
-    return {
-      src: optimizedSet["600"],
-      srcSet: generateSrcSet(optimizedSet),
-      sizes: generateSizes(),
+  const [image400, image600, image1200] = await Promise.all([
+    getImage({
+      src: source,
+      width: 400,
+      format: "webp",
+      quality: 80,
+    }),
+    getImage({
+      src: source,
       width: 600,
-      height: 340,
-      alt,
-    }
-  }
+      format: "webp",
+      quality: 80,
+    }),
+    getImage({
+      src: source,
+      width: 1200,
+      format: "webp",
+      quality: 80,
+    }),
+  ])
 
-  // Fallback for unoptimized images
   return {
-    src: originalPath,
-    srcSet: "",
-    sizes: "",
-    width: 600,
-    height: 340,
+    src: image600.src,
+    srcSet: `${image400.src} 400w, ${image600.src} 600w, ${image1200.src} 1200w`,
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+    width: image600.attributes.width ?? 600,
+    height: image600.attributes.height ?? 340,
     alt,
   }
 }
@@ -193,8 +221,7 @@ export async function getBlogListing(
   const posts = await getCollection("blog", ({ data }) => !data.draft)
   const filteredByLocale = filterByLocale(posts, locale)
 
-  const items = await Promise.all(
-    filteredByLocale.map(async (post) => ({
+  const items: BlogListingItemBase[] = filteredByLocale.map((post) => ({
       slug: getContentSlug(post.id),
       title: post.data.title,
       description: post.data.description,
@@ -202,14 +229,8 @@ export async function getBlogListing(
       updatedDate: post.data.updatedDate?.toISOString(),
       category: post.data.category,
       tags: post.data.tags,
-      coverImage: await createListingImage(
-        typeof post.data.coverImage === "string"
-          ? post.data.coverImage
-          : post.data.coverImage.src,
-        post.data.title
-      ),
+      coverImageSource: post.data.coverImage,
     }))
-  )
 
   let filtered = applyFilters(items, filters)
   filtered = applySorting(filtered, filters.sort)
@@ -217,9 +238,22 @@ export async function getBlogListing(
   const page = filters.page ?? 1
   const limit = filters.limit ?? DEFAULT_LIMIT
   const paginated = applyPagination(filtered, page, limit)
+  const paginatedItems = await Promise.all(
+    paginated.items.map(async (post): Promise<BlogListingItem> => ({
+      slug: post.slug,
+      title: post.title,
+      description: post.description,
+      date: post.date,
+      updatedDate: post.updatedDate,
+      category: post.category,
+      tags: post.tags,
+      coverImage: await createListingImage(post.coverImageSource, post.title),
+    }))
+  )
 
   return {
     ...paginated,
+    items: paginatedItems,
     page,
   }
 }
@@ -231,8 +265,7 @@ export async function getProjectListing(
   const projects = await getCollection("projects")
   const filteredByLocale = filterByLocale(projects, locale)
 
-  const items = await Promise.all(
-    filteredByLocale.map(async (project) => ({
+  const items: ProjectListingItemBase[] = filteredByLocale.map((project) => ({
       slug: getContentSlug(project.id),
       title: project.data.title,
       summary: project.data.summary,
@@ -242,14 +275,8 @@ export async function getProjectListing(
       status: project.data.status,
       category: project.data.category,
       tags: project.data.tags,
-      coverImage: await createListingImage(
-        typeof project.data.coverImage === "string"
-          ? project.data.coverImage
-          : project.data.coverImage.src,
-        project.data.title
-      ),
+      coverImageSource: project.data.coverImage,
     }))
-  )
 
   let filtered = applyFilters(items, filters)
   filtered = applySorting(filtered, filters.sort)
@@ -257,9 +284,24 @@ export async function getProjectListing(
   const page = filters.page ?? 1
   const limit = filters.limit ?? DEFAULT_LIMIT
   const paginated = applyPagination(filtered, page, limit)
+  const paginatedItems = await Promise.all(
+    paginated.items.map(async (project): Promise<ProjectListingItem> => ({
+      slug: project.slug,
+      title: project.title,
+      summary: project.summary,
+      date: project.date,
+      updatedDate: project.updatedDate,
+      featured: project.featured,
+      status: project.status,
+      category: project.category,
+      tags: project.tags,
+      coverImage: await createListingImage(project.coverImageSource, project.title),
+    }))
+  )
 
   return {
     ...paginated,
+    items: paginatedItems,
     page,
   }
 }

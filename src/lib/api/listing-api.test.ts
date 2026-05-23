@@ -1,20 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
 
-// Mock the image manifest to avoid file system operations
-vi.mock("@/lib/api/image-manifest", () => ({
-  getOptimizedImageSet: vi.fn().mockResolvedValue({
-    "400": "/_optimized/test-400.webp",
-    "600": "/_optimized/test-600.webp",
-    "1200": "/_optimized/test-1200.webp",
-  }),
-  generateSrcSet: vi.fn().mockReturnValue("/_optimized/test-400.webp 400w, /_optimized/test-600.webp 600w, /_optimized/test-1200.webp 1200w"),
-  generateSizes: vi.fn().mockReturnValue("(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"),
-}))
-
 // Mock astro:content
 const mockGetCollection = vi.fn()
 vi.mock("astro:content", () => ({
   getCollection: (...args: unknown[]) => mockGetCollection(...args),
+}))
+
+const mockGetImage = vi.fn()
+vi.mock("astro:assets", () => ({
+  getImage: (...args: unknown[]) => mockGetImage(...args),
 }))
 
 import { getBlogListing, getProjectListing, getBlogFilters, getProjectFilters } from "./listing-api"
@@ -76,6 +70,13 @@ function createMockProjectEntries(count: number): CollectionEntry<"projects">[] 
 describe("listing-api", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockGetImage.mockImplementation(async (input: { width: number }) => ({
+      src: `/_optimized/test-${input.width}.webp`,
+      attributes: {
+        width: input.width,
+        height: Math.round(input.width * 0.5667),
+      },
+    }))
   })
 
   describe("getBlogListing", () => {
@@ -158,11 +159,17 @@ describe("listing-api", () => {
     })
 
     it("includes optimized image data", async () => {
+      mockGetImage.mockClear()
       const result = await getBlogListing("en", { limit: 1 })
       expect(result.items[0]).toHaveProperty("coverImage")
       expect(result.items[0].coverImage).toHaveProperty("src")
       expect(result.items[0].coverImage).toHaveProperty("srcSet")
       expect(result.items[0].coverImage).toHaveProperty("sizes")
+      expect(mockGetImage).toHaveBeenCalledTimes(3)
+      const widths = mockGetImage.mock.calls.map((call) =>
+        (call[0] as { width: number }).width
+      )
+      expect(widths).toEqual([400, 600, 1200])
     })
   })
 
