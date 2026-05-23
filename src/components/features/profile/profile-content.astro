@@ -4,6 +4,7 @@ import {
   Briefcase01Icon,
   Award03Icon,
   Layers01Icon,
+  LinkSquare02Icon,
 } from "@hugeicons/core-free-icons"
 import {
   Timeline,
@@ -27,6 +28,7 @@ import { SkillIcon } from "@/components/icon/skill-icons"
 import avatarImage from "@/assets/images/avatar.jpg"
 import { Image } from "astro:assets"
 import type { CollectionEntry } from "astro:content"
+import { createMarkdownProcessor } from "@astrojs/markdown-remark"
 
 type ProfileData = CollectionEntry<"profile">["data"]
 
@@ -36,7 +38,7 @@ type ExperienceRole = {
   start: string
   end?: string | null
   currentlyWorking: boolean
-  highlights: string[]
+  details: string
 }
 
 type ExperienceData = {
@@ -57,6 +59,7 @@ interface Props {
 }
 
 const { data, experiences } = Astro.props
+const markdownProcessor = await createMarkdownProcessor()
 
 function formatMonthLabel(value: string): string {
   const [year, month] = value.split("-")
@@ -92,6 +95,25 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
     Boolean(currentRole)
   )
 }
+
+async function renderMarkdownToHtml(markdown: string): Promise<string> {
+  return (await markdownProcessor.render(markdown)).code
+}
+
+const experiencesWithRoleDetails = await Promise.all(
+  experiences.map(async (experience) => ({
+    ...experience,
+    data: {
+      ...experience.data,
+      roles: await Promise.all(
+        experience.data.roles.map(async (role) => ({
+          ...role,
+          detailsHtml: await renderMarkdownToHtml(role.details),
+        }))
+      ),
+    },
+  }))
+)
 ---
 
 <div class="space-y-14">
@@ -112,9 +134,7 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
           decoding="async"
         />
         <div>
-          <CardTitle class="text-xl md:text-2xl"
-            >{data.profile.name}</CardTitle
-          >
+          <CardTitle class="text-xl md:text-2xl">{data.profile.name}</CardTitle>
           <CardDescription class="text-base"
             >{data.profile.role}</CardDescription
           >
@@ -145,13 +165,15 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
 
     <Timeline defaultValue={experiences.length} className="w-full">
       {
-        experiences.map(({ data: item }) => (
+        experiencesWithRoleDetails.map(({ data: item }, itemIndex) => (
           <TimelineItem
             step={item.id}
-            className="group-data-[orientation=vertical]/timeline:ms-10 group-data-[orientation=vertical]/timeline:not-last:pb-10"
+            className="group-data-[orientation=vertical]/timeline:ms-10 group-data-[orientation=vertical]/timeline:pb-10"
           >
             <TimelineHeader>
-              <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
+              <TimelineSeparator
+                className={`group-data-completed/timeline-item:bg-primary group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5 ${itemIndex === experiencesWithRoleDetails.length - 1 ? "!hidden" : "!block"}`}
+              />
               <TimelineTitle className="mt-0.5 text-base font-semibold">
                 {item.company}
               </TimelineTitle>
@@ -165,18 +187,22 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
             </TimelineHeader>
 
             <TimelineContent>
-              <p class="text-base font-medium text-foreground">{item.location}</p>
+              <p class="text-base font-medium text-foreground">
+                {item.location}
+              </p>
               <TimelineDate className="mt-1 mb-4">
                 {getExperiencePeriodLabel(item.roles)}
               </TimelineDate>
 
-              <div class="space-y-6 border-l border-border/20 pl-5">
+              <div class="space-y-6">
                 {item.roles.map((role, index) => (
-                  <div class={index > 0 ? "border-t border-border/40 pt-6" : ""}>
+                  <div
+                    class={index > 0 ? "border-t border-border/40 pt-6" : ""}
+                  >
                     <h4 class="text-base font-semibold text-foreground">
                       {role.title}
                     </h4>
-                    <TimelineDate className="mt-1 mb-2 text-sm">
+                    <TimelineDate className="mt-1 mb-1 text-sm">
                       {getPeriodLabel(
                         role.start,
                         role.end,
@@ -188,11 +214,9 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
                         {role.location}
                       </p>
                     )}
-                    <ul class="list-disc space-y-1 pl-4 text-base text-muted-foreground">
-                      {role.highlights.map((highlight) => (
-                        <li>{highlight}</li>
-                      ))}
-                    </ul>
+                    <div class="ml-3 max-w-none text-base text-muted-foreground [&_li]:my-1 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5">
+                      <div set:html={role.detailsHtml} />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -250,7 +274,12 @@ function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
             aria-label={`Open ${cert.title}`}
           >
             {cert.title}
-            <span class="text-muted-foreground transition hover:text-foreground">↗</span>
+            <HugeiconsIcon
+              icon={LinkSquare02Icon}
+              size={16}
+              strokeWidth={2}
+              className="text-muted-foreground transition group-hover:text-foreground"
+            />
           </a>
         ))
       }

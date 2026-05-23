@@ -20,18 +20,15 @@ function createMockExperienceEntries(
       id: count - i, // Reverse order to test sorting
       locale: locale as "en" | "es" | "fr",
       company: `Company ${i + 1}`,
-      location: `Location ${i + 1}`,
-      roles: [
-        {
-          title: `Role ${i + 1}`,
-          start: "2024-01",
-          end: i === 0 ? null : "2024-12",
-          currentlyWorking: i === 0,
-          highlights: ["Highlight 1", "Highlight 2"],
-        },
-      ],
+      companyLocation: `Location ${i + 1}`,
+      role: {
+        title: `Role ${i + 1}`,
+        start: "2024-01",
+        end: i === 0 ? null : "2024-12",
+        currentlyWorking: i === 0,
+      },
     },
-    body: "",
+    body: "- Highlight 1\n- Highlight 2",
     rendered: undefined,
     filePath: `src/content/profileExperience/${locale}/experience-${i + 1}.md`,
   })) as CollectionEntry<"profileExperience">[]
@@ -95,28 +92,37 @@ describe("content queries", () => {
             id: 1,
             locale: "en" as const,
             company: "Test Company",
-            location: "Remote",
-            roles: [
-              {
-                title: "Senior Developer",
-                location: "Remote",
-                start: "2023-01",
-                end: "2023-12",
-                currentlyWorking: false,
-                highlights: ["Led a team", "Shipped features"],
-              },
-              {
-                title: "Lead Developer",
-                start: "2024-01",
-                end: null,
-                currentlyWorking: true,
-                highlights: ["Architected systems"],
-              },
-            ],
+            companyLocation: "Remote",
+            role: {
+              title: "Senior Developer",
+              location: "Remote",
+              start: "2023-01",
+              end: "2023-12",
+              currentlyWorking: false,
+            },
           },
-          body: "",
+          body: "- Led a team\n- Shipped features",
           rendered: undefined,
           filePath: "src/content/profileExperience/en/company.md",
+        },
+        {
+          id: "en/company-2",
+          collection: "profileExperience" as const,
+          data: {
+            id: 1,
+            locale: "en" as const,
+            company: "Test Company",
+            companyLocation: "Remote",
+            role: {
+              title: "Lead Developer",
+              start: "2024-01",
+              end: null,
+              currentlyWorking: true,
+            },
+          },
+          body: "- Architected systems",
+          rendered: undefined,
+          filePath: "src/content/profileExperience/en/company-2.md",
         },
       ] as CollectionEntry<"profileExperience">[]
 

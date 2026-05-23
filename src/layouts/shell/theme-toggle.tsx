@@ -135,7 +135,7 @@ export function ThemeToggle({
             <DropdownMenuItem
               key={t}
               onClick={() => handleThemeChange(t)}
-              className="gap-3 px-3 py-2"
+              className={`gap-3 px-3 py-2 ${theme === t ? "bg-muted text-foreground" : ""}`}
             >
               <HugeiconsIcon icon={Icon} strokeWidth={2} className="size-4" />
               <span>{themeConfig[t].label}</span>

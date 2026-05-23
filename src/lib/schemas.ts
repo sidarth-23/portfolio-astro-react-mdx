@@ -72,17 +72,17 @@ const profileExperienceRoleSchema = z
     start: profileMonthSchema,
     end: profileMonthSchema.nullable().optional(),
     currentlyWorking: z.boolean().default(false),
-    highlights: z.array(z.string().min(1)).min(1),
   })
   .refine((item) => item.currentlyWorking || Boolean(item.end), {
     message: "end is required when currentlyWorking is false",
     path: ["end"],
   })
 
-export const profileExperienceSchema = z.object({
-  id: z.number().int().positive(),
-  locale: z.enum(["en", "es", "fr"]),
-  company: z.string().min(1),
-  location: z.string().min(1),
-  roles: z.array(profileExperienceRoleSchema).min(1),
-})
+export const profileExperienceSchema = z
+  .object({
+    id: z.number().int().positive(),
+    locale: z.enum(["en", "es", "fr"]),
+    company: z.string().min(1),
+    companyLocation: z.string().min(1),
+    role: profileExperienceRoleSchema,
+  })

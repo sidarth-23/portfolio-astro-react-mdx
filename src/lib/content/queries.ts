@@ -122,21 +122,76 @@ export async function getProfileExperienceByLocale(locale: Locale = "en") {
       id: number
       locale: Locale
       company: string
-      location: string
-      roles: Array<{
+      companyLocation: string
+      role: {
         title: string
         location?: string
         start: string
         end?: string | null
         currentlyWorking: boolean
-        highlights: string[]
-      }>
+        details: string
+      }
     }
+    body: string
     render: () => Promise<{ Content: unknown; headings: unknown[] }>
   }>
 
-  return entries
+  const grouped = new Map<
+    string,
+    {
+      data: {
+        id: number
+        locale: Locale
+        company: string
+        location: string
+        roles: Array<{
+          title: string
+          location?: string
+          start: string
+          end?: string | null
+          currentlyWorking: boolean
+          details: string
+        }>
+      }
+    }
+  >()
+
+  for (const entry of entries) {
+    if (entry.data.locale !== locale) continue
+    const key = `${entry.data.locale}-${entry.data.id}-${entry.data.company}`
+    const existing = grouped.get(key)
+    const role = {
+      ...entry.data.role,
+      details: entry.body.trim(),
+    }
+
+    if (existing) {
+      existing.data.roles.push(role)
+      continue
+    }
+
+    grouped.set(key, {
+      data: {
+        id: entry.data.id,
+        locale: entry.data.locale,
+        company: entry.data.company,
+        location: entry.data.companyLocation,
+        roles: [role],
+      },
+    })
+  }
+
+  return Array.from(grouped.values())
     .filter((entry) => entry.data.locale === locale)
+    .map((entry) => ({
+      ...entry,
+      data: {
+        ...entry.data,
+        roles: [...entry.data.roles].sort((a, b) =>
+          a.start < b.start ? -1 : a.start > b.start ? 1 : 0
+        ),
+      },
+    }))
     .sort((a, b) => a.data.id - b.data.id)
 }
 

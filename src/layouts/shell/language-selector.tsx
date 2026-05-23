@@ -64,7 +64,7 @@ export function LanguageSelector({
         <DropdownMenuItem
           key={loc}
           onClick={() => handleChange(loc)}
-          className="gap-3 px-3 py-2"
+          className={`gap-3 px-3 py-2 ${locale === loc ? "bg-muted text-foreground" : ""}`}
         >
           <span className="flex w-4 items-center justify-center">
             {locale === loc && (
