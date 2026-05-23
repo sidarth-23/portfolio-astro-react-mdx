@@ -53,6 +53,13 @@ export function ItemListClient<T extends BlogListingItem | ProjectListingItem>({
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title" | null>(
     initialSortBy as "newest" | "oldest" | "title" | null
   )
+  const isInitialFilterState =
+    search === initialSearch &&
+    sortBy === initialSortBy &&
+    activeTags.length === initialTags.length &&
+    activeCategories.length === initialCategories.length &&
+    activeTags.every((tag) => initialTags.includes(tag)) &&
+    activeCategories.every((category) => initialCategories.includes(category))
 
   const {
     allItems,
@@ -68,7 +75,7 @@ export function ItemListClient<T extends BlogListingItem | ProjectListingItem>({
     tags: activeTags,
     categories: activeCategories,
     sort: sortBy,
-    initialData,
+    initialData: isInitialFilterState ? initialData : undefined,
     limit: 12,
   })
 

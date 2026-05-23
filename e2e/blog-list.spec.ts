@@ -18,7 +18,6 @@ test.describe("Blog List Page", () => {
   })
 
   test("images are optimized webp", async ({ page }) => {
-    // Wait for images to load
     await page.waitForLoadState("networkidle")
 
     const images = page.locator("picture img").filter({ has: page.locator("[loading='lazy']") })
@@ -39,40 +38,41 @@ test.describe("Blog List Page", () => {
       const source = sources.nth(i)
       const srcset = await source.getAttribute("srcset")
       expect(srcset).toBeTruthy()
-      expect(srcset).toContain("w") // Contains width descriptors
+      expect(srcset).toContain("w")
     }
   })
 
-  test("filters by search", async ({ page }) => {
+  test("filters by search and updates URL", async ({ page }) => {
     const searchInput = page.locator("[data-testid='search-input']")
-    await searchInput.fill("astro")
-    await searchInput.press("Enter")
 
-    // Wait for filtered results
-    await page.waitForTimeout(500)
+    await searchInput.fill("zzzznotfound")
+    await page.waitForLoadState("networkidle")
 
-    const cards = page.locator("[data-testid='blog-card']")
-    expect(await cards.count()).toBeGreaterThanOrEqual(0)
+    await expect(page).toHaveURL(/search=zzzznotfound/)
+    await expect(page.locator("[data-testid='blog-card']")).toHaveCount(0)
+
+    await searchInput.fill("authentication")
+    await page.waitForLoadState("networkidle")
+    await expect(page).toHaveURL(/search=authentication/)
+    await expect(page.locator("[data-testid='blog-card']")).toHaveCount(1)
   })
 
-  test("filters by tags", async ({ page }) => {
-    const tagButton = page.locator("[data-testid='tag-filter']").first()
-    if (await tagButton.isVisible()) {
-      await tagButton.click()
-      await page.waitForTimeout(500)
+  test("filters by categories and updates URL", async ({ page }) => {
+    await page.getByRole("button", { name: "Backend Systems" }).click()
+    await page.waitForLoadState("networkidle")
+    await expect(page).toHaveURL(/categories=Backend\+Systems|categories=Backend%20Systems/)
+    await expect(page.locator("[data-testid='blog-card']")).toHaveCount(1)
 
-      const cards = page.locator("[data-testid='blog-card']")
-      expect(await cards.count()).toBeGreaterThanOrEqual(0)
-    }
+    await page.getByRole("button", { name: "Backend Systems" }).click()
+    await page.waitForLoadState("networkidle")
+    await expect(page).not.toHaveURL(/categories=/)
   })
 
   test("supports infinite scroll", async ({ page }) => {
-    // Get initial card count
     const initialCards = await page.locator("[data-testid='blog-card']").count()
 
-    // Scroll to bottom to trigger infinite scroll
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-    await page.waitForTimeout(1000)
+    await page.waitForLoadState("networkidle")
 
     const newCards = await page.locator("[data-testid='blog-card']").count()
     expect(newCards).toBeGreaterThanOrEqual(initialCards)
@@ -97,8 +97,6 @@ test.describe("Blog List Page", () => {
     const response = await page.goto("/en/blog")
     const body = await response?.text()
 
-    // Check that we're not dumping all posts in the HTML
-    // The page should use client-side fetching after initial load
-    expect(body?.length).toBeLessThan(50000) // 50KB limit
+    expect(body?.length).toBeLessThan(50000)
   })
 })

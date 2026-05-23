@@ -130,7 +130,8 @@ function applyFilters<T extends { title: string; tags: string[]; category?: stri
         ("summary" in item &&
           (item as unknown as { summary: string }).summary
             .toLowerCase()
-            .includes(query))
+            .includes(query)) ||
+        item.tags.some((tag) => tag.toLowerCase().includes(query))
     )
   }
 

@@ -97,12 +97,23 @@ describe("listing-api", () => {
       expect(typeof result.total).toBe("number")
     })
 
-    it("filters by search term", async () => {
+    it("filters by search term in title, description, or tags", async () => {
       const result = await getBlogListing("en", { search: "astro" })
-      expect(result.items.every(item => 
-        item.title.toLowerCase().includes("astro") || 
-        item.description.toLowerCase().includes("astro")
+      expect(result.items.every(item =>
+        item.title.toLowerCase().includes("astro") ||
+        item.description.toLowerCase().includes("astro") ||
+        item.tags.some(tag => tag.toLowerCase().includes("astro"))
       )).toBe(true)
+    })
+
+    it("filters by search term matching tags", async () => {
+      const result = await getBlogListing("en", { search: "react" })
+      expect(result.items.every(item =>
+        item.title.toLowerCase().includes("react") ||
+        item.description.toLowerCase().includes("react") ||
+        item.tags.some(tag => tag.toLowerCase().includes("react"))
+      )).toBe(true)
+      expect(result.items.length).toBeGreaterThan(0)
     })
 
     it("filters by tags", async () => {
@@ -172,13 +183,22 @@ describe("listing-api", () => {
       expect(result.page).toBe(1)
     })
 
-    it("filters by status-related terms in search", async () => {
+    it("filters by search term in title or summary", async () => {
       const result = await getProjectListing("en", { search: "active" })
-      // Should either match title/summary or return empty if no matches
-      expect(result.items.every(item => 
-        item.title.toLowerCase().includes("active") || 
+      expect(result.items.every(item =>
+        item.title.toLowerCase().includes("active") ||
         item.summary.toLowerCase().includes("active")
       ) || result.items.length === 0).toBe(true)
+    })
+
+    it("filters by search term matching tags", async () => {
+      const result = await getProjectListing("en", { search: "react" })
+      expect(result.items.every(item =>
+        item.title.toLowerCase().includes("react") ||
+        item.summary.toLowerCase().includes("react") ||
+        item.tags.some(tag => tag.toLowerCase().includes("react"))
+      )).toBe(true)
+      expect(result.items.length).toBeGreaterThan(0)
     })
 
     it("filters by multiple tags", async () => {

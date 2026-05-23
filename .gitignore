@@ -6,6 +6,8 @@ dist/
 # generated files
 src/generated/
 public/_optimized/
+test-results/
+playwright-report/
 
 # dependencies
 node_modules/

@@ -208,10 +208,11 @@ export function SearchFilterBar({
                 className="w-full"
                 onClick={() => {
                   setActiveTags([])
+                  setActiveCategories([])
                   setSortBy(null)
                   setSheetOpen(false)
                 }}
-                disabled={activeTags.length === 0 && !sortBy}
+                disabled={activeTags.length === 0 && activeCategories.length === 0 && !sortBy}
               >
                 {t(locale, "filters.clearFilters")}
               </Button>

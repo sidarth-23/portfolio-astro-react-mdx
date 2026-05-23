@@ -42,33 +42,42 @@ test.describe("Projects List Page", () => {
     }
   })
 
-  test("filters by search", async ({ page }) => {
+  test("filters by search and updates URL", async ({ page }) => {
+    const initialCards = await page.locator("[data-testid='project-card']").count()
     const searchInput = page.locator("[data-testid='search-input']")
-    await searchInput.fill("calculator")
-    await searchInput.press("Enter")
 
-    await page.waitForTimeout(500)
+    await searchInput.fill("bluebook")
+    await page.waitForLoadState("networkidle")
 
-    const cards = page.locator("[data-testid='project-card']")
-    expect(await cards.count()).toBeGreaterThanOrEqual(0)
+    await expect(page).toHaveURL(/search=bluebook/)
+
+    const filteredCards = await page.locator("[data-testid='project-card']").count()
+    expect(filteredCards).toBe(1)
+    expect(filteredCards).toBeLessThan(initialCards)
   })
 
-  test("filters by categories", async ({ page }) => {
-    const categoryButton = page.locator("[data-testid='category-filter']").first()
-    if (await categoryButton.isVisible()) {
-      await categoryButton.click()
-      await page.waitForTimeout(500)
+  test("filters by categories and updates URL", async ({ page }) => {
+    await page.getByRole("button", { name: "Website" }).click()
+    await page.waitForLoadState("networkidle")
 
-      const cards = page.locator("[data-testid='project-card']")
-      expect(await cards.count()).toBeGreaterThanOrEqual(0)
-    }
+    await expect(page).toHaveURL(/categories=Website/)
+    await expect(page.locator("[data-testid='project-card']")).toHaveCount(2)
+  })
+
+  test("filters by tags and updates URL", async ({ page }) => {
+    await page.getByRole("button", { name: "Filters" }).click()
+    await page.getByRole("button", { name: "#better auth" }).click()
+    await page.waitForLoadState("networkidle")
+
+    await expect(page).toHaveURL(/tags=better\+auth|tags=better%20auth/)
+    await expect(page.locator("[data-testid='project-card']")).toHaveCount(1)
   })
 
   test("supports infinite scroll", async ({ page }) => {
     const initialCards = await page.locator("[data-testid='project-card']").count()
 
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-    await page.waitForTimeout(1000)
+    await page.waitForLoadState("networkidle")
 
     const newCards = await page.locator("[data-testid='project-card']").count()
     expect(newCards).toBeGreaterThanOrEqual(initialCards)
