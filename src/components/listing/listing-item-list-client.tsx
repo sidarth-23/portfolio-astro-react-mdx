@@ -3,15 +3,15 @@
 import { useCallback, useState, type ComponentType } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { SearchFilterBar } from "@/components/listing/listing-search-filter-bar"
-import { useLocalInfiniteItems } from "@/hooks/use-local-infinite-items"
+import { useListingQuery } from "@/hooks/use-listing-query"
 import { Skeleton } from "@/components/ui/react"
 import { Spinner } from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
-import type { SortMode } from "@/lib/api"
+import type { BlogListingItem, ProjectListingItem, ListingResponse } from "@/lib/api/listing-api"
 
-interface ItemListClientProps<T> {
-  allItems: T[]
+interface ItemListClientProps<T extends BlogListingItem | ProjectListingItem> {
+  endpoint: string
   locale: Locale
   tags: string[]
   categories: string[]
@@ -19,6 +19,7 @@ interface ItemListClientProps<T> {
   initialTags: string[]
   initialCategories: string[]
   initialSortBy: string | null
+  initialData?: ListingResponse<BlogListingItem> | ListingResponse<ProjectListingItem>
   gridClassName: string
   skeletonCount: number
   CardComponent: ComponentType<{ item: T; locale: Locale }>
@@ -31,8 +32,8 @@ const itemVariants = {
   exit: { opacity: 0, y: -4, scale: 0.98 },
 }
 
-export function ItemListClient<T>({
-  allItems,
+export function ItemListClient<T extends BlogListingItem | ProjectListingItem>({
+  endpoint,
   locale,
   tags,
   categories,
@@ -40,6 +41,7 @@ export function ItemListClient<T>({
   initialTags,
   initialCategories,
   initialSortBy,
+  initialData,
   gridClassName,
   skeletonCount,
   CardComponent,
@@ -47,28 +49,31 @@ export function ItemListClient<T>({
 }: ItemListClientProps<T>) {
   const [search, setSearch] = useState(initialSearch)
   const [activeTags, setActiveTags] = useState<string[]>(initialTags)
-  const [activeCategories, setActiveCategories] =
-    useState<string[]>(initialCategories)
-  const [sortBy, setSortBy] = useState<SortMode | null>(initialSortBy as SortMode | null)
+  const [activeCategories, setActiveCategories] = useState<string[]>(initialCategories)
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title" | null>(
+    initialSortBy as "newest" | "oldest" | "title" | null
+  )
 
   const {
-    allItems: filteredItems,
+    allItems,
     sentinelRef,
     isFetchingNextPage,
     hasNextPage,
     isPending,
     isFetching,
-  } = useLocalInfiniteItems({
-    items: allItems,
+  } = useListingQuery<T>({
+    endpoint,
+    locale,
     search,
     tags: activeTags,
     categories: activeCategories,
     sort: sortBy,
+    initialData,
     limit: 12,
   })
 
   const isLoadingFilters =
-    isFetching && !isFetchingNextPage && filteredItems.length > 0
+    isFetching && !isFetchingNextPage && allItems.length > 0
 
   const handleFiltersChange = useCallback(
     (
@@ -80,7 +85,7 @@ export function ItemListClient<T>({
       setSearch(newSearch)
       setActiveTags(newTags)
       setActiveCategories(newCategories)
-      setSortBy(newSortBy as SortMode | null)
+      setSortBy(newSortBy as "newest" | "oldest" | "title" | null)
 
       const url = new URL(window.location.href)
       if (newSearch) {
@@ -121,7 +126,7 @@ export function ItemListClient<T>({
         onFiltersChange={handleFiltersChange}
       />
 
-      {isPending && filteredItems.length === 0 ? (
+      {isPending && allItems.length === 0 ? (
         <div className={gridClassName}>
           {Array.from({ length: 12 }).map((_, i) => (
             <motion.div
@@ -134,7 +139,7 @@ export function ItemListClient<T>({
             </motion.div>
           ))}
         </div>
-      ) : filteredItems.length === 0 ? (
+      ) : allItems.length === 0 ? (
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -146,7 +151,7 @@ export function ItemListClient<T>({
         <>
           <div className={`relative ${gridClassName}`}>
             <AnimatePresence mode="popLayout">
-              {filteredItems.map((item) => (
+              {allItems.map((item) => (
                 <motion.div
                   key={getItemKey(item)}
                   layout
@@ -156,7 +161,7 @@ export function ItemListClient<T>({
                   exit="exit"
                   transition={{ duration: 0.2, ease: "easeOut" }}
                 >
-                  <CardComponent item={item} locale={locale} />
+                  <CardComponent item={item as T} locale={locale} />
                 </motion.div>
               ))}
               {isFetchingNextPage &&

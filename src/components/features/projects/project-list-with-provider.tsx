@@ -3,10 +3,9 @@
 import { ProjectCard } from "@/components/features/projects/project-card"
 import { ItemListWithProvider } from "@/components/listing/listing-item-list-with-provider"
 import type { Locale } from "@/i18n/config"
-import type { SerializedProject } from "@/lib/api"
+import type { ProjectListingItem, ListingResponse } from "@/lib/api/listing-api"
 
 interface ProjectListWithProviderProps {
-  allProjects: SerializedProject[]
   locale: Locale
   tags: string[]
   categories: string[]
@@ -14,10 +13,10 @@ interface ProjectListWithProviderProps {
   initialTags: string[]
   initialCategories: string[]
   initialSortBy: string | null
+  initialData?: ListingResponse<ProjectListingItem>
 }
 
 export function ProjectListWithProvider({
-  allProjects,
   locale,
   tags,
   categories,
@@ -25,10 +24,11 @@ export function ProjectListWithProvider({
   initialTags,
   initialCategories,
   initialSortBy,
+  initialData,
 }: ProjectListWithProviderProps) {
   return (
-    <ItemListWithProvider<SerializedProject>
-      allItems={allProjects}
+    <ItemListWithProvider<ProjectListingItem>
+      endpoint={`/${locale}/api/projects.json`}
       locale={locale}
       tags={tags}
       categories={categories}
@@ -36,6 +36,7 @@ export function ProjectListWithProvider({
       initialTags={initialTags}
       initialCategories={initialCategories}
       initialSortBy={initialSortBy}
+      initialData={initialData}
       gridClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       skeletonCount={3}
       CardComponent={ProjectCard}

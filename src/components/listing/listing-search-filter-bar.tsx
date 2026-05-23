@@ -114,6 +114,7 @@ export function SearchFilterBar({
             className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
           />
           <Input
+            data-testid="search-input"
             type="text"
             placeholder={t(locale, "filters.searchPlaceholder")}
             value={search}
@@ -184,6 +185,7 @@ export function SearchFilterBar({
                     {tags.map((tag) => (
                       <button
                         key={tag}
+                        data-testid="tag-filter"
                         onClick={() => handleTagToggle(tag)}
                         className="cursor-pointer"
                       >
@@ -228,11 +230,12 @@ export function SearchFilterBar({
           <ScrollArea className="flex-1 whitespace-nowrap">
             <div className="flex items-center gap-1.5 py-1">
               {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryToggle(category)}
-                  className="shrink-0 cursor-pointer"
-                >
+                  <button
+                    key={category}
+                    data-testid="category-filter"
+                    onClick={() => handleCategoryToggle(category)}
+                    className="shrink-0 cursor-pointer"
+                  >
                   <Badge
                     variant={
                       activeCategories.includes(category)

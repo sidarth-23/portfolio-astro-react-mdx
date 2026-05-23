@@ -3,10 +3,9 @@
 import { BlogCard } from "@/components/features/blog/blog-card"
 import { ItemListWithProvider } from "@/components/listing/listing-item-list-with-provider"
 import type { Locale } from "@/i18n/config"
-import type { SerializedBlogPost } from "@/lib/api"
+import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
 
 interface BlogListWithProviderProps {
-  allPosts: SerializedBlogPost[]
   locale: Locale
   tags: string[]
   categories: string[]
@@ -14,10 +13,10 @@ interface BlogListWithProviderProps {
   initialTags: string[]
   initialCategories: string[]
   initialSortBy: string | null
+  initialData?: ListingResponse<BlogListingItem>
 }
 
 export function BlogListWithProvider({
-  allPosts,
   locale,
   tags,
   categories,
@@ -25,10 +24,11 @@ export function BlogListWithProvider({
   initialTags,
   initialCategories,
   initialSortBy,
+  initialData,
 }: BlogListWithProviderProps) {
   return (
-    <ItemListWithProvider<SerializedBlogPost>
-      allItems={allPosts}
+    <ItemListWithProvider<BlogListingItem>
+      endpoint={`/${locale}/api/blog.json`}
       locale={locale}
       tags={tags}
       categories={categories}
@@ -36,6 +36,7 @@ export function BlogListWithProvider({
       initialTags={initialTags}
       initialCategories={initialCategories}
       initialSortBy={initialSortBy}
+      initialData={initialData}
       gridClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       skeletonCount={4}
       CardComponent={BlogCard}

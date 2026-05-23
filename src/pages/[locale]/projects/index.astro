@@ -3,8 +3,7 @@ export const prerender = false
 
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import { ProjectListWithProvider } from "@/components/features/projects/project-list-with-provider"
-import { getAllProjects, getAllProjectTags, getAllProjectCategories } from "@/lib/content/queries"
-import { serializeProject } from "@/lib/api"
+import { getProjectListing, getProjectFilters } from "@/lib/api/listing-api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
@@ -18,13 +17,21 @@ const sort = url.searchParams.get("sort")
 
 const tags = tagsParam ? tagsParam.split(",") : []
 const categories = categoriesParam ? categoriesParam.split(",") : []
-const sortMode = sort && ["newest", "oldest", "title"].includes(sort) ? sort as "newest" | "oldest" | "title" : null
+const sortMode = sort && ["newest", "oldest", "title"].includes(sort) 
+  ? sort as "newest" | "oldest" | "title" 
+  : null
 
-const projects = await getAllProjects(locale)
-const allTags = getAllProjectTags(projects)
-const allCategories = getAllProjectCategories(projects)
-
-const serializedProjects = await Promise.all(projects.map(serializeProject))
+const [initialData, availableFilters] = await Promise.all([
+  getProjectListing(locale, {
+    search: search || undefined,
+    tags: tags.length > 0 ? tags : undefined,
+    categories: categories.length > 0 ? categories : undefined,
+    sort: sortMode || undefined,
+    page: 1,
+    limit: 12,
+  }),
+  getProjectFilters(locale),
+])
 ---
 
 <ContentLayout title={t(locale, "projects.title") + " — Sid"} locale={locale}>
@@ -35,13 +42,13 @@ const serializedProjects = await Promise.all(projects.map(serializeProject))
 
   <ProjectListWithProvider
     client:load
-    allProjects={serializedProjects}
     locale={locale}
-    tags={allTags}
-    categories={allCategories}
+    tags={availableFilters.tags}
+    categories={availableFilters.categories}
     initialSearch={search}
     initialTags={tags}
     initialCategories={categories}
     initialSortBy={sortMode}
+    initialData={initialData}
   />
 </ContentLayout>

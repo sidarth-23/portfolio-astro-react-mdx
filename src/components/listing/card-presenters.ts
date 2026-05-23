@@ -1,7 +1,7 @@
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
-type ImageLike = {
+export type ImageLike = {
   src: string
   width?: number
   height?: number

@@ -3,8 +3,7 @@ export const prerender = false
 
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import { BlogListWithProvider } from "@/components/features/blog/blog-list-with-provider"
-import { getPublishedBlogPosts, getAllTags, getAllCategories } from "@/lib/content/queries"
-import { serializeBlogPost } from "@/lib/api"
+import { getBlogListing, getBlogFilters } from "@/lib/api/listing-api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
@@ -18,28 +17,38 @@ const sort = url.searchParams.get("sort")
 
 const tags = tagsParam ? tagsParam.split(",") : []
 const categories = categoriesParam ? categoriesParam.split(",") : []
-const sortMode = sort && ["newest", "oldest", "title"].includes(sort) ? sort as "newest" | "oldest" | "title" : null
+const sortMode = sort && ["newest", "oldest", "title"].includes(sort) 
+  ? sort as "newest" | "oldest" | "title" 
+  : null
 
-const posts = await getPublishedBlogPosts(locale)
-const allTags = getAllTags(posts)
-const allCategories = getAllCategories(posts)
-
-const serializedPosts = await Promise.all(posts.map(serializeBlogPost))
+const [initialData, availableFilters] = await Promise.all([
+  getBlogListing(locale, {
+    search: search || undefined,
+    tags: tags.length > 0 ? tags : undefined,
+    categories: categories.length > 0 ? categories : undefined,
+    sort: sortMode || undefined,
+    page: 1,
+    limit: 12,
+  }),
+  getBlogFilters(locale),
+])
 ---
 
 <ContentLayout title={t(locale, "blog.title") + " — Sid"} locale={locale}>
-  <h1 class="text-3xl font-bold tracking-tight mb-2">{t(locale, "blog.title")}</h1>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">
+    {t(locale, "blog.title")}
+  </h1>
   <p class="text-muted-foreground mb-8">{t(locale, "blog.description")}</p>
 
   <BlogListWithProvider
     client:load
-    allPosts={serializedPosts}
     locale={locale}
-    tags={allTags}
-    categories={allCategories}
+    tags={availableFilters.tags}
+    categories={availableFilters.categories}
     initialSearch={search}
     initialTags={tags}
     initialCategories={categories}
     initialSortBy={sortMode}
+    initialData={initialData}
   />
 </ContentLayout>
