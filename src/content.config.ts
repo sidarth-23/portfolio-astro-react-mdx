@@ -1,5 +1,6 @@
 import { defineCollection } from "astro:content"
-import { z } from "zod"
+import { glob } from "astro/loaders"
+import { z } from "astro/zod"
 import {
   seoSchema,
   linkSchema,
@@ -11,7 +12,7 @@ import {
 import { locales } from "@/i18n/config"
 
 const blog = defineCollection({
-  type: "content",
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/blog" }),
   schema: ({ image }) =>
     z.object({
       title: z.string().min(1).max(120),
@@ -29,7 +30,7 @@ const blog = defineCollection({
 })
 
 const projects = defineCollection({
-  type: "content",
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/projects" }),
   schema: ({ image }) =>
     z.object({
       title: z.string().min(1).max(120),
@@ -48,12 +49,12 @@ const projects = defineCollection({
 })
 
 const profile = defineCollection({
-  type: "data",
+  loader: glob({ pattern: "*.json", base: "./src/content/profile" }),
   schema: profileSchema,
 })
 
 const profileExperience = defineCollection({
-  type: "content",
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/profileExperience" }),
   schema: profileExperienceSchema,
 })
 

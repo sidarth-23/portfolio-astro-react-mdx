@@ -22,7 +22,7 @@ export async function GET(context: { params: { locale: string } }) {
         title: post.data.title,
         description: post.data.description,
         pubDate: post.data.date,
-        link: `/${locale}/blog/${post.slug.split("/").slice(1).join("/")}`,
+        link: `/${locale}/blog/${post.id.split("/").slice(1).join("/")}`,
         categories: post.data.tags,
       })
     ),

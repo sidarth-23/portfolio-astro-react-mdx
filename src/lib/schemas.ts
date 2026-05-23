@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "astro/zod"
 
 export const slugSchema = z
   .string()
@@ -13,13 +13,13 @@ export const seoSchema = z.object({
 
 export const linkSchema = z.object({
   type: z.enum(["github", "link"]),
-  url: z.string().url(),
+        url: z.url(),
 })
 
 export const tagSchema = z.string().min(1).max(50)
 
 export const dateSchema = z
-  .union([z.date(), z.string().datetime()])
+  .union([z.date(), z.iso.datetime()])
   .transform((val) => (val instanceof Date ? val : new Date(val)))
 
 export const profileSkillIconSchema = z.object({
@@ -59,7 +59,7 @@ export const profileSchema = z.object({
     .array(
       z.object({
         title: z.string().min(1),
-        url: z.string().url(),
+  url: z.url(),
       })
     )
     .min(1),

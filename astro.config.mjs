@@ -16,7 +16,7 @@ export default defineConfig({
     mode: "standalone",
   }),
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [/** @type {any} */ (tailwindcss())],
   },
   integrations: [
     react(),

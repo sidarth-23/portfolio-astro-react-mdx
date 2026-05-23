@@ -1,4 +1,4 @@
-import type { z } from "zod"
+import type { z } from "astro/zod"
 import type { seoSchema } from "@/lib/schemas"
 
 export type SeoData = z.infer<typeof seoSchema>

@@ -49,7 +49,7 @@ export async function serializeBlogPost(
   })
 
   return {
-    slug: post.slug.split("/").slice(1).join("/"),
+    slug: post.id.split("/").slice(1).join("/"),
     title: post.data.title,
     description: post.data.description,
     date: post.data.date.toISOString(),
@@ -76,7 +76,7 @@ export async function serializeProject(
   })
 
   return {
-    slug: project.slug.split("/").slice(1).join("/"),
+    slug: project.id.split("/").slice(1).join("/"),
     title: project.data.title,
     summary: project.data.summary,
     date: project.data.date.toISOString(),

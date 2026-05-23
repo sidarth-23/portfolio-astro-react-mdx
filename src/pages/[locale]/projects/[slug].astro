@@ -10,6 +10,7 @@ import { getAllProjects } from "@/lib/content/queries"
 import { formatDate, estimateReadingTime } from "@/lib/content"
 import { locales, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
+import { render } from "astro:content"
 import type { CollectionEntry } from "astro:content"
 import CodeGroup from "@/components/mdx/CodeGroup.astro"
 
@@ -22,7 +23,7 @@ export async function getStaticPaths() {
   for (const locale of locales) {
     const projects = await getAllProjects(locale)
     for (const project of projects) {
-      const slug = project.slug.split("/").slice(1).join("/")
+      const slug = project.id.split("/").slice(1).join("/")
       paths.push({
         params: { locale, slug },
         props: { project },
@@ -39,14 +40,14 @@ interface Props {
 
 const { project } = Astro.props
 const { locale } = Astro.params as { locale: Locale }
-const { Content, headings } = await project.render()
+const { Content, headings } = await render(project)
 
 const date = formatDate(project.data.date, locale)
 const updatedDate = project.data.updatedDate
   ? formatDate(project.data.updatedDate, locale)
   : null
 const showUpdatedDate = updatedDate && updatedDate !== date
-const readingTime = estimateReadingTime(project.body)
+const readingTime = estimateReadingTime(project.body ?? "")
 ---
 
 <ProjectLayout project={project} locale={locale}>

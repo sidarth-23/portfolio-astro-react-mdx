@@ -1,13 +1,12 @@
 "use client"
 
-import { HydratedQueryProvider } from "@/components/providers/hydrated-query-provider"
 import { ItemListClient } from "@/components/listing/listing-item-list-client"
-import type { DehydratedState } from "@tanstack/react-query"
+import { QueryProvider } from "@/components/providers/query-provider"
 import type { Locale } from "@/i18n/config"
 import type { ComponentType } from "react"
 
 interface ItemListWithProviderProps<T> {
-  dehydratedState: DehydratedState
+  allItems: T[]
   locale: Locale
   tags: string[]
   categories: string[]
@@ -15,7 +14,6 @@ interface ItemListWithProviderProps<T> {
   initialTags: string[]
   initialCategories: string[]
   initialSortBy: string | null
-  endpoint: string
   gridClassName: string
   skeletonCount: number
   CardComponent: ComponentType<{ item: T; locale: Locale }>
@@ -23,7 +21,7 @@ interface ItemListWithProviderProps<T> {
 }
 
 export function ItemListWithProvider<T>({
-  dehydratedState,
+  allItems,
   locale,
   tags,
   categories,
@@ -31,15 +29,15 @@ export function ItemListWithProvider<T>({
   initialTags,
   initialCategories,
   initialSortBy,
-  endpoint,
   gridClassName,
   skeletonCount,
   CardComponent,
   getItemKey,
 }: ItemListWithProviderProps<T>) {
   return (
-    <HydratedQueryProvider dehydratedState={dehydratedState}>
+    <QueryProvider>
       <ItemListClient
+        allItems={allItems}
         locale={locale}
         tags={tags}
         categories={categories}
@@ -47,12 +45,11 @@ export function ItemListWithProvider<T>({
         initialTags={initialTags}
         initialCategories={initialCategories}
         initialSortBy={initialSortBy}
-        endpoint={endpoint}
         gridClassName={gridClassName}
         skeletonCount={skeletonCount}
         CardComponent={CardComponent}
         getItemKey={getItemKey}
       />
-    </HydratedQueryProvider>
+    </QueryProvider>
   )
 }

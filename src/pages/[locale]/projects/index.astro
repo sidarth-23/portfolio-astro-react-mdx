@@ -4,11 +4,7 @@ export const prerender = false
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import { ProjectListWithProvider } from "@/components/features/projects/project-list-with-provider"
 import { getAllProjects, getAllProjectTags, getAllProjectCategories } from "@/lib/content/queries"
-import { fetchProjectPage } from "@/lib/api"
-import { dehydrate } from "@tanstack/react-query"
-import { createQueryClient } from "@/lib/query-client"
-import type { PaginatedResponse } from "@/lib/api"
-import type { SerializedProject } from "@/lib/api"
+import { serializeProject } from "@/lib/api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
@@ -19,7 +15,6 @@ const search = url.searchParams.get("search") ?? ""
 const tagsParam = url.searchParams.get("tags")
 const categoriesParam = url.searchParams.get("categories")
 const sort = url.searchParams.get("sort")
-const limit = 12
 
 const tags = tagsParam ? tagsParam.split(",") : []
 const categories = categoriesParam ? categoriesParam.split(",") : []
@@ -29,23 +24,7 @@ const projects = await getAllProjects(locale)
 const allTags = getAllProjectTags(projects)
 const allCategories = getAllProjectCategories(projects)
 
-const queryClient = createQueryClient()
-
-await queryClient.prefetchInfiniteQuery({
-  queryKey: ["/api/projects.json", locale, tags, categories, search, sortMode, limit],
-  queryFn: ({ pageParam = 1 }) =>
-    fetchProjectPage(locale, tags.length > 0 ? tags : null, categories.length > 0 ? categories : null, search || null, sortMode, pageParam, limit),
-  initialPageParam: 1,
-  getNextPageParam: (
-    lastPage: PaginatedResponse<SerializedProject>,
-    allPages: PaginatedResponse<SerializedProject>[]
-  ) => {
-    if (!lastPage.hasMore) return undefined
-    return allPages.length + 1
-  },
-})
-
-const dehydratedState = dehydrate(queryClient)
+const serializedProjects = await Promise.all(projects.map(serializeProject))
 ---
 
 <ContentLayout title={t(locale, "projects.title") + " — Sid"} locale={locale}>
@@ -56,7 +35,7 @@ const dehydratedState = dehydrate(queryClient)
 
   <ProjectListWithProvider
     client:load
-    dehydratedState={dehydratedState}
+    allProjects={serializedProjects}
     locale={locale}
     tags={allTags}
     categories={allCategories}

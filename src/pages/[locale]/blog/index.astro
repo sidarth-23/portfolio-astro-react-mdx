@@ -4,11 +4,7 @@ export const prerender = false
 import ContentLayout from "@/layouts/ContentLayout.astro"
 import { BlogListWithProvider } from "@/components/features/blog/blog-list-with-provider"
 import { getPublishedBlogPosts, getAllTags, getAllCategories } from "@/lib/content/queries"
-import { fetchBlogPage } from "@/lib/api"
-import { dehydrate } from "@tanstack/react-query"
-import { createQueryClient } from "@/lib/query-client"
-import type { PaginatedResponse } from "@/lib/api"
-import type { SerializedBlogPost } from "@/lib/api"
+import { serializeBlogPost } from "@/lib/api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 
@@ -19,7 +15,6 @@ const search = url.searchParams.get("search") ?? ""
 const tagsParam = url.searchParams.get("tags")
 const categoriesParam = url.searchParams.get("categories")
 const sort = url.searchParams.get("sort")
-const limit = 12
 
 const tags = tagsParam ? tagsParam.split(",") : []
 const categories = categoriesParam ? categoriesParam.split(",") : []
@@ -29,22 +24,7 @@ const posts = await getPublishedBlogPosts(locale)
 const allTags = getAllTags(posts)
 const allCategories = getAllCategories(posts)
 
-const queryClient = createQueryClient()
-
-await queryClient.prefetchInfiniteQuery({
-  queryKey: ["/api/blog.json", locale, tags, categories, search, sortMode, limit],
-  queryFn: ({ pageParam = 1 }) => fetchBlogPage(locale, tags.length > 0 ? tags : null, categories.length > 0 ? categories : null, search || null, sortMode, pageParam, limit),
-  initialPageParam: 1,
-  getNextPageParam: (
-    lastPage: PaginatedResponse<SerializedBlogPost>,
-    allPages: PaginatedResponse<SerializedBlogPost>[]
-  ) => {
-    if (!lastPage.hasMore) return undefined
-    return allPages.length + 1
-  },
-})
-
-const dehydratedState = dehydrate(queryClient)
+const serializedPosts = await Promise.all(posts.map(serializeBlogPost))
 ---
 
 <ContentLayout title={t(locale, "blog.title") + " — Sid"} locale={locale}>
@@ -53,7 +33,7 @@ const dehydratedState = dehydrate(queryClient)
 
   <BlogListWithProvider
     client:load
-    dehydratedState={dehydratedState}
+    allPosts={serializedPosts}
     locale={locale}
     tags={allTags}
     categories={allCategories}

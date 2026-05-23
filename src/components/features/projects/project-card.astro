@@ -16,7 +16,7 @@ const { project, locale, variant = "default" } = Astro.props
 
 const card = createProjectCardView({
   locale,
-  slug: project.slug.split("/").slice(1).join("/"),
+  slug: project.id.split("/").slice(1).join("/"),
   title: project.data.title,
   category: project.data.category,
   formattedDate: formatShortDate(project.data.date, locale),

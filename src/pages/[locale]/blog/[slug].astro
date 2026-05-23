@@ -9,6 +9,7 @@ import { getPublishedBlogPosts } from "@/lib/content/queries"
 import { formatDate, estimateReadingTime } from "@/lib/content"
 import { locales, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
+import { render } from "astro:content"
 import type { CollectionEntry } from "astro:content"
 import CodeGroup from "@/components/mdx/CodeGroup.astro"
 
@@ -21,7 +22,7 @@ export async function getStaticPaths() {
   for (const locale of locales) {
     const posts = await getPublishedBlogPosts(locale)
     for (const post of posts) {
-      const slug = post.slug.split("/").slice(1).join("/")
+      const slug = post.id.split("/").slice(1).join("/")
       paths.push({
         params: { locale, slug },
         props: { post },
@@ -38,14 +39,14 @@ interface Props {
 
 const { post } = Astro.props
 const { locale } = Astro.params as { locale: Locale }
-const { Content, headings } = await post.render()
+const { Content, headings } = await render(post)
 
 const pubDate = formatDate(post.data.date, locale)
 const updatedDate = post.data.updatedDate
   ? formatDate(post.data.updatedDate, locale)
   : null
 const showUpdatedDate = updatedDate && updatedDate !== pubDate
-const readingTime = estimateReadingTime(post.body)
+const readingTime = estimateReadingTime(post.body ?? "")
 ---
 
 <BlogPostLayout post={post} locale={locale}>

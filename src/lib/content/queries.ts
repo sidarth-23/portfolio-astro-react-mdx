@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content"
-import type { z } from "zod"
+import type { z } from "astro/zod"
 import type { tagSchema } from "@/lib/schemas"
 import { locales, type Locale } from "@/i18n/config"
 
@@ -34,7 +34,7 @@ function filterByLocale(
   locale: Locale
 ): (CollectionEntry<"blog"> | CollectionEntry<"projects">)[] {
   return entries.filter((entry) => {
-    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.slug)
+    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.id)
     return entryLocale === locale
   })
 }
@@ -52,8 +52,8 @@ export async function getDraftBlogPosts(locale: Locale = "en") {
 
 export async function getBlogPostBySlug(slug: string, locale: Locale = "en") {
   const posts = await getCollection("blog", (entry) => {
-    const entrySlug = getContentSlug(entry.slug)
-    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.slug)
+    const entrySlug = getContentSlug(entry.id)
+    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.id)
     return entrySlug === slug && entryLocale === locale && !entry.data.draft
   })
   return posts[0] ?? null
@@ -93,8 +93,8 @@ export async function getAllProjects(locale: Locale = "en") {
 
 export async function getProjectBySlug(slug: string, locale: Locale = "en") {
   const projects = await getCollection("projects", (entry) => {
-    const entrySlug = getContentSlug(entry.slug)
-    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.slug)
+    const entrySlug = getContentSlug(entry.id)
+    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.id)
     return entrySlug === slug && entryLocale === locale
   })
   return projects[0] ?? null

@@ -16,7 +16,7 @@ const { post, locale, variant = "default" } = Astro.props
 
 const card = createBlogCardView({
   locale,
-  slug: post.slug.split("/").slice(1).join("/"),
+  slug: post.id.split("/").slice(1).join("/"),
   title: post.data.title,
   category: post.data.category,
   formattedDate: formatShortDate(post.data.date, locale),
