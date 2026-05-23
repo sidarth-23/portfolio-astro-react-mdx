@@ -1,7 +1,7 @@
 # AGENTS
 
 ## Stack + boundaries
-- Astro 5 site with React islands (`@astrojs/react`); default to `.astro` for static UI and use `.tsx` only for interactive client logic.
+- Astro 6 site with React islands (`@astrojs/react`); default to `.astro` for static UI and use `.tsx` only for interactive client logic.
 - Team rule: prefer Fulldev UI components/patterns first; use raw React/shadcn only where interactivity is required.
 - Content-driven architecture: Astro content collections are the source of truth (`blog`, `projects`, `profile`, `profileExperience`) in `src/content.config.ts` and `src/content/**`.
 - i18n is required across routes/content: locales are `en`, `es`, `fr` (`src/i18n/config.ts`), with locale-prefixed routing enabled in `astro.config.mjs`.
@@ -15,7 +15,7 @@
 
 ## Real entrypoints to edit
 - Pages/routes: `src/pages/**` (root redirects to `/${defaultLocale}` in `src/pages/index.astro`).
-- Shared layout shell: `src/layouts/Layout.astro` + `src/components/layout/app-shell.tsx`.
+- Shared layout shell: `src/layouts/base/Layout.astro` + `src/layouts/shell/app-shell.tsx`.
 - Client-side filtered lists use API + React Query: `src/pages/api/*.json.ts` + `src/components/*/*-list-with-provider.tsx`.
 
 ## Agent Rules

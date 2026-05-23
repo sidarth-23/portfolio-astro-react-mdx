@@ -1,4 +1,7 @@
 ---
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+
 interface Props {
   heading: string
   role: string
@@ -44,9 +47,7 @@ const { heading, role, description, buttons, className } = Astro.props
           class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-foreground dark:border-input dark:bg-input/30 w-full sm:w-auto"
         >
           {buttons.secondary.text}
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4">
-            <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
-          </svg>
+          <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={2} className="size-4" />
         </a>
       </div>
     </div>

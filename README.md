@@ -2,7 +2,7 @@
 
 [![Live Site](https://img.shields.io/badge/Live-sidshub.in-0b7285?style=flat-square)](https://sidshub.in)
 [![Bun](https://img.shields.io/badge/Bun-1.2%2B-f9f1e1?logo=bun&logoColor=111&style=flat-square)](https://bun.sh)
-[![Astro](https://img.shields.io/badge/Astro-5.x-1e1b4b?logo=astro&style=flat-square)](https://astro.build)
+[![Astro](https://img.shields.io/badge/Astro-6.x-1e1b4b?logo=astro&style=flat-square)](https://astro.build)
 
 This repository powers [sidshub.in](https://sidshub.in) as a content-driven Astro site.
 
@@ -16,7 +16,7 @@ The project has moved away from CMS-driven content and now uses **MDX + Astro co
 
 ## Stack
 
-- Astro 5 + TypeScript (strict)
+- Astro 6 + TypeScript (strict)
 - MDX (`@astrojs/mdx`)
 - React islands (`@astrojs/react`) for interactive components
 - Tailwind CSS 4

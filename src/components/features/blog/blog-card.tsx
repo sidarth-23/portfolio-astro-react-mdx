@@ -12,6 +12,8 @@ import type { BlogListingItem } from "@/lib/api/listing-api"
 import type { Locale } from "@/i18n/config"
 import { formatShortDate } from "@/lib/content"
 import { createBlogCardView } from "@/components/features/listing/card-presenters"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 
 interface BlogCardProps {
   item: BlogListingItem
@@ -102,21 +104,12 @@ export function BlogCard({ item, locale }: BlogCardProps) {
           )}
         </CardContent>
         <CardFooter className="mt-auto justify-end border-0 bg-transparent pt-2 pb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            size={20}
+            strokeWidth={2}
             className="text-primary transition-transform group-hover:translate-x-1"
-          >
-            <path d="M5 12h14"></path>
-            <path d="m12 5 7 7-7 7"></path>
-          </svg>
+          />
         </CardFooter>
       </Card>
     </a>

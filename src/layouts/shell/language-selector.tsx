@@ -3,9 +3,8 @@
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Globe02Icon,
-  SparklesIcon,
   ArrowDown01Icon,
-  Tick01Icon,
+  Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import {
   DropdownMenu,
@@ -69,28 +68,15 @@ export function LanguageSelector({
         >
           <span className="flex w-4 items-center justify-center">
             {locale === loc && (
-              <HugeiconsIcon icon={Tick01Icon} size={14} strokeWidth={2} />
+              <HugeiconsIcon icon={Tick02Icon} size={14} strokeWidth={2} />
             )}
           </span>
           <a
             href={getPathForLocale(loc)}
-            className="flex flex-1 items-baseline gap-1.5"
+            className="flex flex-1 items-baseline"
             onClick={(e) => e.preventDefault()}
           >
             <span className="text-sm">{localeLabels[loc]}</span>
-            {loc !== defaultLocale && (
-              <span
-                title={t(loc, "lang.aiGenerated")}
-                className="relative -top-1.5 ml-0.5 inline-flex"
-              >
-                <HugeiconsIcon
-                  icon={SparklesIcon}
-                  size={6}
-                  strokeWidth={2}
-                  className="text-sidebar-primary/70"
-                />
-              </span>
-            )}
           </a>
         </DropdownMenuItem>
       ))}
