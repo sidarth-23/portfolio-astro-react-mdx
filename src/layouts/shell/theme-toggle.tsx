@@ -137,13 +137,13 @@ export function ThemeToggle({
               onClick={() => handleThemeChange(t)}
               className="gap-3 px-3 py-2"
             >
-              <span className="flex w-4 items-center justify-center">
+              <HugeiconsIcon icon={Icon} strokeWidth={2} className="size-4" />
+              <span>{themeConfig[t].label}</span>
+              <span className="ml-auto flex w-4 items-center justify-center">
                 {theme === t && (
                   <HugeiconsIcon icon={Tick02Icon} size={14} strokeWidth={2} />
                 )}
               </span>
-              <HugeiconsIcon icon={Icon} strokeWidth={2} className="size-4" />
-              <span>{themeConfig[t].label}</span>
             </DropdownMenuItem>
           )
         })}
