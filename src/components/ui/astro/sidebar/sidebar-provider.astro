@@ -3,10 +3,6 @@ import type { HTMLAttributes } from "astro/types"
 
 import { cn } from "@/lib/utils"
 
-const SIDEBAR_WIDTH = "16rem"
-const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "3rem"
-
 type Props = HTMLAttributes<"div"> & {
   defaultOpen?: boolean
   open?: boolean
@@ -14,20 +10,10 @@ type Props = HTMLAttributes<"div"> & {
 
 const {
   class: className,
-  style,
   defaultOpen = true,
   open,
   ...props
 } = Astro.props
-
-const resolvedStyle = [
-  `--sidebar-width: ${SIDEBAR_WIDTH}`,
-  `--sidebar-width-mobile: ${SIDEBAR_WIDTH_MOBILE}`,
-  `--sidebar-width-icon: ${SIDEBAR_WIDTH_ICON}`,
-  typeof style === "string" ? style : undefined,
-]
-  .filter(Boolean)
-  .join("; ")
 ---
 
 <div
@@ -35,9 +21,8 @@ const resolvedStyle = [
   data-default-open={defaultOpen ? "true" : "false"}
   data-open={open === undefined ? undefined : open ? "true" : "false"}
   data-sidebar-initializing="true"
-  style={resolvedStyle}
   class={cn(
-    "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
+    "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full [--sidebar-width:16rem] [--sidebar-width-mobile:18rem] [--sidebar-width-icon:3rem]",
     className
   )}
   {...props}

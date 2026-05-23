@@ -18,7 +18,7 @@ import {
   siAstro,
   siTypescript,
   siTailwindcss,
-} from "simple-icons/icons"
+} from "simple-icons"
 
 export type SkillIconInput = {
   source: "simple" | "huge" | "custom"
@@ -66,7 +66,6 @@ function SimpleIconGlyph({
       viewBox="0 0 24 24"
       fill="currentColor"
       className={className}
-      style={{ color: "currentColor" }}
       aria-label={icon.title}
     >
       <path d={icon.path} />

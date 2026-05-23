@@ -9,7 +9,18 @@ type Props = HTMLAttributes<"div"> & {
 }
 
 const { class: className, showIcon = false, ...props } = Astro.props
-const width = `${Math.floor(Math.random() * 40) + 50}%`
+const widthClasses = [
+  "max-w-[50%]",
+  "max-w-[55%]",
+  "max-w-[60%]",
+  "max-w-[65%]",
+  "max-w-[70%]",
+  "max-w-[75%]",
+  "max-w-[80%]",
+  "max-w-[85%]",
+  "max-w-[90%]",
+]
+const widthClass = widthClasses[Math.floor(Math.random() * widthClasses.length)]
 ---
 
 <div
@@ -24,8 +35,7 @@ const width = `${Math.floor(Math.random() * 40) + 50}%`
     )
   }
   <Skeleton
-    class="h-4 max-w-(--skeleton-width) flex-1"
+    class={cn("h-4 flex-1", widthClass)}
     data-sidebar="menu-skeleton-text"
-    style={`--skeleton-width: ${width};`}
   />
 </div>
