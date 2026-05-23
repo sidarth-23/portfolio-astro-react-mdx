@@ -35,9 +35,13 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
   })
 
   return (
-    <a href={card.href} className="group block h-full" data-testid="project-card">
-      <Card className="p-0 gap-0 h-full transition-colors transition-shadow hover:shadow-md">
-        <div className="relative overflow-hidden bg-black/5 aspect-video w-full">
+    <a
+      href={card.href}
+      className="group block h-full"
+      data-testid="project-card"
+    >
+      <Card className="h-full gap-0 p-0 transition-colors hover:shadow-md">
+        <div className="relative aspect-video w-full overflow-hidden bg-black/5">
           <picture>
             {item.coverImage.srcSet && (
               <source
@@ -52,7 +56,7 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
               aria-hidden="true"
               width={64}
               height={36}
-              className="absolute inset-0 h-full w-full object-cover blur-2xl scale-110"
+              className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
             />
           </picture>
           <picture>
@@ -101,7 +105,7 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
             </div>
           )}
         </CardContent>
-        <CardFooter className="mt-auto justify-end border-0 bg-transparent pb-4 pt-2">
+        <CardFooter className="mt-auto justify-end border-0 bg-transparent pt-2 pb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
