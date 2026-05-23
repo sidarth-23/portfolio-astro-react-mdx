@@ -28,7 +28,11 @@ describe("BlogCard", () => {
 
     expect(container.querySelectorAll("img")).toHaveLength(2)
     expect(container.querySelectorAll("picture source[type='image/webp']")).toHaveLength(2)
-    expect(container.querySelector("img[aria-hidden='true']")).toBeInTheDocument()
-    expect(getByRole("img", { name: "My Post" })).toBeInTheDocument()
+    const blurImage = container.querySelector("img[aria-hidden='true']")
+    expect(blurImage).toBeInTheDocument()
+    expect(blurImage).toHaveClass("blur-2xl", "scale-110")
+    const coverImage = getByRole("img", { name: "My Post" })
+    expect(coverImage).toBeInTheDocument()
+    expect(coverImage).not.toHaveClass("group-hover:scale-105")
   })
 })

@@ -74,7 +74,7 @@ export function ProjectCard({ item, locale }: ProjectCardProps) {
               height={card.coverImage.height}
               loading="lazy"
               decoding="async"
-              className="relative z-10 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+              className="relative z-10 h-full w-full object-contain transition-transform duration-300"
             />
           </picture>
         </div>
