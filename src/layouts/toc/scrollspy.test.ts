@@ -64,6 +64,16 @@ describe("getActiveHeadingIds", () => {
     expect(ids).toEqual(["intro", "install"])
   })
 
+  it("returns multiple active headings when viewport spans a boundary", () => {
+    const ids = getActiveHeadingIds([
+      { id: "intro", absoluteTop: 100 },
+      { id: "setup", absoluteTop: 450 },
+      { id: "usage", absoluteTop: 900 },
+    ], 350, 800, 120)
+
+    expect(ids).toEqual(["setup", "usage"])
+  })
+
   it("returns fallback nearest heading when viewport misses sections", () => {
     const ids = getActiveHeadingIds([
       { id: "intro", absoluteTop: 500 },
@@ -71,5 +81,26 @@ describe("getActiveHeadingIds", () => {
     ], 0, 300, 72)
 
     expect(ids).toEqual(["intro"])
+  })
+
+  it("uses deterministic nearest fallback in large gaps", () => {
+    const ids = getActiveHeadingIds([
+      { id: "a", absoluteTop: 100 },
+      { id: "b", absoluteTop: 900 },
+      { id: "c", absoluteTop: 2300 },
+    ], 1200, 180, 72)
+
+    expect(ids).toEqual(["b"])
+  })
+
+  it("applies offset consistently for small and large viewports", () => {
+    const headings = [
+      { id: "a", absoluteTop: 80 },
+      { id: "b", absoluteTop: 420 },
+      { id: "c", absoluteTop: 900 },
+    ]
+
+    expect(getActiveHeadingIds(headings, 260, 420, getScrollspyOffset(420))).toEqual(["a", "b"])
+    expect(getActiveHeadingIds(headings, 260, 1200, getScrollspyOffset(1200))).toEqual(["a", "b", "c"])
   })
 })

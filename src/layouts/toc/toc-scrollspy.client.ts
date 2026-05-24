@@ -1,4 +1,4 @@
-import { getActiveHeadingIds, getScrollspyOffset } from "./scrollspy"
+import { getActiveHeadingIds, type HeadingPosition } from "./scrollspy"
 
 type CleanupFn = () => void
 
@@ -22,6 +22,69 @@ function scrollActiveLinkIntoView(link: HTMLAnchorElement, instant = false): voi
   })
 }
 
+function collectHeadingPositions(headings: HTMLElement[]): HeadingPosition[] {
+  return headings.map((heading) => ({
+    id: heading.id,
+    absoluteTop: heading.getBoundingClientRect().top + window.scrollY,
+  }))
+}
+
+function computeActiveIds(headings: HeadingPosition[], scrollTop: number, viewportHeight: number): string[] {
+  return getActiveHeadingIds(headings, scrollTop, viewportHeight)
+}
+
+function applyLinkStates(
+  links: HTMLAnchorElement[],
+  activeSet: Set<string>,
+  latestActiveId: string,
+  shouldAutoScroll: boolean
+): void {
+  for (const link of links) {
+    const href = link.getAttribute("href")
+    const id = href?.startsWith("#") ? href.slice(1) : ""
+    const isActive = Boolean(id && activeSet.has(id))
+
+    if (isActive) {
+      link.classList.add(...ACTIVE_TEXT)
+      link.classList.remove(...INACTIVE_TEXT)
+    } else {
+      link.classList.remove(...ACTIVE_TEXT)
+      link.classList.add(...INACTIVE_TEXT)
+    }
+  }
+
+  if (!shouldAutoScroll || !latestActiveId) return
+
+  const activeLink = links.find((link) => link.getAttribute("href") === `#${latestActiveId}`)
+  if (activeLink) {
+    scrollActiveLinkIntoView(activeLink)
+  }
+}
+
+function applyMobileSummaryAndProgress(
+  firstActiveId: string,
+  latestActiveId: string,
+  headingIds: string[],
+  headingMap: Map<string, number>,
+  mobileLinksByHash: Map<string, HTMLAnchorElement>,
+  mobileSummary: HTMLElement | null,
+  mobileProgress: SVGCircleElement | null,
+  mobileProgressTrackLength: number
+): void {
+  if (mobileSummary && firstActiveId) {
+    const matchingLink = mobileLinksByHash.get(`#${firstActiveId}`)
+    if (matchingLink) {
+      mobileSummary.textContent = matchingLink.textContent?.trim() ?? ""
+    }
+  }
+
+  if (mobileProgress && mobileProgressTrackLength > 0 && latestActiveId) {
+    const activeEndIndex = headingMap.get(latestActiveId) ?? -1
+    const progress = (activeEndIndex + 1) / Math.max(1, headingIds.length)
+    mobileProgress.style.strokeDashoffset = `${mobileProgressTrackLength * (1 - progress)}`
+  }
+}
+
 function initTocScrollspy(): void {
   cleanup?.()
   cleanup = null
@@ -31,33 +94,32 @@ function initTocScrollspy(): void {
   )
   if (headings.length === 0) return
 
-  const tocLinks = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")
+  const desktopRoot = document.querySelector('[data-toc="desktop"]')
+  const mobileRoot = document.querySelector('[data-toc="mobile"]')
+  const desktopLinks = Array.from(
+    desktopRoot?.querySelectorAll<HTMLAnchorElement>("[data-toc-link]") ?? []
   )
+  const mobileLinks = Array.from(
+    mobileRoot?.querySelectorAll<HTMLAnchorElement>("[data-toc-link]") ?? []
+  )
+  const tocLinks = [...desktopLinks, ...mobileLinks]
   if (tocLinks.length === 0) return
 
   const mobileSummary = document.querySelector<HTMLElement>("[data-toc-summary]")
-  const mobileToc = document.querySelector('[data-toc="mobile"]')
+  const mobileToc = mobileRoot instanceof HTMLDetailsElement ? mobileRoot : null
   const mobileProgress = document.querySelector<SVGCircleElement>("[data-toc-progress-value]")
   const mobileProgressTrackLength = Number(mobileProgress?.dataset.circumference ?? "0")
-  const scrollRoot = document.scrollingElement as HTMLElement | null
   const headingIds = headings.map((heading) => heading.id)
   const headingMap = new Map(headingIds.map((id, index) => [id, index]))
-  const linksByHash = new Map(tocLinks.map((link) => [link.getAttribute("href") ?? "", link]))
+  const mobileLinksByHash = new Map(mobileLinks.map((link) => [link.getAttribute("href") ?? "", link]))
   let currentActiveIdsKey = ""
-  let ticking = false
+  let rafId = 0
 
-  const setLinkActiveState = (link: HTMLAnchorElement, active: boolean): void => {
-    if (active) {
-      link.classList.add(...ACTIVE_TEXT)
-      link.classList.remove(...INACTIVE_TEXT)
-      return
-    }
-    link.classList.remove(...ACTIVE_TEXT)
-    link.classList.add(...INACTIVE_TEXT)
-  }
+  const sync = (): void => {
+    rafId = 0
 
-  const applyActiveState = (activeIds: string[]): void => {
+    const positions = collectHeadingPositions(headings)
+    const activeIds = computeActiveIds(positions, window.scrollY, window.innerHeight)
     const activeIdsKey = activeIds.join("|")
     if (activeIdsKey === currentActiveIdsKey) return
     currentActiveIdsKey = activeIdsKey
@@ -66,61 +128,53 @@ function initTocScrollspy(): void {
     const latestActiveId = activeIds.at(-1) ?? ""
     const firstActiveId = activeIds[0] ?? ""
 
-    for (const link of tocLinks) {
-      const href = link.getAttribute("href")
-      const id = href?.startsWith("#") ? href.slice(1) : ""
-      setLinkActiveState(link, Boolean(id && activeSet.has(id)))
-    }
+    applyLinkStates(desktopLinks, activeSet, latestActiveId, true)
+    applyLinkStates(mobileLinks, activeSet, latestActiveId, Boolean(mobileToc?.open))
 
-    if (latestActiveId) {
-      const latestLink = linksByHash.get(`#${latestActiveId}`)
-      if (latestLink) {
-        scrollActiveLinkIntoView(latestLink)
-      }
-    }
-
-    if (mobileSummary && firstActiveId) {
-      const matchingLink = linksByHash.get(`#${firstActiveId}`)
-      if (matchingLink) {
-        mobileSummary.textContent = matchingLink.textContent?.trim() ?? ""
-      }
-    }
-
-    if (mobileProgress && mobileProgressTrackLength > 0 && latestActiveId) {
-      const activeEndIndex = headingMap.get(latestActiveId) ?? -1
-      const progress = (activeEndIndex + 1) / Math.max(1, headingIds.length)
-      mobileProgress.style.strokeDashoffset = `${mobileProgressTrackLength * (1 - progress)}`
-    }
-
-    if (latestActiveId && history.replaceState) {
-      history.replaceState(null, "", `#${latestActiveId}`)
-    }
-  }
-
-  const syncFromViewport = (): void => {
-    const viewportHeight = window.visualViewport?.height ?? window.innerHeight
-    const offset = getScrollspyOffset(viewportHeight)
-    const scrollTop = window.visualViewport?.pageTop
-      ?? window.scrollY
-      ?? scrollRoot?.scrollTop
-      ?? document.documentElement.scrollTop
-      ?? 0
-    const headingPositions = headings.map((heading) => ({
-      id: heading.id,
-      absoluteTop: heading.getBoundingClientRect().top + scrollTop,
-    }))
-    const activeIds = getActiveHeadingIds(headingPositions, scrollTop, viewportHeight, offset)
-    applyActiveState(activeIds)
+    applyMobileSummaryAndProgress(
+      firstActiveId,
+      latestActiveId,
+      headingIds,
+      headingMap,
+      mobileLinksByHash,
+      mobileSummary,
+      mobileProgress,
+      mobileProgressTrackLength
+    )
   }
 
   const requestSync = (): void => {
-    if (ticking) return
-    ticking = true
-    requestAnimationFrame(() => {
-      ticking = false
-      syncFromViewport()
-    })
+    if (rafId) return
+    rafId = window.requestAnimationFrame(sync)
   }
+
+  const io = new IntersectionObserver(() => {
+    requestSync()
+  }, {
+    root: null,
+    threshold: [0, 0.25, 0.5, 0.75, 1],
+  })
+
+  for (const heading of headings) {
+    io.observe(heading)
+  }
+
+  const scrollHandler = (): void => requestSync()
+  const resizeHandler = (): void => requestSync()
+  const visibilityHandler = (): void => {
+    if (document.visibilityState === "visible") {
+      requestSync()
+    }
+  }
+
+  window.addEventListener("scroll", scrollHandler, { passive: true })
+  window.addEventListener("resize", resizeHandler)
+  window.addEventListener("orientationchange", resizeHandler)
+  document.addEventListener("visibilitychange", visibilityHandler)
+
+  const visualViewport = window.visualViewport
+  visualViewport?.addEventListener("scroll", scrollHandler, { passive: true })
+  visualViewport?.addEventListener("resize", resizeHandler)
 
   const clickHandlers = new Map<HTMLAnchorElement, EventListener>()
   for (const link of tocLinks) {
@@ -133,8 +187,11 @@ function initTocScrollspy(): void {
       if (!target) return
 
       target.scrollIntoView({ behavior: "smooth" })
+      if (history.replaceState) {
+        history.replaceState(null, "", hash)
+      }
 
-      if (mobileToc instanceof HTMLDetailsElement) {
+      if (mobileToc) {
         mobileToc.open = false
       }
     }
@@ -143,43 +200,23 @@ function initTocScrollspy(): void {
     link.addEventListener("click", handler)
   }
 
-  window.addEventListener("scroll", requestSync, { passive: true })
-  scrollRoot?.addEventListener("scroll", requestSync, { passive: true })
-  window.addEventListener("resize", requestSync)
-  window.addEventListener("orientationchange", requestSync)
-  window.visualViewport?.addEventListener("scroll", requestSync, { passive: true })
-  window.visualViewport?.addEventListener("resize", requestSync)
-  document.addEventListener("scroll", requestSync, { passive: true, capture: true })
-
-  const visibilityHandler = (): void => {
-    if (document.visibilityState === "visible") {
-      requestSync()
-    }
-  }
-  document.addEventListener("visibilitychange", visibilityHandler)
-
-  const io = new IntersectionObserver(requestSync, {
-    root: null,
-    threshold: [0, 0.1, 0.5, 0.9, 1],
-  })
-  for (const heading of headings) {
-    io.observe(heading)
-  }
-
-  const intervalId = window.setInterval(requestSync, 250)
-  syncFromViewport()
+  requestSync()
 
   cleanup = () => {
-    window.removeEventListener("scroll", requestSync)
-    scrollRoot?.removeEventListener("scroll", requestSync)
-    window.removeEventListener("resize", requestSync)
-    window.removeEventListener("orientationchange", requestSync)
-    window.visualViewport?.removeEventListener("scroll", requestSync)
-    window.visualViewport?.removeEventListener("resize", requestSync)
-    document.removeEventListener("scroll", requestSync, { capture: true })
-    document.removeEventListener("visibilitychange", visibilityHandler)
     io.disconnect()
-    window.clearInterval(intervalId)
+
+    if (rafId) {
+      window.cancelAnimationFrame(rafId)
+      rafId = 0
+    }
+
+    window.removeEventListener("scroll", scrollHandler)
+    window.removeEventListener("resize", resizeHandler)
+    window.removeEventListener("orientationchange", resizeHandler)
+    document.removeEventListener("visibilitychange", visibilityHandler)
+
+    visualViewport?.removeEventListener("scroll", scrollHandler)
+    visualViewport?.removeEventListener("resize", resizeHandler)
 
     for (const [link, handler] of clickHandlers) {
       link.removeEventListener("click", handler)
