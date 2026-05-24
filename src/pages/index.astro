@@ -3,19 +3,37 @@ import { Badge } from "@/components/ui/astro/badge"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/astro/card"
 import { Spinner } from "@/components/ui/astro/spinner"
 import BaseLayout from "@/layouts/base/BaseLayout.astro"
-import { defaultLocale, localeLabels } from "@/i18n/config"
+import { defaultLocale, localeLabels, locales } from "@/i18n/config"
+import { getPageSeo } from "@/lib/seo/pages"
+import { resolvePageSeo } from "@/lib/seo/resolve"
 
 const targetPath = `/${defaultLocale}`
+const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const defaultHomeSeo = getPageSeo("home", defaultLocale)
+const seo = resolvePageSeo(
+  defaultHomeSeo.title,
+  defaultHomeSeo.description,
+  `${siteUrl}/og/home-${defaultLocale}.png`,
+  "website",
+  defaultLocale,
+  siteUrl,
+  "/",
+  false
+)
 
-const seo = {
-  title: "Loading portfolio...",
-  description: "Loading Sid's portfolio",
-  ogImage: "",
-  ogType: "website" as const,
-  ogLocale: "en",
-  canonicalUrl: "https://sidshub.in",
-  twitterCard: "summary_large_image" as const,
-}
+const homeSeoByLocale = Object.fromEntries(
+  locales.map((locale) => {
+    const pageSeo = getPageSeo("home", locale)
+    return [
+      locale,
+      {
+        title: pageSeo.title,
+        description: pageSeo.description,
+        ogImage: `${siteUrl}/og/home-${locale}.png`,
+      },
+    ]
+  })
+)
 ---
 
 <BaseLayout
@@ -25,8 +43,55 @@ const seo = {
 >
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`5;url=${targetPath}`} />
-    <script is:inline define:vars={{ targetPath }}>
-      window.location.replace(targetPath)
+    <script is:inline define:vars={{ targetPath, defaultLocale, locales, homeSeoByLocale }}>
+      const available = new Set(locales)
+
+      const resolveLocale = () => {
+        const preferred = navigator.languages?.length
+          ? navigator.languages
+          : [navigator.language]
+
+        for (const candidate of preferred) {
+          const normalized = String(candidate || "").toLowerCase()
+          const full = normalized
+          const base = normalized.split("-")[0]
+
+          if (available.has(full)) return full
+          if (available.has(base)) return base
+        }
+
+        return defaultLocale
+      }
+
+      const targetLocale = resolveLocale()
+      const target = `/${targetLocale}`
+      const seoForLocale =
+        homeSeoByLocale[targetLocale] || homeSeoByLocale[defaultLocale]
+
+      if (seoForLocale) {
+        document.title = seoForLocale.title
+
+        const setMeta = (selector, content) => {
+          const node = document.querySelector(selector)
+          if (node && content) node.setAttribute("content", content)
+        }
+
+        setMeta('meta[name="description"]', seoForLocale.description)
+        setMeta('meta[property="og:title"]', seoForLocale.title)
+        setMeta('meta[property="og:description"]', seoForLocale.description)
+        setMeta('meta[property="og:image"]', seoForLocale.ogImage)
+        setMeta('meta[property="og:locale"]', targetLocale)
+        setMeta('meta[name="twitter:title"]', seoForLocale.title)
+        setMeta('meta[name="twitter:description"]', seoForLocale.description)
+        setMeta('meta[name="twitter:image"]', seoForLocale.ogImage)
+
+        const canonical = document.querySelector('link[rel="canonical"]')
+        if (canonical) {
+          canonical.setAttribute("href", `${window.location.origin}${target}`)
+        }
+      }
+
+      window.location.replace(target)
     </script>
   </Fragment>
 

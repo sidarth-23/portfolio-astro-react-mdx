@@ -56,9 +56,10 @@ export function clampText(value: string, maxLength: number): string {
 export interface OgTemplateProps {
   title: string
   description: string
+  coverImageDataUrl?: string
 }
 
-function OgTemplate({ title, description }: OgTemplateProps) {
+function OgTemplate({ title, description, coverImageDataUrl }: OgTemplateProps) {
   const displayTitle = clampText(title, 60)
   const displayDescription = clampText(description, 132)
 
@@ -146,6 +147,43 @@ function OgTemplate({ title, description }: OgTemplateProps) {
           },
           displayDescription
         )
+      ),
+      createElement(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 320,
+            height: 210,
+            borderRadius: 16,
+            overflow: "hidden",
+            border: "1px solid rgba(148,163,184,0.25)",
+            background: "rgba(15,23,42,0.55)",
+            flexShrink: 0,
+            marginTop: 34,
+          },
+        },
+        coverImageDataUrl
+          ? createElement("img", {
+              src: coverImageDataUrl,
+              width: 320,
+              height: 210,
+              style: {
+                objectFit: "cover",
+                display: "flex",
+              },
+            })
+          : createElement("div", {
+              style: {
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                background:
+                  "linear-gradient(120deg, rgba(99,102,241,0.35), rgba(139,92,246,0.2))",
+              },
+            })
       )
     ),
     createElement(

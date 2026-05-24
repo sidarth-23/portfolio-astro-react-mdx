@@ -25,7 +25,7 @@ describe("resolveContentSeo", () => {
 
     expect(result.title).toBe("My Blog Post | Sidarth G")
     expect(result.description).toBe("A description of my blog post.")
-    expect(result.ogImage).toBe("https://sidshub.in/images/blog/post.jpg")
+    expect(result.ogImage).toBe("https://sidshub.in/og/og-blog-en-my-blog-post.png")
     expect(result.ogType).toBe("article")
     expect(result.ogLocale).toBe("en")
     expect(result.canonicalUrl).toBe("https://sidshub.in/en/blog/my-blog-post")
@@ -54,7 +54,7 @@ describe("resolveContentSeo", () => {
 
     expect(result.title).toBe("My Project | Sidarth G")
     expect(result.description).toBe("A description of my project.")
-    expect(result.ogImage).toBe("https://sidshub.in/images/projects/project.png")
+    expect(result.ogImage).toBe("https://sidshub.in/og/og-projects-en-my-project.png")
     expect(result.ogType).toBe("website")
     expect(result.publishedTime).toBe("2024-02-20T00:00:00.000Z")
     expect(result.modifiedTime).toBe("2024-03-01T00:00:00.000Z")
@@ -155,6 +155,21 @@ describe("resolvePageSeo", () => {
     )
 
     expect(result.canonicalUrl).toBe("https://sidshub.in/en")
+  })
+
+  it("can skip site suffix in title", () => {
+    const result = resolvePageSeo(
+      "Home",
+      "Portfolio description.",
+      "https://sidshub.in/og/home-en.png",
+      "website",
+      "en",
+      mockSiteUrl,
+      "/en",
+      false
+    )
+
+    expect(result.title).toBe("Home")
   })
 
   it("handles profile page path", () => {

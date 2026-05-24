@@ -1,5 +1,6 @@
 import type { Locale } from "@/i18n/config"
 import type { CollectionEntry } from "astro:content"
+import { buildContentOgFilename } from "./content-og"
 
 export interface SeoData {
   title: string
@@ -23,15 +24,12 @@ export function resolveContentSeo(
 ): SeoData {
   const seo = entry.data.seo
   const slug = entry.id.split("/").slice(1).join("/")
-  const coverImageSrc =
-    type === "blog"
-      ? (entry.data as CollectionEntry<"blog">["data"]).coverImage.src
-      : (entry.data as CollectionEntry<"projects">["data"]).coverImage.src
+  const ogFilename = buildContentOgFilename(type, locale, slug)
 
   return {
     title: `${seo.title} | Sidarth G`,
     description: seo.description,
-    ogImage: `${siteUrl}${coverImageSrc}`,
+    ogImage: `${siteUrl}/og/${ogFilename}`,
     ogType: type === "blog" ? "article" : "website",
     ogLocale: locale,
     publishedTime: entry.data.date.toISOString(),
@@ -48,10 +46,11 @@ export function resolvePageSeo(
   ogType: "article" | "website",
   locale: Locale,
   siteUrl: string,
-  path: string
+  path: string,
+  appendSiteName = true
 ): SeoData {
   return {
-    title: `${title} | Sidarth G`,
+    title: appendSiteName ? `${title} | Sidarth G` : title,
     description,
     ogImage,
     ogType,

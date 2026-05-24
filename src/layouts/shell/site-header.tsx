@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/react"
 import { LanguageSelector } from "@/layouts/shell/language-selector"
-import { resolvePageTitle } from "@/lib/ui"
+import { resolvePageTitle } from "@/layouts/shell/sidebar-content"
 import { defaultLocale, isValidLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 

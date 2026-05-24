@@ -11,7 +11,7 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "@/components/ui/react"
-import { sidebarContent } from "@/lib/ui"
+import { sidebarContent } from "@/layouts/shell/sidebar-content"
 import { NavFooter } from "@/layouts/shell/nav-footer"
 import type { Locale } from "@/i18n/config"
 
