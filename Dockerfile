@@ -15,7 +15,7 @@ FROM oven/bun:1 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN bun run build
+RUN bun run prebuild && bun run astro build
 
 # ============================================================
 # Stage 3: Runtime
