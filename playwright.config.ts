@@ -21,6 +21,13 @@ export default defineConfig({
       name: "mobile-chromium",
       use: { ...devices["Pixel 7"] },
     },
+    {
+      name: "android-real",
+      use: {
+        ...devices["Pixel 7"],
+        baseURL: "http://10.0.2.2:4321",
+      },
+    },
   ],
 
   webServer: {

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test"
+import { expect, test } from "./test"
 
 test.describe("Code tabs", () => {
   test("renders tab menu and switches panels", async ({ page }) => {

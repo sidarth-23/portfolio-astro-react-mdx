@@ -3,223 +3,194 @@ import { getActiveHeadingIds, type HeadingPosition } from "./scrollspy"
 type CleanupFn = () => void
 
 let cleanup: CleanupFn | null = null
+
 const ACTIVE_TEXT = ["border-border", "text-foreground"]
 const INACTIVE_TEXT = ["border-border/35", "text-muted-foreground/80"]
 
-function scrollActiveLinkIntoView(link: HTMLAnchorElement, instant = false): void {
-  const container = link.closest<HTMLElement>("[data-toc-scroll-container]")
-  if (!container) return
-
-  const containerRect = container.getBoundingClientRect()
-  const linkRect = link.getBoundingClientRect()
-  const containerCenter = containerRect.top + containerRect.height / 2
-  const linkCenter = linkRect.top + linkRect.height / 2
-  const nextTop = container.scrollTop + (linkCenter - containerCenter)
-
-  container.scrollTo({
-    top: nextTop,
-    behavior: instant ? "auto" : "smooth",
-  })
+function getScrollTop(): number {
+  const fromWindow = typeof window.scrollY === "number" ? window.scrollY : 0
+  const fromDoc = document.documentElement?.scrollTop ?? 0
+  const fromBody = document.body?.scrollTop ?? 0
+  const fromVisualViewport = window.visualViewport?.pageTop ?? 0
+  return Math.max(fromWindow, fromDoc, fromBody, fromVisualViewport)
 }
 
-function collectHeadingPositions(headings: HTMLElement[]): HeadingPosition[] {
-  return headings.map((heading) => ({
-    id: heading.id,
-    absoluteTop: heading.getBoundingClientRect().top + window.scrollY,
-  }))
+function getViewportHeight(): number {
+  const visualViewportHeight = window.visualViewport?.height ?? 0
+  if (visualViewportHeight > 0) return visualViewportHeight
+  if (window.innerHeight > 0) return window.innerHeight
+  return document.documentElement?.clientHeight ?? 0
 }
 
-function computeActiveIds(headings: HeadingPosition[], scrollTop: number, viewportHeight: number): string[] {
-  return getActiveHeadingIds(headings, scrollTop, viewportHeight)
+function collectHeadingIdsFromLinks(): string[] {
+  const ids = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"))
+    .map((link) => link.getAttribute("href") ?? "")
+    .filter((href) => href.startsWith("#"))
+    .map((href) => decodeURIComponent(href.slice(1)))
+  return ids.filter((id, index) => id.length > 0 && ids.indexOf(id) === index)
 }
 
-function applyLinkStates(
-  links: HTMLAnchorElement[],
-  activeSet: Set<string>,
-  latestActiveId: string,
-  shouldAutoScroll: boolean
-): void {
+function collectHeadingPositions(ids: string[], scrollTop: number): HeadingPosition[] {
+  return ids
+    .map((id) => {
+      const node = document.getElementById(id)
+      if (!node) return null
+      return {
+        id,
+        absoluteTop: node.getBoundingClientRect().top + scrollTop,
+      }
+    })
+    .filter((entry): entry is HeadingPosition => Boolean(entry))
+}
+
+function setLinkState(link: HTMLAnchorElement, isActive: boolean): void {
+  if (isActive) {
+    link.classList.add(...ACTIVE_TEXT)
+    link.classList.remove(...INACTIVE_TEXT)
+  } else {
+    link.classList.remove(...ACTIVE_TEXT)
+    link.classList.add(...INACTIVE_TEXT)
+  }
+}
+
+function updateLinks(links: HTMLAnchorElement[], activeIds: Set<string>): void {
   for (const link of links) {
-    const href = link.getAttribute("href")
-    const id = href?.startsWith("#") ? href.slice(1) : ""
-    const isActive = Boolean(id && activeSet.has(id))
-
-    if (isActive) {
-      link.classList.add(...ACTIVE_TEXT)
-      link.classList.remove(...INACTIVE_TEXT)
-    } else {
-      link.classList.remove(...ACTIVE_TEXT)
-      link.classList.add(...INACTIVE_TEXT)
-    }
-  }
-
-  if (!shouldAutoScroll || !latestActiveId) return
-
-  const activeLink = links.find((link) => link.getAttribute("href") === `#${latestActiveId}`)
-  if (activeLink) {
-    scrollActiveLinkIntoView(activeLink)
+    const href = link.getAttribute("href") ?? link.hash ?? ""
+    const id = href.startsWith("#") ? decodeURIComponent(href.slice(1)) : ""
+    setLinkState(link, Boolean(id && activeIds.has(id)))
   }
 }
 
-function applyMobileSummaryAndProgress(
+function updateMobileSummaryAndProgress(
   firstActiveId: string,
   latestActiveId: string,
   headingIds: string[],
-  headingMap: Map<string, number>,
-  mobileLinksByHash: Map<string, HTMLAnchorElement>,
-  mobileSummary: HTMLElement | null,
-  mobileProgress: SVGCircleElement | null,
-  mobileProgressTrackLength: number
+  mobileLinks: HTMLAnchorElement[]
 ): void {
+  const mobileSummary = document.querySelector<HTMLElement>("[data-toc-summary]")
   if (mobileSummary && firstActiveId) {
-    const matchingLink = mobileLinksByHash.get(`#${firstActiveId}`)
-    if (matchingLink) {
-      mobileSummary.textContent = matchingLink.textContent?.trim() ?? ""
+    const activeLink = mobileLinks.find((link) => (link.getAttribute("href") ?? "") === `#${firstActiveId}`)
+    if (activeLink) {
+      mobileSummary.textContent = activeLink.textContent?.trim() ?? ""
     }
   }
 
-  if (mobileProgress && mobileProgressTrackLength > 0 && latestActiveId) {
-    const activeEndIndex = headingMap.get(latestActiveId) ?? -1
-    const progress = (activeEndIndex + 1) / Math.max(1, headingIds.length)
-    mobileProgress.style.strokeDashoffset = `${mobileProgressTrackLength * (1 - progress)}`
+  const mobileProgress = document.querySelector<SVGCircleElement>("[data-toc-progress-value]")
+  const circumference = Number(mobileProgress?.dataset.circumference ?? "0")
+  if (mobileProgress && circumference > 0 && latestActiveId) {
+    const endIndex = headingIds.indexOf(latestActiveId)
+    const progress = (endIndex + 1) / Math.max(1, headingIds.length)
+    mobileProgress.style.strokeDashoffset = `${circumference * (1 - progress)}`
   }
+}
+
+function ensureActiveMobileLinkVisible(latestActiveId: string): void {
+  const mobileToc = document.querySelector('[data-toc="mobile"]')
+  if (!(mobileToc instanceof HTMLDetailsElement) || !mobileToc.open || !latestActiveId) return
+
+  const link = document.querySelector<HTMLAnchorElement>(`[data-toc='mobile'] [data-toc-link][href='#${latestActiveId}']`)
+  link?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "auto" })
 }
 
 function initTocScrollspy(): void {
   cleanup?.()
   cleanup = null
 
-  const headings = Array.from(
-    document.querySelectorAll<HTMLElement>("article h2[id], article h3[id]")
-  )
-  if (headings.length === 0) return
-
-  const desktopRoot = document.querySelector('[data-toc="desktop"]')
-  const mobileRoot = document.querySelector('[data-toc="mobile"]')
-  const desktopLinks = Array.from(
-    desktopRoot?.querySelectorAll<HTMLAnchorElement>("[data-toc-link]") ?? []
-  )
-  const mobileLinks = Array.from(
-    mobileRoot?.querySelectorAll<HTMLAnchorElement>("[data-toc-link]") ?? []
-  )
-  const tocLinks = [...desktopLinks, ...mobileLinks]
-  if (tocLinks.length === 0) return
-
-  const mobileSummary = document.querySelector<HTMLElement>("[data-toc-summary]")
-  const mobileToc = mobileRoot instanceof HTMLDetailsElement ? mobileRoot : null
-  const mobileProgress = document.querySelector<SVGCircleElement>("[data-toc-progress-value]")
-  const mobileProgressTrackLength = Number(mobileProgress?.dataset.circumference ?? "0")
-  const headingIds = headings.map((heading) => heading.id)
-  const headingMap = new Map(headingIds.map((id, index) => [id, index]))
-  const mobileLinksByHash = new Map(mobileLinks.map((link) => [link.getAttribute("href") ?? "", link]))
-  let currentActiveIdsKey = ""
-  let rafId = 0
+  let lastKey = ""
 
   const sync = (): void => {
-    rafId = 0
+    const headingIds = collectHeadingIdsFromLinks()
+    if (headingIds.length === 0) return
 
-    const positions = collectHeadingPositions(headings)
-    const activeIds = computeActiveIds(positions, window.scrollY, window.innerHeight)
-    const activeIdsKey = activeIds.join("|")
-    if (activeIdsKey === currentActiveIdsKey) return
-    currentActiveIdsKey = activeIdsKey
+    const scrollTop = getScrollTop()
+    const viewportHeight = getViewportHeight()
+    const positions = collectHeadingPositions(headingIds, scrollTop)
+    if (positions.length === 0) return
+
+    const activeIds = getActiveHeadingIds(positions, scrollTop, viewportHeight)
+    const firstActiveId = activeIds[0] ?? ""
+    const latestActiveId = activeIds.at(-1) ?? ""
+    const mobileOpen = document.querySelector('[data-toc="mobile"]') instanceof HTMLDetailsElement
+      ? (document.querySelector('[data-toc="mobile"]') as HTMLDetailsElement).open
+      : false
+
+    const key = `${activeIds.join("|")}|open:${mobileOpen ? "1" : "0"}`
+    if (key === lastKey) return
+    lastKey = key
 
     const activeSet = new Set(activeIds)
-    const latestActiveId = activeIds.at(-1) ?? ""
-    const firstActiveId = activeIds[0] ?? ""
-
-    applyLinkStates(desktopLinks, activeSet, latestActiveId, true)
-    applyLinkStates(mobileLinks, activeSet, latestActiveId, Boolean(mobileToc?.open))
-
-    applyMobileSummaryAndProgress(
-      firstActiveId,
-      latestActiveId,
-      headingIds,
-      headingMap,
-      mobileLinksByHash,
-      mobileSummary,
-      mobileProgress,
-      mobileProgressTrackLength
+    const desktopLinks = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('[data-toc="desktop"] [data-toc-link]')
     )
+    const mobileLinks = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('[data-toc="mobile"] [data-toc-link]')
+    )
+
+    updateLinks(desktopLinks, activeSet)
+    updateLinks(mobileLinks, activeSet)
+    updateMobileSummaryAndProgress(firstActiveId, latestActiveId, headingIds, mobileLinks)
+    ensureActiveMobileLinkVisible(latestActiveId)
   }
 
-  const requestSync = (): void => {
-    if (rafId) return
-    rafId = window.requestAnimationFrame(sync)
+  const onScroll = (): void => sync()
+  const onResize = (): void => sync()
+  const onVisibility = (): void => {
+    if (document.visibilityState === "visible") sync()
   }
 
-  const io = new IntersectionObserver(() => {
-    requestSync()
-  }, {
-    root: null,
-    threshold: [0, 0.25, 0.5, 0.75, 1],
-  })
+  const onTocLinkClick = (event: Event): void => {
+    const target = event.target
+    if (!(target instanceof Element)) return
 
-  for (const heading of headings) {
-    io.observe(heading)
-  }
+    const link = target.closest<HTMLAnchorElement>("[data-toc-link]")
+    if (!link) return
 
-  const scrollHandler = (): void => requestSync()
-  const resizeHandler = (): void => requestSync()
-  const visibilityHandler = (): void => {
-    if (document.visibilityState === "visible") {
-      requestSync()
+    event.preventDefault()
+    const hash = link.getAttribute("href")
+    if (!hash) return
+
+    const heading = document.querySelector<HTMLElement>(hash)
+    if (!heading) return
+
+    heading.scrollIntoView({ behavior: "smooth" })
+    if (history.replaceState) history.replaceState(null, "", hash)
+
+    const mobileToc = document.querySelector('[data-toc="mobile"]')
+    if (mobileToc instanceof HTMLDetailsElement) {
+      mobileToc.open = false
     }
   }
 
-  window.addEventListener("scroll", scrollHandler, { passive: true })
-  window.addEventListener("resize", resizeHandler)
-  window.addEventListener("orientationchange", resizeHandler)
-  document.addEventListener("visibilitychange", visibilityHandler)
+  const mobileToc = document.querySelector('[data-toc="mobile"]')
+  const onMobileToggle = (): void => sync()
+
+  window.addEventListener("scroll", onScroll, { passive: true })
+  document.addEventListener("scroll", onScroll, { passive: true, capture: true })
+  window.addEventListener("resize", onResize)
+  window.addEventListener("orientationchange", onResize)
+  document.addEventListener("visibilitychange", onVisibility)
+  document.addEventListener("click", onTocLinkClick)
+  if (mobileToc instanceof HTMLDetailsElement) {
+    mobileToc.addEventListener("toggle", onMobileToggle)
+  }
 
   const visualViewport = window.visualViewport
-  visualViewport?.addEventListener("scroll", scrollHandler, { passive: true })
-  visualViewport?.addEventListener("resize", resizeHandler)
+  visualViewport?.addEventListener("scroll", onScroll, { passive: true })
+  visualViewport?.addEventListener("resize", onResize)
 
-  const clickHandlers = new Map<HTMLAnchorElement, EventListener>()
-  for (const link of tocLinks) {
-    const handler: EventListener = (event) => {
-      event.preventDefault()
-      const hash = link.getAttribute("href")
-      if (!hash) return
-
-      const target = document.querySelector<HTMLElement>(hash)
-      if (!target) return
-
-      target.scrollIntoView({ behavior: "smooth" })
-      if (history.replaceState) {
-        history.replaceState(null, "", hash)
-      }
-
-      if (mobileToc) {
-        mobileToc.open = false
-      }
-    }
-
-    clickHandlers.set(link, handler)
-    link.addEventListener("click", handler)
-  }
-
-  requestSync()
+  sync()
 
   cleanup = () => {
-    io.disconnect()
-
-    if (rafId) {
-      window.cancelAnimationFrame(rafId)
-      rafId = 0
-    }
-
-    window.removeEventListener("scroll", scrollHandler)
-    window.removeEventListener("resize", resizeHandler)
-    window.removeEventListener("orientationchange", resizeHandler)
-    document.removeEventListener("visibilitychange", visibilityHandler)
-
-    visualViewport?.removeEventListener("scroll", scrollHandler)
-    visualViewport?.removeEventListener("resize", resizeHandler)
-
-    for (const [link, handler] of clickHandlers) {
-      link.removeEventListener("click", handler)
+    window.removeEventListener("scroll", onScroll)
+    document.removeEventListener("scroll", onScroll, true)
+    window.removeEventListener("resize", onResize)
+    window.removeEventListener("orientationchange", onResize)
+    document.removeEventListener("visibilitychange", onVisibility)
+    document.removeEventListener("click", onTocLinkClick)
+    visualViewport?.removeEventListener("scroll", onScroll)
+    visualViewport?.removeEventListener("resize", onResize)
+    if (mobileToc instanceof HTMLDetailsElement) {
+      mobileToc.removeEventListener("toggle", onMobileToggle)
     }
   }
 }

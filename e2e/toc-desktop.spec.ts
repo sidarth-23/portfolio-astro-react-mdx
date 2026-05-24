@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test"
+import { expect, test } from "./test"
 
 test.describe("Desktop TOC scrollspy", () => {
   test.skip(({ isMobile }) => isMobile, "Desktop-only behavior")

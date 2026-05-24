@@ -17,7 +17,10 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:android:toc": "playwright test e2e/toc-mobile.spec.ts --project=android-real",
+    "test:e2e:android": "playwright test --project=android-real",
+    "test:e2e:android:all": "playwright test --project=android-real"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",
