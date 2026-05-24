@@ -7,10 +7,12 @@ export interface TocItem {
 
 type Props = {
   items: TocItem[]
+  onThisPageLabel?: string
 }
 
 const { items }: Props = Astro.props
 const tocItems = items.filter((item) => item.depth === 2 || item.depth === 3)
+const onThisPageLabel = Astro.props.onThisPageLabel ?? "On this page"
 ---
 
 {
@@ -18,7 +20,7 @@ const tocItems = items.filter((item) => item.depth === 2 || item.depth === 3)
     <nav data-toc="desktop" aria-label="Table of contents" class="hidden xl:block">
       <div data-toc-scroll-container class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pb-4">
         <div class="mb-3 border-b border-border pb-2 text-sm font-semibold text-muted-foreground">
-          On this page
+          {onThisPageLabel}
         </div>
         <ul class="flex flex-col">
           {tocItems.map((item) => {
@@ -28,7 +30,7 @@ const tocItems = items.filter((item) => item.depth === 2 || item.depth === 3)
                 <a
                   data-toc-link
                   href={`#${item.slug}`}
-                  class={`block border-l-[1.5px] border-transparent py-1.5 text-[0.85rem] leading-snug text-muted-foreground/80 transition-colors hover:border-border hover:text-foreground ${indentClass}`}
+                  class={`block border-l-[1.5px] border-border/35 py-1.5 text-[0.85rem] leading-snug text-muted-foreground/80 transition-colors hover:border-border hover:text-foreground ${indentClass}`}
                 >
                   {item.text}
                 </a>

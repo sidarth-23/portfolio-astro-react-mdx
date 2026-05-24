@@ -74,6 +74,9 @@ const translations: Record<Locale, TranslationSchema> = {
       resume: "View Profile",
       imageAlt: "Sidarth G — Software Developer",
     },
+    toc: {
+      onThisPage: "On this page",
+    },
   },
   es: {
     nav: {
@@ -145,6 +148,9 @@ const translations: Record<Locale, TranslationSchema> = {
       resume: "Ver Perfil",
       imageAlt: "Sidarth G — Desarrollador de Software",
     },
+    toc: {
+      onThisPage: "En esta página",
+    },
   },
   fr: {
     nav: {
@@ -214,6 +220,9 @@ const translations: Record<Locale, TranslationSchema> = {
       connect: "Me Contacter",
       resume: "Voir le Profil",
       imageAlt: "Sidarth G — Développeur Logiciel",
+    },
+    toc: {
+      onThisPage: "Sur cette page",
     },
   },
 }

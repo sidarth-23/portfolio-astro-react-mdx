@@ -65,6 +65,9 @@ export const TranslationSchema = z.object({
     resume: z.string(),
     imageAlt: z.string(),
   }),
+  toc: z.object({
+    onThisPage: z.string(),
+  }),
 })
 
 export type TranslationSchema = z.infer<typeof TranslationSchema>

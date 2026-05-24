@@ -4,7 +4,7 @@ type CleanupFn = () => void
 
 let cleanup: CleanupFn | null = null
 const ACTIVE_TEXT = ["border-border", "text-foreground"]
-const INACTIVE_TEXT = ["border-transparent", "text-muted-foreground/80"]
+const INACTIVE_TEXT = ["border-border/35", "text-muted-foreground/80"]
 
 function scrollActiveLinkIntoView(link: HTMLAnchorElement, instant = false): void {
   const container = link.closest<HTMLElement>("[data-toc-scroll-container]")
@@ -82,7 +82,7 @@ function initTocScrollspy(): void {
     if (mobileSummary && firstActiveId) {
       const matchingLink = linksByHash.get(`#${firstActiveId}`)
       if (matchingLink) {
-        mobileSummary.textContent = `On this page · ${matchingLink.textContent?.trim() ?? ""}`
+        mobileSummary.textContent = matchingLink.textContent?.trim() ?? ""
       }
     }
 
