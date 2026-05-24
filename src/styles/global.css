@@ -129,3 +129,15 @@
     @apply font-sans;
   }
 }
+
+#topbar {
+  position: fixed;
+  z-index: 9999;
+  inset: 0 auto auto 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+#topbar .peg {
+  box-shadow: none;
+}

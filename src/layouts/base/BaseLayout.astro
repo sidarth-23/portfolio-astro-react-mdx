@@ -66,6 +66,13 @@ const {
         e.newDocument.documentElement.classList.add(currentTheme)
       })
     </script>
+    {includeClientRouter && (
+      <script>
+        import { initNavigationTopLoader } from "@/lib/navigation/top-loader"
+
+        initNavigationTopLoader()
+      </script>
+    )}
   </head>
   <body class={bodyClass}>
     <slot />
