@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { getActiveHeadingHash, getScrollspyOffset } from "./scrollspy"
+import { getActiveHeadingHash, getActiveHeadingIds, getScrollspyOffset } from "./scrollspy"
 
 describe("getActiveHeadingHash", () => {
   it("returns first heading when viewport has not reached any heading", () => {
@@ -50,5 +50,26 @@ describe("getScrollspyOffset", () => {
 
   it("clamps to a maximum offset", () => {
     expect(getScrollspyOffset(1200)).toBe(140)
+  })
+})
+
+describe("getActiveHeadingIds", () => {
+  it("keeps a heading active while its content section is visible", () => {
+    const ids = getActiveHeadingIds([
+      { id: "intro", absoluteTop: 100 },
+      { id: "install", absoluteTop: 800 },
+      { id: "faq", absoluteTop: 1500 },
+    ], 500, 900, 120)
+
+    expect(ids).toEqual(["intro", "install"])
+  })
+
+  it("returns fallback nearest heading when viewport misses sections", () => {
+    const ids = getActiveHeadingIds([
+      { id: "intro", absoluteTop: 500 },
+      { id: "install", absoluteTop: 1200 },
+    ], 0, 300, 72)
+
+    expect(ids).toEqual(["intro"])
   })
 })

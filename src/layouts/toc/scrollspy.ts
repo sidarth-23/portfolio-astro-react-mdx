@@ -34,3 +34,44 @@ export function getActiveHeadingHash(
 
   return `#${headings[activeIndex].id}`
 }
+
+/**
+ * Returns headings whose content section overlaps the current viewport window.
+ * A section spans from its heading to the next heading.
+ */
+export function getActiveHeadingIds(
+  headings: HeadingPosition[],
+  scrollTop: number,
+  viewportHeight: number,
+  offset = getScrollspyOffset(900)
+): string[] {
+  if (headings.length === 0) return []
+
+  const topLine = scrollTop + offset
+  const bottomLine = scrollTop + Math.max(offset, viewportHeight - offset)
+  const activeIds: string[] = []
+
+  for (let index = 0; index < headings.length; index += 1) {
+    const start = headings[index].absoluteTop
+    const end = headings[index + 1]?.absoluteTop ?? Number.POSITIVE_INFINITY
+    const overlapsViewport = end > topLine && start <= bottomLine
+
+    if (overlapsViewport) {
+      activeIds.push(headings[index].id)
+    }
+  }
+
+  if (activeIds.length > 0) return activeIds
+
+  let fallbackIndex = 0
+  let minDistance = Number.POSITIVE_INFINITY
+  for (let index = 0; index < headings.length; index += 1) {
+    const distance = Math.abs(headings[index].absoluteTop - topLine)
+    if (distance < minDistance) {
+      minDistance = distance
+      fallbackIndex = index
+    }
+  }
+
+  return [headings[fallbackIndex].id]
+}

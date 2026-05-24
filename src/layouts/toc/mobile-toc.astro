@@ -1,6 +1,7 @@
 ---
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
+import { CircularProgress } from "@/components/ui/react/circular-progress"
 
 export interface TocItem {
   depth: number
@@ -20,15 +21,26 @@ const firstItem = tocItems[0]
 {
   tocItems.length > 0 && (
     <details data-toc="mobile" class="group xl:hidden sticky top-0 z-50 bg-background border-b border-border">
-      <summary class="flex cursor-pointer list-none items-center justify-between px-6 py-3 text-sm font-semibold text-muted-foreground">
-        <span data-toc-summary>
-          On this page · {firstItem?.text ?? ""}
-        </span>
+      <summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-6 py-3 text-sm font-semibold text-muted-foreground">
+        <div class="flex min-w-0 flex-1 items-center gap-2.5">
+          <CircularProgress
+            value={0}
+            min={0}
+            max={1}
+            size={18}
+            strokeWidth={1.5}
+            indicatorDataAttribute="data-toc-progress-value"
+            aria-hidden="true"
+          />
+          <span data-toc-summary class="truncate">
+            {firstItem?.text ?? ""}
+          </span>
+        </div>
         <HugeiconsIcon
           icon={ArrowDown01Icon}
           size={16}
           strokeWidth={2}
-          className="size-4 transition-transform group-open:rotate-180"
+          className="size-4 shrink-0 transition-transform group-open:rotate-180"
           aria-hidden="true"
         />
       </summary>
