@@ -2,30 +2,29 @@
   "locale": "es",
   "profile": {
     "name": "Sidarth G",
-    "role": "Backend & Full-Stack Developer",
-    "summary": "I started with HTML and JavaScript, moved across modern frontend stacks, and then focused deeply on backend architecture. I now build reliable product systems across APIs, infra, and developer workflows, while continuing to learn DevOps and networking.",
+    "role": "Desarrollador de Software",
+    "summary": "Escribo código que a veces funciona a la primera. Empecé con HTML porque quería hacer sitios web geniales, me metí de lleno en el mundo de React, luego descubrí el backend y de alguna manera terminé escribiendo Go. Me emociono demasiado con nuevos frameworks de JavaScript (actualmente explorando TanStack Start) y todavía busco 'cómo centrar un div' solo para sentir algo. Siempre aprendiendo, siempre rompiendo cosas, siempre preguntándome por qué funciona en mi máquina.",
     "focus": [
-      "OpenAPI-first",
-      "Distributed Systems",
-      "Cloud & DevOps Learning Path"
+      "React y Next.js",
+      "Node.js y Go",
+      "Siempre Aprendiendo"
     ]
   },
   "skills": [
     {
-      "title": "Backend & Systems",
+      "title": "Backend y Sistemas",
       "items": [
         { "label": "Golang", "icon": { "source": "simple", "name": "go" } },
         { "label": "Python", "icon": { "source": "simple", "name": "python" } },
-        {
-          "label": "Express.js",
-          "icon": { "source": "simple", "name": "expressjs" }
-        },
+        { "label": "Node.js", "icon": { "source": "simple", "name": "nodedotjs" } },
+        { "label": "Hono", "icon": { "source": "custom", "name": "hono" } },
+        { "label": "Elysia", "icon": { "source": "custom", "name": "elysia" } },
         { "label": "gRPC", "icon": { "source": "custom", "name": "grpc" } },
         { "label": "WebSockets", "icon": { "source": "huge", "name": "cloud" } }
       ]
     },
     {
-      "title": "Database & Auth",
+      "title": "Base de datos y Autenticación",
       "items": [
         {
           "label": "PostgreSQL",
@@ -44,13 +43,17 @@
       ]
     },
     {
-      "title": "Frontend & DX",
+      "title": "Frontend y DX",
       "items": [
+        { "label": "React", "icon": { "source": "simple", "name": "react" } },
         {
           "label": "Next.js",
           "icon": { "source": "simple", "name": "nextjs" }
         },
-        { "label": "React", "icon": { "source": "simple", "name": "react" } },
+        {
+          "label": "TanStack Start",
+          "icon": { "source": "simple", "name": "tanstack" }
+        },
         { "label": "Astro", "icon": { "source": "simple", "name": "astro" } },
         {
           "label": "TypeScript",

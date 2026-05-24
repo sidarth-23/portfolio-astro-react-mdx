@@ -67,12 +67,12 @@ const translations: Record<Locale, TranslationSchema> = {
     },
     hero: {
       heading: "Sidarth G",
-      role: "Backend & Full-Stack Developer",
+      role: "Software Developer",
       description:
-        "I build fast, reliable products with modern web tech and cloud infrastructure. Turning complex problems into elegant solutions — from robust APIs to seamless user experiences. Always learning, always shipping.",
+        "Professional bug writer and occasional feature shipper. I speak React, Next.js, Node.js, and Go — sometimes all in the same project. Currently exploring TanStack Start because one framework is never enough. Yes, I still Google 'how to exit vim'. Always curious, always learning.",
       connect: "Let's Connect",
       resume: "View Profile",
-      imageAlt: "Sidarth G — Backend & Full-Stack Developer",
+      imageAlt: "Sidarth G — Software Developer",
     },
   },
   es: {
@@ -138,12 +138,12 @@ const translations: Record<Locale, TranslationSchema> = {
     },
     hero: {
       heading: "Sidarth G",
-      role: "Desarrollador Backend y Full-Stack",
+      role: "Desarrollador de Software",
       description:
-        "Construyo productos rápidos y confiables con tecnologías web modernas e infraestructura en la nube. Transformo problemas complejos en soluciones elegantes — desde API robustas hasta experiencias de usuario fluidas. Siempre aprendiendo, siempre enviando.",
+        "Escritor profesional de bugs y enviador ocasional de features. Hablo React, Next.js, Node.js y Go — a veces todos en el mismo proyecto. Actualmente explorando TanStack Start porque un framework nunca es suficiente. Sí, todavía busco 'cómo salir de vim'. Siempre curioso, siempre aprendiendo.",
       connect: "Conectemos",
       resume: "Ver Perfil",
-      imageAlt: "Sidarth G — Desarrollador Backend y Full-Stack",
+      imageAlt: "Sidarth G — Desarrollador de Software",
     },
   },
   fr: {
@@ -208,11 +208,12 @@ const translations: Record<Locale, TranslationSchema> = {
     },
     hero: {
       heading: "Sidarth G",
-      role: "Développeur Backend & Full-Stack",
+      role: "Développeur Logiciel",
       description:
-        "Je construis des produits rapides et fiables avec des technologies web modernes et une infrastructure cloud. Transformer des problèmes complexes en solutions élégantes — des API robustes aux expériences utilisateur fluides. Toujours en apprentissage, toujours en production.",
+        "Rédacteur professionnel de bugs et expéditeur occasionnel de features. Je parle React, Next.js, Node.js et Go — parfois tous dans le même projet. J'explore actuellement TanStack Start parce qu'un framework ne suffit jamais. Oui, je Google toujours 'comment quitter vim'. Toujours curieux, toujours en train d'apprendre.",
       connect: "Me Contacter",
-      resume: "Voir le Profil",      imageAlt: "Sidarth G — Développeur Backend & Full-Stack",
+      resume: "Voir le Profil",
+      imageAlt: "Sidarth G — Développeur Logiciel",
     },
   },
 }

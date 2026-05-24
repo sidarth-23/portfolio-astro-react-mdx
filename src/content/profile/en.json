@@ -2,12 +2,12 @@
   "locale": "en",
   "profile": {
     "name": "Sidarth G",
-    "role": "Backend & Full-Stack Developer",
-    "summary": "I started with HTML and JavaScript, moved across modern frontend stacks, and then focused deeply on backend architecture. I now build reliable product systems across APIs, infra, and developer workflows, while continuing to learn DevOps and networking.",
+    "role": "Software Developer",
+    "summary": "I write code that sometimes works on the first try. Started with HTML because I wanted to make cool websites, fell deep into the React rabbit hole, then discovered backend development and somehow ended up writing Go. I get unreasonably excited about new JavaScript frameworks (currently exploring TanStack Start) and still Google 'how to center a div' just to feel something. Always learning, always breaking things, always wondering why it works on my machine.",
     "focus": [
-      "OpenAPI-first",
-      "Distributed Systems",
-      "Cloud & DevOps Learning Path"
+      "React & Next.js",
+      "Node.js & Go",
+      "Always Learning"
     ]
   },
   "skills": [
@@ -16,10 +16,9 @@
       "items": [
         { "label": "Golang", "icon": { "source": "simple", "name": "go" } },
         { "label": "Python", "icon": { "source": "simple", "name": "python" } },
-        {
-          "label": "Express.js",
-          "icon": { "source": "simple", "name": "expressjs" }
-        },
+        { "label": "Node.js", "icon": { "source": "simple", "name": "nodedotjs" } },
+        { "label": "Hono", "icon": { "source": "custom", "name": "hono" } },
+        { "label": "Elysia", "icon": { "source": "custom", "name": "elysia" } },
         { "label": "gRPC", "icon": { "source": "custom", "name": "grpc" } },
         { "label": "WebSockets", "icon": { "source": "huge", "name": "cloud" } }
       ]
@@ -46,11 +45,15 @@
     {
       "title": "Frontend & DX",
       "items": [
+        { "label": "React", "icon": { "source": "simple", "name": "react" } },
         {
           "label": "Next.js",
           "icon": { "source": "simple", "name": "nextjs" }
         },
-        { "label": "React", "icon": { "source": "simple", "name": "react" } },
+        {
+          "label": "TanStack Start",
+          "icon": { "source": "simple", "name": "tanstack" }
+        },
         { "label": "Astro", "icon": { "source": "simple", "name": "astro" } },
         {
           "label": "TypeScript",

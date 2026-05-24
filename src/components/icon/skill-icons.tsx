@@ -11,13 +11,14 @@ import {
   siGo,
   siPython,
   siPostgresql,
-  siExpress,
+  siNodedotjs,
   siTurso,
   siReact,
   siNextdotjs,
   siAstro,
   siTypescript,
   siTailwindcss,
+  siTanstack,
 } from "simple-icons"
 
 export type SkillIconInput = {
@@ -35,13 +36,14 @@ const simpleIconRegistry: Record<string, SimpleIconData> = {
   go: siGo,
   python: siPython,
   postgresql: siPostgresql,
-  expressjs: siExpress,
+  nodedotjs: siNodedotjs,
   turso: siTurso,
   react: siReact,
   nextjs: siNextdotjs,
   astro: siAstro,
   typescript: siTypescript,
   tailwindcss: siTailwindcss,
+  tanstack: siTanstack,
 }
 
 const hugeIconRegistry = {
@@ -128,6 +130,42 @@ function GormIcon({ className }: { className?: string }) {
   )
 }
 
+function HonoIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="Hono"
+    >
+      <path
+        d="M12 2C8.5 2 6 5.5 6 9c0 3.5 2 6 4.5 8.5 1 1 1.5 2.5 1.5 4.5 0-2 .5-3.5 1.5-4.5C16 15 18 12.5 18 9c0-3.5-2.5-7-6-7zm0 3c2 0 3.5 2.5 3.5 4.5 0 2.5-1.5 4-3 6-.5.5-1 1-1.5 1.5-.5-.5-1-1-1.5-1.5-1.5-2-3-3.5-3-6C8.5 7.5 10 5 12 5z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
+function ElysiaIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="Elysia"
+    >
+      <path
+        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.5 0 2.5 1 3 2.5.5 1.5 0 3-1 4-.5.5-1 1-1.5 1.5-.5.5-.5 1-.5 1.5 0 1 .5 2 1 2.5.5.5 1 .5 1.5.5.5 0 1-.5 1.5-1 .5-.5 1-1 1.5-1.5.5.5.5 1 .5 1.5 0 1-.5 2-1.5 2.5-1 .5-2 .5-3 0-1-.5-2-1-2.5-2-.5-1-.5-2 0-3 .5-1 1.5-1.5 2.5-2 1-.5 1.5-1 2-1.5.5-.5.5-1 0-1.5-.5-.5-1-.5-1.5-.5-.5 0-1 .5-1.5 1-.5.5-1 1-1.5 1.5-.5-.5-1-1-1-1.5 0-1 .5-2 1.5-2.5 1-.5 2-.5 3 0z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
 export function SkillIcon({
   icon,
   className = "size-3.5 shrink-0",
@@ -164,6 +202,14 @@ export function SkillIcon({
 
   if (icon.source === "custom" && icon.name === "gorm") {
     return <GormIcon className={className} />
+  }
+
+  if (icon.source === "custom" && icon.name === "hono") {
+    return <HonoIcon className={className} />
+  }
+
+  if (icon.source === "custom" && icon.name === "elysia") {
+    return <ElysiaIcon className={className} />
   }
 
   return null

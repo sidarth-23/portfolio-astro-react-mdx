@@ -20,7 +20,7 @@ export interface SidebarSocialContentItem {
 
 export const sidebarProfileContent = {
   name: "Sidarth G",
-  title: "Backend & Full-Stack Developer",
+  title: "Software Developer",
   avatar: "/avatar.jpg",
   fallback: "SG",
 } as const
