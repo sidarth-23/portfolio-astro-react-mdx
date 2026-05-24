@@ -36,7 +36,7 @@ const [initialData, availableFilters] = await Promise.all([
   getProjectFilters(locale),
 ])
 
-const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const siteUrl = Astro.site?.toString() ?? "https://www.sidshub.in"
 const pageSeo = getPageSeo("projects", locale)
 const seo = resolvePageSeo(
   pageSeo.title,

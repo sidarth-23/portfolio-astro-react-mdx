@@ -16,7 +16,7 @@ export async function GET(context: { params: { locale: string } }) {
   return rss({
     title: locale === defaultLocale ? "Sid's Blog" : `Sid's Blog (${locale})`,
     description: t(locale, "rss.description"),
-    site: "https://sidshub.in",
+    site: "https://www.sidshub.in",
     items: posts.map(
       (post): RSSFeedItem => ({
         title: post.data.title,

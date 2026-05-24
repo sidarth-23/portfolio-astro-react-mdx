@@ -44,7 +44,7 @@ export default defineConfig({
       transformers: [filenameTransformer()],
     },
   },
-  site: "https://sidshub.in",
+  site: "https://www.sidshub.in",
   i18n: {
     locales: ["en", "es", "fr"],
     defaultLocale: "en",
