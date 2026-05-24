@@ -65,6 +65,21 @@ bun run preview         # preview static build
 bun run start           # run built server output (dist/server/entry.mjs)
 ```
 
+## OG image generation
+
+Open Graph images are generated automatically and written to `public/og`.
+
+- Build hook: `astro.config.mjs` runs `bun scripts/generate-og-images.ts` at `astro:build:start`.
+- Generated page OGs: from `src/content/page-seo.json` as `og-{page}-{locale}.png` (for `en`, `es`, `fr`).
+- Generated content OGs: for `blog` and `projects` MDX entries, including localized slugs.
+- Content requirements: frontmatter needs `locale`, title/description (`seo` or fallback fields), and `coverImage`.
+
+To regenerate manually:
+
+```bash
+bun scripts/generate-og-images.ts
+```
+
 ## Features
 
 - **Multi-language support** — Content available in English, Spanish, and French with locale-prefixed routing and automatic redirection.
@@ -74,6 +89,7 @@ bun run start           # run built server output (dist/server/entry.mjs)
 - **Collapsible sidebar navigation** — Profile info, primary navigation, social links (GitHub, LinkedIn, RSS, Email), and quick actions (archive, download resume).
 - **Responsive design** — Mobile-friendly layout built with Tailwind CSS.
 - **SEO optimized** — Metadata helpers and structured content for search engines.
+- **Automated OG images** — Build-time Open Graph image generation for pages and MDX content.
 - **RSS feeds** — Per-locale RSS feed generation.
 - **API endpoints** — JSON API for blog and project data with pagination, search, and tag filtering.
 
