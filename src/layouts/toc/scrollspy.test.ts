@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { getActiveHeadingHash } from "./scrollspy"
+import { getActiveHeadingHash, getScrollspyOffset } from "./scrollspy"
 
 describe("getActiveHeadingHash", () => {
   it("returns first heading when viewport has not reached any heading", () => {
@@ -35,5 +35,19 @@ describe("getActiveHeadingHash", () => {
 
   it("returns empty string when there are no headings", () => {
     expect(getActiveHeadingHash([])).toBe("")
+  })
+})
+
+describe("getScrollspyOffset", () => {
+  it("uses a smaller offset on short mobile viewports", () => {
+    expect(getScrollspyOffset(640)).toBe(128)
+  })
+
+  it("clamps to a minimum offset", () => {
+    expect(getScrollspyOffset(300)).toBe(72)
+  })
+
+  it("clamps to a maximum offset", () => {
+    expect(getScrollspyOffset(1200)).toBe(140)
   })
 })

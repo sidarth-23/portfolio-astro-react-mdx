@@ -1,4 +1,4 @@
-import { getActiveHeadingHash } from "./scrollspy"
+import { getActiveHeadingHash, getScrollspyOffset } from "./scrollspy"
 
 type CleanupFn = () => void
 
@@ -56,11 +56,14 @@ function initTocScrollspy(): void {
   }
 
   const syncActiveFromViewport = (): void => {
+    const viewportHeight = window.visualViewport?.height ?? window.innerHeight
+    const offset = getScrollspyOffset(viewportHeight)
     const hash = getActiveHeadingHash(
       headings.map((heading) => ({
         id: heading.id,
         top: heading.getBoundingClientRect().top,
-      }))
+      })),
+      offset
     )
     setActive(hash)
   }
@@ -107,12 +110,20 @@ function initTocScrollspy(): void {
   }
 
   window.addEventListener("scroll", requestSync, { passive: true })
+  document.addEventListener("scroll", requestSync, { passive: true, capture: true })
   window.addEventListener("resize", requestSync)
+  window.addEventListener("orientationchange", requestSync)
+  window.visualViewport?.addEventListener("scroll", requestSync, { passive: true })
+  window.visualViewport?.addEventListener("resize", requestSync)
   syncActiveFromViewport()
 
   cleanup = () => {
     window.removeEventListener("scroll", requestSync)
+    document.removeEventListener("scroll", requestSync, { capture: true })
     window.removeEventListener("resize", requestSync)
+    window.removeEventListener("orientationchange", requestSync)
+    window.visualViewport?.removeEventListener("scroll", requestSync)
+    window.visualViewport?.removeEventListener("resize", requestSync)
 
     for (const [link, handler] of clickHandlers) {
       link.removeEventListener("click", handler)

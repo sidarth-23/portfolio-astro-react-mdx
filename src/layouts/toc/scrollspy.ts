@@ -3,6 +3,10 @@ export type HeadingPosition = {
   top: number
 }
 
+export function getScrollspyOffset(viewportHeight: number): number {
+  return Math.max(72, Math.min(140, viewportHeight * 0.2))
+}
+
 /**
  * Picks the heading that should be active for a given viewport offset.
  *
@@ -12,7 +16,7 @@ export type HeadingPosition = {
  */
 export function getActiveHeadingHash(
   headings: HeadingPosition[],
-  offset = 120
+  offset = getScrollspyOffset(900)
 ): string {
   if (headings.length === 0) return ""
 
