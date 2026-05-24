@@ -6,6 +6,7 @@ import react from "@astrojs/react"
 import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
 import node from "@astrojs/node"
+import { execFileSync } from "node:child_process"
 import rehypeSlug from "rehype-slug"
 import { filenameTransformer } from "./src/lib/codeblock/shiki"
 import { rehypeCodeBlocks } from "./src/lib/codeblock/rehype"
@@ -21,6 +22,16 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [
+    {
+      name: "generate-og-images",
+      hooks: {
+        "astro:build:start": () => {
+          execFileSync("bun", ["scripts/generate-og-images.ts"], {
+            stdio: "inherit",
+          })
+        },
+      },
+    },
     react(),
     mdx({
       remarkPlugins: [remarkCodeGroup],

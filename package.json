@@ -7,7 +7,6 @@
   "scripts": {
     "preinstall": "bun -e \"const exec = process.env.npm_execpath || ''; if (!exec.includes('bun')) { console.error('Use bun (or bunx), not npm/yarn/pnpm'); process.exit(1); } const min = [1,2,0]; const cur = (process.versions.bun || '0.0.0').split('.').map((n) => Number.parseInt(n, 10) || 0); for (let i = 0; i < 3; i += 1) { if (cur[i] > min[i]) break; if (cur[i] < min[i]) { console.error('Bun >= 1.2.0 is required. Current: ' + (process.versions.bun || 'unknown')); process.exit(1); } }\"",
     "dev": "astro dev",
-    "prebuild": "bun scripts/generate-og-images.ts",
     "build": "astro build",
     "start": "bun ./dist/server/entry.mjs",
     "preview": "astro preview",
