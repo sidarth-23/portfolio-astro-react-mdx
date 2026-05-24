@@ -3,6 +3,8 @@ import ContentLayout from "@/layouts/content/ContentLayout.astro"
 import ProfileContent from "@/components/features/profile/profile-content.astro"
 import { defaultLocale, locales, type Locale } from "@/i18n/config"
 import { getProfileByLocale, getProfileExperienceByLocale } from "@/lib/content/queries"
+import { resolvePageSeo } from "@/lib/seo/resolve"
+import { getPageSeo } from "@/lib/seo/pages"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))
@@ -26,8 +28,20 @@ const experienceEntries =
 const experiences = experienceEntries.map((item) => ({
   data: item.data,
 }))
+
+const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const pageSeo = getPageSeo("profile", locale)
+const seo = resolvePageSeo(
+  pageSeo.title,
+  pageSeo.description,
+  `${siteUrl}/og/profile-${locale}.png`,
+  "website",
+  locale,
+  siteUrl,
+  `/${locale}/profile`
+)
 ---
 
-<ContentLayout title="Profile — Sidarth G" headerTitle="Profile" locale={locale}>
+<ContentLayout seo={seo} headerTitle="Profile" locale={locale}>
   <ProfileContent data={entry.data} experiences={experiences} />
 </ContentLayout>

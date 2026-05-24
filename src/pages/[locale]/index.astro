@@ -6,9 +6,14 @@ import heroIllustration from "@/assets/images/hero-illustration.svg"
 import { Image } from "astro:assets"
 import BlogCard from "@/components/features/blog/blog-card.astro"
 import ProjectCard from "@/components/features/projects/project-card.astro"
-import { getPublishedBlogPosts, getFeaturedProjects } from "@/lib/content/queries"
-import { locales, defaultLocale, type Locale } from "@/i18n/config"
+import {
+  getPublishedBlogPosts,
+  getFeaturedProjects,
+} from "@/lib/content/queries"
+import { locales, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
+import { resolvePageSeo } from "@/lib/seo/resolve"
+import { getPageSeo } from "@/lib/seo/pages"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))
@@ -19,14 +24,21 @@ const { locale } = Astro.params as { locale: Locale }
 const posts = await getPublishedBlogPosts(locale)
 const projects = await getFeaturedProjects(locale)
 const latestPosts = posts.slice(0, 3)
+
+const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const pageSeo = getPageSeo("home", locale)
+const seo = resolvePageSeo(
+  pageSeo.title,
+  pageSeo.description,
+  `${siteUrl}/og/home-${locale}.png`,
+  "website",
+  locale,
+  siteUrl,
+  `/${locale}`
+)
 ---
 
-<ContentLayout
-  title={locale === defaultLocale
-    ? "Sid — Engineer & Builder"
-    : t(locale, "meta.description")}
-  locale={locale}
->
+<ContentLayout seo={seo} locale={locale}>
   <Hero
     heading={t(locale, "hero.heading")}
     role={t(locale, "hero.role")}

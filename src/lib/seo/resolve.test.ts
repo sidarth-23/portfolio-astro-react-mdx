@@ -1,0 +1,173 @@
+import { describe, expect, it } from "vitest"
+import { resolveContentSeo, resolvePageSeo } from "./resolve"
+import type { ContentEntry } from "./resolve"
+
+describe("resolveContentSeo", () => {
+  const mockSiteUrl = "https://sidshub.in"
+
+  it("resolves blog entry SEO with cover image", () => {
+    const mockEntry = {
+      id: "en/my-blog-post",
+      data: {
+        seo: {
+          title: "My Blog Post",
+          description: "A description of my blog post.",
+        },
+        title: "My Blog Post Title",
+        description: "A description of my blog post.",
+        date: new Date("2024-01-15"),
+        coverImage: { src: "/images/blog/post.jpg" } as unknown as import("astro").ImageMetadata,
+      },
+      collection: "blog" as const,
+    } as unknown as ContentEntry
+
+    const result = resolveContentSeo(mockEntry, "blog", "en", mockSiteUrl)
+
+    expect(result.title).toBe("My Blog Post | Sidarth G")
+    expect(result.description).toBe("A description of my blog post.")
+    expect(result.ogImage).toBe("https://sidshub.in/images/blog/post.jpg")
+    expect(result.ogType).toBe("article")
+    expect(result.ogLocale).toBe("en")
+    expect(result.canonicalUrl).toBe("https://sidshub.in/en/blog/my-blog-post")
+    expect(result.publishedTime).toBe("2024-01-15T00:00:00.000Z")
+    expect(result.twitterCard).toBe("summary_large_image")
+  })
+
+  it("resolves project entry SEO with cover image", () => {
+    const mockEntry = {
+      id: "en/my-project",
+      data: {
+        seo: {
+          title: "My Project",
+          description: "A description of my project.",
+        },
+        title: "My Project Title",
+        summary: "A summary of my project.",
+        date: new Date("2024-02-20"),
+        updatedDate: new Date("2024-03-01"),
+        coverImage: { src: "/images/projects/project.png" } as unknown as import("astro").ImageMetadata,
+      },
+      collection: "projects" as const,
+    } as unknown as ContentEntry
+
+    const result = resolveContentSeo(mockEntry, "projects", "en", mockSiteUrl)
+
+    expect(result.title).toBe("My Project | Sidarth G")
+    expect(result.description).toBe("A description of my project.")
+    expect(result.ogImage).toBe("https://sidshub.in/images/projects/project.png")
+    expect(result.ogType).toBe("website")
+    expect(result.publishedTime).toBe("2024-02-20T00:00:00.000Z")
+    expect(result.modifiedTime).toBe("2024-03-01T00:00:00.000Z")
+  })
+
+  it("handles entries without updatedDate", () => {
+    const mockEntry = {
+      id: "en/blog-post",
+      data: {
+        seo: {
+          title: "Blog Post",
+          description: "Description.",
+        },
+        title: "Blog Post Title",
+        description: "Description.",
+        date: new Date("2024-01-01"),
+        coverImage: { src: "/cover.jpg" } as unknown as import("astro").ImageMetadata,
+      },
+      collection: "blog" as const,
+    } as unknown as ContentEntry
+
+    const result = resolveContentSeo(mockEntry, "blog", "es", mockSiteUrl)
+
+    expect(result.modifiedTime).toBeUndefined()
+    expect(result.canonicalUrl).toBe("https://sidshub.in/es/blog/blog-post")
+  })
+
+  it("handles complex slug paths", () => {
+    const mockEntry = {
+      id: "fr/deep/nested/path",
+      data: {
+        seo: {
+          title: "Deep Post",
+          description: "Deep description.",
+        },
+        title: "Deep Post Title",
+        description: "Deep description.",
+        date: new Date("2024-01-01"),
+        coverImage: { src: "/deep.jpg" } as unknown as import("astro").ImageMetadata,
+      },
+      collection: "blog" as const,
+    } as unknown as ContentEntry
+
+    const result = resolveContentSeo(mockEntry, "blog", "fr", mockSiteUrl)
+
+    expect(result.canonicalUrl).toBe("https://sidshub.in/fr/blog/deep/nested/path")
+  })
+})
+
+describe("resolvePageSeo", () => {
+  const mockSiteUrl = "https://sidshub.in"
+
+  it("resolves listing page SEO", () => {
+    const result = resolvePageSeo(
+      "Blog",
+      "Thoughts on engineering.",
+      "https://sidshub.in/og/blog-en.png",
+      "website",
+      "en",
+      mockSiteUrl,
+      "/en/blog"
+    )
+
+    expect(result.title).toBe("Blog | Sidarth G")
+    expect(result.description).toBe("Thoughts on engineering.")
+    expect(result.ogImage).toBe("https://sidshub.in/og/blog-en.png")
+    expect(result.ogType).toBe("website")
+    expect(result.ogLocale).toBe("en")
+    expect(result.canonicalUrl).toBe("https://sidshub.in/en/blog")
+    expect(result.twitterCard).toBe("summary_large_image")
+  })
+
+  it("resolves page SEO for different locales", () => {
+    const esResult = resolvePageSeo(
+      "Proyectos",
+      "Una selección de proyectos.",
+      "https://sidshub.in/og/projects-es.png",
+      "website",
+      "es",
+      mockSiteUrl,
+      "/es/projects"
+    )
+
+    expect(esResult.title).toBe("Proyectos | Sidarth G")
+    expect(esResult.ogLocale).toBe("es")
+    expect(esResult.canonicalUrl).toBe("https://sidshub.in/es/projects")
+  })
+
+  it("handles home page path", () => {
+    const result = resolvePageSeo(
+      "Sidarth G",
+      "Portfolio description.",
+      "https://sidshub.in/og/home-en.png",
+      "website",
+      "en",
+      mockSiteUrl,
+      "/en"
+    )
+
+    expect(result.canonicalUrl).toBe("https://sidshub.in/en")
+  })
+
+  it("handles profile page path", () => {
+    const result = resolvePageSeo(
+      "Profile",
+      "Profile description.",
+      "https://sidshub.in/og/profile-en.png",
+      "website",
+      "en",
+      mockSiteUrl,
+      "/en/profile"
+    )
+
+    expect(result.canonicalUrl).toBe("https://sidshub.in/en/profile")
+  })
+})

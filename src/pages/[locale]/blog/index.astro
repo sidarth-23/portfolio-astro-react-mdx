@@ -6,6 +6,8 @@ import { BlogListWithProvider } from "@/components/providers/blog-list"
 import { getBlogListing, getBlogFilters } from "@/lib/api/listing-api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
+import { resolvePageSeo } from "@/lib/seo/resolve"
+import { getPageSeo } from "@/lib/seo/pages"
 
 const { locale } = Astro.params as { locale: Locale }
 const url = Astro.url
@@ -17,8 +19,8 @@ const sort = url.searchParams.get("sort")
 
 const tags = tagsParam ? tagsParam.split(",") : []
 const categories = categoriesParam ? categoriesParam.split(",") : []
-const sortMode = sort && ["newest", "oldest", "title"].includes(sort) 
-  ? sort as "newest" | "oldest" | "title" 
+const sortMode = sort && ["newest", "oldest", "title"].includes(sort)
+  ? sort as "newest" | "oldest" | "title"
   : null
 
 const [initialData, availableFilters] = await Promise.all([
@@ -32,9 +34,21 @@ const [initialData, availableFilters] = await Promise.all([
   }),
   getBlogFilters(locale),
 ])
+
+const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const pageSeo = getPageSeo("blog", locale)
+const seo = resolvePageSeo(
+  pageSeo.title,
+  pageSeo.description,
+  `${siteUrl}/og/blog-${locale}.png`,
+  "website",
+  locale,
+  siteUrl,
+  `/${locale}/blog`
+)
 ---
 
-<ContentLayout title={t(locale, "blog.title") + " — Sid"} locale={locale}>
+<ContentLayout seo={seo} locale={locale}>
   <h1 class="text-3xl font-bold tracking-tight mb-2">
     {t(locale, "blog.title")}
   </h1>

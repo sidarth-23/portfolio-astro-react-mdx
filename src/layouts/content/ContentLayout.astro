@@ -1,21 +1,19 @@
 ---
 import Layout from "@/layouts/base/Layout.astro"
 import type { Locale } from "@/i18n/config"
+import type { SeoData } from "@/lib/seo/resolve"
 
 interface Props {
-  title: string
-  description?: string
-  image?: string
-  seo?: import("@/lib/content/seo").SeoData
+  seo: SeoData
   headerTitle?: string
   locale?: Locale
 }
 
-const props = Astro.props
+const { seo, headerTitle, locale = "en" } = Astro.props
 const hasToc = Astro.slots.has("toc")
 ---
 
-<Layout {...props}>
+<Layout seo={seo} headerTitle={headerTitle} locale={locale}>
   {Astro.slots.has("mobile-toc") && <slot name="mobile-toc" />}
   <div
     class="mx-auto w-full max-w-7xl flex-1 px-6 py-12"

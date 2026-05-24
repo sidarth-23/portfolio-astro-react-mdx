@@ -24,7 +24,7 @@ const blog = defineCollection({
       tags: z.array(tagSchema).default([]),
       category: z.string().min(1).optional(),
       series: z.string().optional(),
-      seo: seoSchema.optional(),
+      seo: seoSchema,
       locale: z.enum(locales).default("en"),
     }),
 })
@@ -43,7 +43,7 @@ const projects = defineCollection({
       links: z.array(linkSchema).default([]),
       tags: z.array(tagSchema).default([]),
       category: z.string().min(1),
-      seo: seoSchema.optional(),
+      seo: seoSchema,
       locale: z.enum(locales).default("en"),
     }),
 })

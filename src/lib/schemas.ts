@@ -6,9 +6,8 @@ export const slugSchema = z
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be kebab-case")
 
 export const seoSchema = z.object({
-  title: z.string().min(1).max(70).optional(),
-  description: z.string().min(1).max(160).optional(),
-  image: z.string().optional(),
+  title: z.string().min(1).max(60),
+  description: z.string().min(1).max(160),
 })
 
 export const linkSchema = z.object({

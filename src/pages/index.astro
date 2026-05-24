@@ -6,11 +6,20 @@ import BaseLayout from "@/layouts/base/BaseLayout.astro"
 import { defaultLocale, localeLabels } from "@/i18n/config"
 
 const targetPath = `/${defaultLocale}`
+
+const seo = {
+  title: "Loading portfolio...",
+  description: "Loading Sid's portfolio",
+  ogImage: "",
+  ogType: "website" as const,
+  ogLocale: "en",
+  canonicalUrl: "https://sidshub.in",
+  twitterCard: "summary_large_image" as const,
+}
 ---
 
 <BaseLayout
-  title="Loading portfolio..."
-  description="Loading Sid's portfolio"
+  seo={seo}
   locale="en"
   bodyClass="relative min-h-svh overflow-hidden bg-background text-foreground antialiased"
 >

@@ -8,6 +8,7 @@ src/generated/
 public/_optimized/
 test-results/
 playwright-report/
+public/og/
 
 # dependencies
 node_modules/

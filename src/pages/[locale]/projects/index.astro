@@ -6,6 +6,8 @@ import { ProjectListWithProvider } from "@/components/providers/project-list"
 import { getProjectListing, getProjectFilters } from "@/lib/api/listing-api"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
+import { resolvePageSeo } from "@/lib/seo/resolve"
+import { getPageSeo } from "@/lib/seo/pages"
 
 const { locale } = Astro.params as { locale: Locale }
 const url = Astro.url
@@ -33,9 +35,21 @@ const [initialData, availableFilters] = await Promise.all([
   }),
   getProjectFilters(locale),
 ])
+
+const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const pageSeo = getPageSeo("projects", locale)
+const seo = resolvePageSeo(
+  pageSeo.title,
+  pageSeo.description,
+  `${siteUrl}/og/projects-${locale}.png`,
+  "website",
+  locale,
+  siteUrl,
+  `/${locale}/projects`
+)
 ---
 
-<ContentLayout title={t(locale, "projects.title") + " — Sid"} locale={locale}>
+<ContentLayout seo={seo} locale={locale}>
   <h1 class="mb-2 text-3xl font-bold tracking-tight">
     {t(locale, "projects.title")}
   </h1>
