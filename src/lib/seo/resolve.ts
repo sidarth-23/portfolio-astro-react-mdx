@@ -16,6 +16,27 @@ export interface SeoData {
 
 export type ContentEntry = CollectionEntry<"blog"> | CollectionEntry<"projects">
 
+function normalizeSiteUrl(siteUrl: string): string {
+  return siteUrl.replace(/\/+$/, "")
+}
+
+function collapsePathSlashes(pathname: string): string {
+  return pathname.replace(/\/{2,}/g, "/")
+}
+
+function buildAbsoluteUrl(siteUrl: string, path: string): string {
+  const normalizedSite = normalizeSiteUrl(siteUrl)
+  const url = new URL(path, `${normalizedSite}/`)
+  url.pathname = collapsePathSlashes(url.pathname)
+  return url.toString()
+}
+
+function normalizeAbsoluteUrl(urlString: string): string {
+  const url = new URL(urlString)
+  url.pathname = collapsePathSlashes(url.pathname)
+  return url.toString()
+}
+
 export function resolveContentSeo(
   entry: ContentEntry,
   type: "blog" | "projects",
@@ -29,12 +50,12 @@ export function resolveContentSeo(
   return {
     title: `${seo.title} | Sidarth G`,
     description: seo.description,
-    ogImage: `${siteUrl}/og/${ogFilename}`,
+    ogImage: buildAbsoluteUrl(siteUrl, `/og/${ogFilename}`),
     ogType: type === "blog" ? "article" : "website",
     ogLocale: locale,
     publishedTime: entry.data.date.toISOString(),
     modifiedTime: entry.data.updatedDate?.toISOString(),
-    canonicalUrl: `${siteUrl}/${locale}/${type}/${slug}`,
+    canonicalUrl: buildAbsoluteUrl(siteUrl, `/${locale}/${type}/${slug}`),
     twitterCard: "summary_large_image",
   }
 }
@@ -52,10 +73,10 @@ export function resolvePageSeo(
   return {
     title: appendSiteName ? `${title} | Sidarth G` : title,
     description,
-    ogImage,
+    ogImage: normalizeAbsoluteUrl(ogImage),
     ogType,
     ogLocale: locale,
-    canonicalUrl: `${siteUrl}${path}`,
+    canonicalUrl: buildAbsoluteUrl(siteUrl, path),
     twitterCard: "summary_large_image",
   }
 }

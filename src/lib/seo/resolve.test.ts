@@ -111,7 +111,7 @@ describe("resolvePageSeo", () => {
     const result = resolvePageSeo(
       "Blog",
       "Thoughts on engineering.",
-      "https://sidshub.in/og/blog-en.png",
+      "https://sidshub.in/og/og-blog-en.png",
       "website",
       "en",
       mockSiteUrl,
@@ -120,7 +120,7 @@ describe("resolvePageSeo", () => {
 
     expect(result.title).toBe("Blog | Sidarth G")
     expect(result.description).toBe("Thoughts on engineering.")
-    expect(result.ogImage).toBe("https://sidshub.in/og/blog-en.png")
+    expect(result.ogImage).toBe("https://sidshub.in/og/og-blog-en.png")
     expect(result.ogType).toBe("website")
     expect(result.ogLocale).toBe("en")
     expect(result.canonicalUrl).toBe("https://sidshub.in/en/blog")
@@ -131,7 +131,7 @@ describe("resolvePageSeo", () => {
     const esResult = resolvePageSeo(
       "Proyectos",
       "Una selección de proyectos.",
-      "https://sidshub.in/og/projects-es.png",
+      "https://sidshub.in/og/og-projects-es.png",
       "website",
       "es",
       mockSiteUrl,
@@ -147,7 +147,7 @@ describe("resolvePageSeo", () => {
     const result = resolvePageSeo(
       "Sidarth G",
       "Portfolio description.",
-      "https://sidshub.in/og/home-en.png",
+      "https://sidshub.in/og/og-home-en.png",
       "website",
       "en",
       mockSiteUrl,
@@ -161,7 +161,7 @@ describe("resolvePageSeo", () => {
     const result = resolvePageSeo(
       "Home",
       "Portfolio description.",
-      "https://sidshub.in/og/home-en.png",
+      "https://sidshub.in/og/og-home-en.png",
       "website",
       "en",
       mockSiteUrl,
@@ -176,7 +176,7 @@ describe("resolvePageSeo", () => {
     const result = resolvePageSeo(
       "Profile",
       "Profile description.",
-      "https://sidshub.in/og/profile-en.png",
+      "https://sidshub.in/og/og-profile-en.png",
       "website",
       "en",
       mockSiteUrl,
@@ -184,5 +184,20 @@ describe("resolvePageSeo", () => {
     )
 
     expect(result.canonicalUrl).toBe("https://sidshub.in/en/profile")
+  })
+
+  it("normalizes trailing slash in site URL and OG image path", () => {
+    const result = resolvePageSeo(
+      "Blog",
+      "Thoughts on engineering.",
+      "https://www.sidshub.in//og/og-blog-en.png",
+      "website",
+      "en",
+      "https://www.sidshub.in/",
+      "/en/blog"
+    )
+
+    expect(result.ogImage).toBe("https://www.sidshub.in/og/og-blog-en.png")
+    expect(result.canonicalUrl).toBe("https://www.sidshub.in/en/blog")
   })
 })

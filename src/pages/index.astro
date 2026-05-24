@@ -13,7 +13,7 @@ const defaultHomeSeo = getPageSeo("home", defaultLocale)
 const seo = resolvePageSeo(
   defaultHomeSeo.title,
   defaultHomeSeo.description,
-  `${siteUrl}/og/home-${defaultLocale}.png`,
+  `${siteUrl}/og/og-home-${defaultLocale}.png`,
   "website",
   defaultLocale,
   siteUrl,
@@ -29,7 +29,7 @@ const homeSeoByLocale = Object.fromEntries(
       {
         title: pageSeo.title,
         description: pageSeo.description,
-        ogImage: `${siteUrl}/og/home-${locale}.png`,
+        ogImage: `${siteUrl}/og/og-home-${locale}.png`,
       },
     ]
   })
