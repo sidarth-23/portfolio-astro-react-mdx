@@ -96,7 +96,7 @@ function buildBreadcrumbs(
   return breadcrumbs
 }
 
-function Breadcrumbs({
+export function Breadcrumbs({
   currentPath,
   pageTitle,
 }: {
@@ -108,16 +108,14 @@ function Breadcrumbs({
   // If only 2 items (Home + 1), no collapse
   if (breadcrumbs.length <= 2) {
     return (
-      <Breadcrumb>
+      <Breadcrumb className="min-w-0 overflow-hidden">
         <BreadcrumbList className="flex-nowrap">
           {breadcrumbs.map((crumb, index) => (
             <React.Fragment key={crumb.href}>
               {index > 0 && <BreadcrumbSeparator />}
-              <BreadcrumbItem
-                className={crumb.isCurrent ? "min-w-0" : undefined}
-              >
+              <BreadcrumbItem className={crumb.isCurrent ? "min-w-0 max-w-full" : undefined}>
                 {crumb.isCurrent ? (
-                  <BreadcrumbPage className="block truncate">
+                  <BreadcrumbPage className="block max-w-full truncate">
                     {crumb.title}
                   </BreadcrumbPage>
                 ) : (
@@ -139,12 +137,12 @@ function Breadcrumbs({
   const last = breadcrumbs[breadcrumbs.length - 1]
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className="min-w-0 overflow-hidden">
       <BreadcrumbList className="flex-nowrap">
-        <BreadcrumbItem>
+        <BreadcrumbItem className="hidden sm:inline-flex">
           <BreadcrumbLink href={first.href}>{first.title}</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
+        <BreadcrumbSeparator className="hidden sm:block" />
         <BreadcrumbItem>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex cursor-pointer items-center gap-1">
@@ -152,6 +150,11 @@ function Breadcrumbs({
               <span className="sr-only">Show more</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
+              <DropdownMenuItem className="sm:hidden" asChild>
+                <a href={first.href} className="cursor-pointer">
+                  {first.title}
+                </a>
+              </DropdownMenuItem>
               {middle.map((crumb) => (
                 <DropdownMenuItem key={crumb.href} asChild>
                   <a href={crumb.href} className="cursor-pointer">
@@ -163,8 +166,8 @@ function Breadcrumbs({
           </DropdownMenu>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbItem className="min-w-0">
-          <BreadcrumbPage className="block truncate">
+        <BreadcrumbItem className="min-w-0 max-w-full">
+          <BreadcrumbPage className="block max-w-full truncate">
             {last.title}
           </BreadcrumbPage>
         </BreadcrumbItem>
