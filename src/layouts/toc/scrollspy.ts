@@ -1,6 +1,6 @@
 export type HeadingPosition = {
   id: string
-  top: number
+  absoluteTop: number
 }
 
 export function getScrollspyOffset(viewportHeight: number): number {
@@ -16,14 +16,16 @@ export function getScrollspyOffset(viewportHeight: number): number {
  */
 export function getActiveHeadingHash(
   headings: HeadingPosition[],
+  scrollTop: number,
   offset = getScrollspyOffset(900)
 ): string {
   if (headings.length === 0) return ""
 
   let activeIndex = 0
+  const activeLine = scrollTop + offset
 
   for (let index = 0; index < headings.length; index += 1) {
-    if (headings[index].top - offset <= 0) {
+    if (headings[index].absoluteTop <= activeLine) {
       activeIndex = index
     } else {
       break

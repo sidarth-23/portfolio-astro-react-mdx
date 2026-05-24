@@ -33,7 +33,7 @@ const firstItem = tocItems[0]
         />
       </summary>
       <nav aria-label="Table of contents" class="absolute left-0 right-0 bg-background border-b border-border shadow-lg px-6 pb-3">
-        <div class="max-h-[60vh] overflow-y-auto">
+        <div data-toc-scroll-container class="max-h-[60vh] overflow-y-auto">
           <ul class="flex flex-col">
             {tocItems.map((item) => {
               const indentClass = item.depth === 2 ? "pl-3" : "pl-8"

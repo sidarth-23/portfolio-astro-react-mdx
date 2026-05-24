@@ -5,6 +5,22 @@ type CleanupFn = () => void
 let observer: IntersectionObserver | null = null
 let cleanup: CleanupFn | null = null
 
+function scrollActiveLinkIntoView(link: HTMLAnchorElement, instant = false): void {
+  const container = link.closest<HTMLElement>("[data-toc-scroll-container]")
+  if (!container) return
+
+  const containerRect = container.getBoundingClientRect()
+  const linkRect = link.getBoundingClientRect()
+  const containerCenter = containerRect.top + containerRect.height / 2
+  const linkCenter = linkRect.top + linkRect.height / 2
+  const nextTop = container.scrollTop + (linkCenter - containerCenter)
+
+  container.scrollTo({
+    top: nextTop,
+    behavior: instant ? "auto" : "smooth",
+  })
+}
+
 function initTocScrollspy(): void {
   cleanup?.()
   cleanup = null
@@ -37,6 +53,7 @@ function initTocScrollspy(): void {
       if (isActive) {
         link.classList.add("border-border", "text-foreground")
         link.classList.remove("border-transparent", "text-muted-foreground/80")
+        scrollActiveLinkIntoView(link)
       } else {
         link.classList.remove("border-border", "text-foreground")
         link.classList.add("border-transparent", "text-muted-foreground/80")
@@ -58,11 +75,13 @@ function initTocScrollspy(): void {
   const syncActiveFromViewport = (): void => {
     const viewportHeight = window.visualViewport?.height ?? window.innerHeight
     const offset = getScrollspyOffset(viewportHeight)
+    const scrollTop = window.scrollY || document.documentElement.scrollTop || 0
     const hash = getActiveHeadingHash(
       headings.map((heading) => ({
         id: heading.id,
-        top: heading.getBoundingClientRect().top,
+        absoluteTop: heading.getBoundingClientRect().top + scrollTop,
       })),
+      scrollTop,
       offset
     )
     setActive(hash)

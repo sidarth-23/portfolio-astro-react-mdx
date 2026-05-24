@@ -4,19 +4,19 @@ import { getActiveHeadingHash, getScrollspyOffset } from "./scrollspy"
 describe("getActiveHeadingHash", () => {
   it("returns first heading when viewport has not reached any heading", () => {
     const hash = getActiveHeadingHash([
-      { id: "stack", top: 200 },
-      { id: "what-it-does", top: 420 },
-    ])
+      { id: "stack", absoluteTop: 200 },
+      { id: "what-it-does", absoluteTop: 420 },
+    ], 0)
 
     expect(hash).toBe("#stack")
   })
 
   it("returns last heading that crossed the offset", () => {
     const hash = getActiveHeadingHash([
-      { id: "stack", top: -40 },
-      { id: "what-it-does", top: 20 },
-      { id: "themes", top: 300 },
-    ])
+      { id: "stack", absoluteTop: 80 },
+      { id: "what-it-does", absoluteTop: 140 },
+      { id: "themes", absoluteTop: 420 },
+    ], 100)
 
     expect(hash).toBe("#what-it-does")
   })
@@ -24,9 +24,10 @@ describe("getActiveHeadingHash", () => {
   it("supports custom offset", () => {
     const hash = getActiveHeadingHash(
       [
-        { id: "stack", top: 60 },
-        { id: "what-it-does", top: 180 },
+        { id: "stack", absoluteTop: 160 },
+        { id: "what-it-does", absoluteTop: 280 },
       ],
+      100,
       80
     )
 
@@ -34,7 +35,7 @@ describe("getActiveHeadingHash", () => {
   })
 
   it("returns empty string when there are no headings", () => {
-    expect(getActiveHeadingHash([])).toBe("")
+    expect(getActiveHeadingHash([], 0)).toBe("")
   })
 })
 
