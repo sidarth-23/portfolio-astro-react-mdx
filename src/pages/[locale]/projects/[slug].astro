@@ -115,8 +115,9 @@ const readingTime = estimateReadingTime(project.body ?? "")
       alt={project.data.title}
       width={1280}
       height={720}
+      fit="contain"
       format="webp"
-      class="mb-10 aspect-video w-full rounded-xl"
+      class="mb-10 aspect-video w-full rounded-xl bg-muted/30"
     />
 
     <div class="prose prose-lg max-w-none prose-zinc dark:prose-invert">

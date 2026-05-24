@@ -7,6 +7,7 @@ interface Props {
   alt: string
   width: number
   height: number
+  fit?: "cover" | "contain"
   class?: string
   imageClass?: string
   blurScaleClass?: string
@@ -20,6 +21,7 @@ const {
   alt,
   width,
   height,
+  fit = "cover",
   class: className = "",
   imageClass = "",
   blurScaleClass = "scale-110",
@@ -37,6 +39,7 @@ const {
     width={64}
     height={36}
     quality={25}
+    fit="cover"
     format={format}
     loading={loading}
     decoding={decoding}
@@ -47,9 +50,10 @@ const {
     alt={alt}
     width={width}
     height={height}
+    fit={fit}
     format={format}
     loading={loading}
     decoding={decoding}
-    class={`relative z-10 h-full w-full object-cover ${imageClass}`}
+    class={`relative z-10 h-full w-full object-${fit} ${imageClass}`}
   />
 </div>
