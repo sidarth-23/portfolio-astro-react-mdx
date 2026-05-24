@@ -14,7 +14,7 @@ import { locales, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import { resolvePageSeo } from "@/lib/seo/resolve"
 import { getPageSeo } from "@/lib/seo/pages"
-import { homeCta } from "@/content/home-cta.data"
+import { getGlobalLink, homeCtaLinkIds } from "@/content/global-links.data"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))
@@ -25,6 +25,8 @@ const { locale } = Astro.params as { locale: Locale }
 const posts = await getPublishedBlogPosts(locale)
 const projects = await getFeaturedProjects(locale)
 const latestPosts = posts.slice(0, 3)
+const primaryLink = getGlobalLink(homeCtaLinkIds.primary)
+const secondaryLink = getGlobalLink(homeCtaLinkIds.secondary)
 
 const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
 const pageSeo = getPageSeo("home", locale)
@@ -48,11 +50,11 @@ const seo = resolvePageSeo(
     buttons={{
       primary: {
         text: t(locale, "hero.connect"),
-        url: homeCta.primaryUrl,
+        url: primaryLink.href(locale),
       },
       secondary: {
         text: t(locale, "hero.resume"),
-        url: `/${locale}${homeCta.secondaryPath}`,
+        url: secondaryLink.href(locale),
       },
     }}
   >

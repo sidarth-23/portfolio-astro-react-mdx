@@ -54,7 +54,10 @@ const profile = defineCollection({
 })
 
 const profileExperience = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/profileExperience" }),
+  loader: glob({
+    pattern: "**/*.md",
+    base: "./src/content/profile-experience",
+  }),
   schema: profileExperienceSchema,
 })
 

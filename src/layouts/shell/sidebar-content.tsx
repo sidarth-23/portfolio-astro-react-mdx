@@ -14,9 +14,8 @@ import { t } from "@/i18n/ui"
 import {
   sidebarNavigationContent,
   sidebarProfileContent,
-  sidebarSecondaryContent,
-  sidebarSocialContent,
 } from "@/content/sidebar-content.data"
+import { getGlobalLink } from "@/content/global-links.data"
 
 export interface NavigationItem {
   title: string
@@ -88,19 +87,28 @@ function buildNavigation(locale: Locale): NavigationItem[] {
 }
 
 function buildSecondary(locale: Locale): NavigationItem[] {
-  return sidebarSecondaryContent.map((item) => ({
-    title: t(locale, item.titleKey),
-    url: item.url,
-    icon: secondaryIcon(item.icon),
-  }))
+  return ([
+    { id: "archive", title: t(locale, "nav.archive") },
+    { id: "resume", title: t(locale, "nav.downloadResume") },
+  ] as const).map((item) => {
+    const link = getGlobalLink(item.id)
+    return {
+      title: item.title,
+      url: link.href(locale),
+      icon: secondaryIcon(link.icon as "archive" | "downloadResume"),
+    }
+  })
 }
 
 function buildSocial(locale: Locale): SocialLink[] {
-  return sidebarSocialContent.map((item) => ({
-    title: item.title,
-    url: item.url(locale),
-    icon: socialIcon(item.icon),
-  }))
+  return (["github", "linkedin", "rss", "email"] as const).map((id) => {
+    const link = getGlobalLink(id)
+    return {
+      title: link.title,
+      url: link.href(locale),
+      icon: socialIcon(link.icon as "github" | "linkedin" | "rss" | "email"),
+    }
+  })
 }
 
 export function resolvePageTitle(
