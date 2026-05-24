@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { clampText } from "./generate-image"
+import { clampText, hasCoverImage } from "./generate-image"
 
 describe("clampText", () => {
   it("returns text unchanged when under max length", () => {
@@ -43,5 +43,19 @@ describe("clampText", () => {
     const result = clampText(text, 60)
     expect(result.length).toBe(60)
     expect(result.endsWith("…")).toBe(true)
+  })
+})
+
+describe("hasCoverImage", () => {
+  it("returns true for a non-empty image data url", () => {
+    expect(hasCoverImage("data:image/png;base64,abc")).toBe(true)
+  })
+
+  it("returns false when image data url is missing", () => {
+    expect(hasCoverImage(undefined)).toBe(false)
+  })
+
+  it("returns false for whitespace-only image data url", () => {
+    expect(hasCoverImage("   ")).toBe(false)
   })
 })
