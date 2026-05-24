@@ -56,7 +56,11 @@ const desktopCollapsible = desktopState === "collapsed" ? collapsible : ""
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          class={cn("bg-sidebar text-sidebar-foreground w-[var(--sidebar-width-mobile)] p-0 md:hidden", className)}
+          style="--sidebar-width: var(--sidebar-width-mobile);"
+          class={cn(
+            "bg-sidebar text-sidebar-foreground w-[var(--sidebar-width)] p-0 md:hidden",
+            className
+          )}
         >
           <SheetHeader class="sr-only">
             <SheetTitle>Sidebar</SheetTitle>
