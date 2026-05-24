@@ -13,7 +13,6 @@ import { remarkCodeGroup } from "./src/lib/codeblock/remark"
 
 // https://astro.build/config
 export default defineConfig({
-  security: { csp: true },
   adapter: node({
     mode: "standalone",
   }),

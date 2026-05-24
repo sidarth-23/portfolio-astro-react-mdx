@@ -18,7 +18,7 @@ import {
   siAstro,
   siTypescript,
   siTailwindcss,
-} from "simple-icons/icons"
+} from "simple-icons"
 
 export type SkillIconInput = {
   source: "simple" | "huge" | "custom"
