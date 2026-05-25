@@ -1,0 +1,76 @@
+---
+import BaseLayout from "@/layouts/base/BaseLayout.astro"
+import { resolvePageSeo } from "@/lib/seo/resolve"
+import { Button } from "@/components/ui/astro/button"
+import { Icon } from "@/components/ui/astro/icon"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@/components/ui/astro/card"
+import { getResumeContent } from "@/lib/resume/service"
+
+const siteUrl = Astro.site?.toString() ?? "https://www.sidshub.in"
+const seo = resolvePageSeo(
+  "Sidarth G Resume",
+  "Resume of Sidarth G in markdown format with export options.",
+  `${siteUrl}/og/og-profile-en.png`,
+  "website",
+  "en",
+  siteUrl,
+  "/resume",
+  false
+)
+
+const { html, markdown } = await getResumeContent()
+---
+
+<BaseLayout seo={seo} locale="en" includeClientRouter={false}>
+  <main class="container mx-auto min-h-svh px-4 py-8 md:py-12">
+    <Card class="mx-auto w-full max-w-4xl">
+      <CardHeader class="gap-4">
+        <div class="flex items-center justify-between gap-3">
+          <Button as="a" href="/en" variant="outline" size="icon" aria-label="Back to App">
+            <Icon name="arrow-left" class="size-4" aria-hidden="true" />
+          </Button>
+
+          <Button id="copy-markdown" variant="outline" type="button">
+            <span id="copy-markdown-icon-default">
+              <Icon name="file-text" class="size-4" aria-hidden="true" />
+            </span>
+            <span id="copy-markdown-icon-success" class="hidden text-green-600">
+              <Icon name="check" class="size-4" aria-hidden="true" />
+            </span>
+            <span>Copy Markdown</span>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <article
+          class="prose max-w-none text-base prose-slate dark:prose-invert prose-headings:scroll-mt-20 prose-h2:mt-10 prose-h2:border-b prose-h2:pb-2 prose-h3:mt-8 prose-h3:mb-2 prose-h4:mt-5 prose-h4:mb-1 prose-h4:text-xl prose-p:my-2 prose-p:leading-7 prose-p:font-medium prose-strong:font-semibold prose-ul:my-3 prose-ul:list-disc prose-ul:pl-6 prose-li:my-1 prose-li:leading-7"
+          set:html={html}
+        />
+      </CardContent>
+    </Card>
+  </main>
+  <script is:inline define:vars={{ markdown }}>
+    const copyButton = document.querySelector("#copy-markdown")
+    const defaultIcon = document.querySelector("#copy-markdown-icon-default")
+    const successIcon = document.querySelector("#copy-markdown-icon-success")
+    if (copyButton instanceof HTMLButtonElement) {
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(markdown)
+          if (defaultIcon instanceof HTMLElement && successIcon instanceof HTMLElement) {
+            defaultIcon.classList.add("hidden")
+            successIcon.classList.remove("hidden")
+            window.setTimeout(() => {
+              successIcon.classList.add("hidden")
+              defaultIcon.classList.remove("hidden")
+            }, 1400)
+          }
+        } catch {}
+      })
+    }
+  </script>
+</BaseLayout>

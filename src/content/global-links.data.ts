@@ -34,8 +34,7 @@ export const globalLinks: GlobalLink[] = [
     id: "resume",
     title: "Resume",
     icon: "downloadResume",
-    href: () =>
-      "https://docs.google.com/document/d/11b-14LpVAj4N0t2oE48UKhVarS09YzWW/edit?usp=sharing&ouid=108256755841823437144&rtpof=true&sd=true",
+    href: () => "/resume",
   },
   {
     id: "github",

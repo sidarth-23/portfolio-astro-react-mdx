@@ -9,6 +9,7 @@ public/_optimized/
 test-results/
 playwright-report/
 public/og/
+public/resume/
 
 # dependencies
 node_modules/
@@ -18,6 +19,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+tmp/
 
 # environment variables
 .env

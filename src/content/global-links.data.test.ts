@@ -7,7 +7,7 @@ describe("globalLinks", () => {
     const secondary = getGlobalLink(homeCtaLinkIds.secondary)
 
     expect(primary.href("en")).toBe("https://linkedin.com/in/sidarth-g")
-    expect(secondary.href("en")).toMatch(/^https?:\/\//)
+    expect(secondary.href("en")).toBe("/resume")
   })
 
   it("resolves locale-aware rss link", () => {

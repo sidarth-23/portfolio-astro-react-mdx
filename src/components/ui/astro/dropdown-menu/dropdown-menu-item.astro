@@ -1,15 +1,16 @@
 ---
-import type { HTMLAttributes } from "astro/types"
+import type { HTMLTag, Polymorphic } from "astro/types"
 
 import { cn } from "@/lib/utils"
 
-type Props = HTMLAttributes<"button"> & {
+type Props<Tag extends HTMLTag = "button"> = Polymorphic<{ as: Tag }> & {
   disabled?: boolean
   variant?: "default" | "destructive"
   inset?: boolean
 }
 
 const {
+  as: Tag = "button",
   class: className,
   type = "button",
   disabled,
@@ -19,13 +20,15 @@ const {
 } = Astro.props
 ---
 
-<button
+<Tag
   data-slot="dropdown-menu-item"
   data-disabled={disabled}
   data-variant={variant}
   data-inset={inset}
-  disabled={disabled ? true : undefined}
-  type={type}
+  disabled={Tag === "button" && disabled ? true : undefined}
+  type={Tag === "button" ? type : undefined}
+  aria-disabled={Tag !== "button" && disabled ? "true" : undefined}
+  tabindex={Tag !== "button" && disabled ? -1 : undefined}
   class={cn(
     "group/dropdown-menu-item data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:data-highlighted:bg-destructive/10 data-[variant=destructive]:data-highlighted:text-destructive data-[variant=destructive]:*:[svg]:text-destructive relative flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-inset:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     className
@@ -33,4 +36,4 @@ const {
   {...props}
 >
   <slot />
-</button>
+</Tag>

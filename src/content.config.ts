@@ -8,6 +8,7 @@ import {
   dateSchema,
   profileSchema,
   profileExperienceSchema,
+  resumeSchema,
 } from "@/lib/schemas"
 import { locales } from "@/i18n/config"
 
@@ -61,9 +62,18 @@ const profileExperience = defineCollection({
   schema: profileExperienceSchema,
 })
 
+const resume = defineCollection({
+  loader: glob({
+    pattern: "*.md",
+    base: "./src/content/resume",
+  }),
+  schema: resumeSchema,
+})
+
 export const collections = {
   blog,
   projects,
   profile,
   profileExperience,
+  resume,
 }
