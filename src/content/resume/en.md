@@ -5,8 +5,8 @@ title: Resume
 
 # Sidarth G | **Full Stack Developer**
 
-+91-80982-30245 | g.sidarth23@gmail.com  
-linkedin.com/in/sidarth-g | github.com/sidarth-23 | sidshub.in
+[+91-80982-30245](tel:+918098230245) | [g.sidarth23@gmail.com](mailto:g.sidarth23@gmail.com)  
+[linkedin.com/in/sidarth-g](https://linkedin.com/in/sidarth-g) | [github.com/sidarth-23](https://github.com/sidarth-23) | [sidshub.in](https://sidshub.in)
 
 ## Professional Summary
 
