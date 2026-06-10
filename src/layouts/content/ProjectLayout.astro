@@ -11,7 +11,7 @@ interface Props {
 
 const { project, locale = "en" } = Astro.props
 
-const siteUrl = Astro.site?.toString() ?? "https://www.sidshub.in"
+const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
 const seo = resolveContentSeo(project, "projects", locale, siteUrl)
 ---
 

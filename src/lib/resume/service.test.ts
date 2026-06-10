@@ -4,7 +4,7 @@ const markdownFixture = `# Sidarth G
 
 **Title:** Full-Stack Developer
 **Contact:** +91-80982-30245 | g.sidarth23@gmail.com
-**Links:** linkedin.com/in/sidarth-g | github.com/sidarth-23 | www.sidshub.in
+**Links:** linkedin.com/in/sidarth-g | github.com/sidarth-23 | sidshub.in
 
 ## Work History
 

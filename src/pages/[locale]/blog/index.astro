@@ -35,7 +35,7 @@ const [initialData, availableFilters] = await Promise.all([
   getBlogFilters(locale),
 ])
 
-const siteUrl = Astro.site?.toString() ?? "https://www.sidshub.in"
+const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
 const pageSeo = getPageSeo("blog", locale)
 const seo = resolvePageSeo(
   pageSeo.title,

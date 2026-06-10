@@ -190,14 +190,14 @@ describe("resolvePageSeo", () => {
     const result = resolvePageSeo(
       "Blog",
       "Thoughts on engineering.",
-      "https://www.sidshub.in//og/og-blog-en.png",
+      "https://sidshub.in//og/og-blog-en.png",
       "website",
       "en",
-      "https://www.sidshub.in/",
+      "https://sidshub.in/",
       "/en/blog"
     )
 
-    expect(result.ogImage).toBe("https://www.sidshub.in/og/og-blog-en.png")
-    expect(result.canonicalUrl).toBe("https://www.sidshub.in/en/blog")
+    expect(result.ogImage).toBe("https://sidshub.in/og/og-blog-en.png")
+    expect(result.canonicalUrl).toBe("https://sidshub.in/en/blog")
   })
 })
