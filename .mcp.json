@@ -13,9 +13,9 @@
         "DOKPLOY_URL": "${DOKPLOY_URL}"
       }
     },
-    "chrome-devtools": {
+    "playwright": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": ["-y", "@playwright/mcp@latest"]
     }
   }
 }

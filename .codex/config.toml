@@ -1,4 +1,4 @@
-model = "gpt-5.3-codex"
+model = "gpt-5.4-mini"
 
 [mcp_servers.astro-docs]
 command = "npx"
@@ -9,6 +9,6 @@ command = "npx"
 args = ["-y", "@dokploy/mcp"]
 env_vars = ["DOKPLOY_API_KEY", "DOKPLOY_URL"]
 
-[mcp_servers.chrome-devtools]
+[mcp_servers.playwright]
 command = "npx"
-args = ["-y", "chrome-devtools-mcp@latest"]
+args = ["@playwright/mcp@latest"]

@@ -3,7 +3,6 @@ import ContentLayout from "@/layouts/content/ContentLayout.astro"
 import Hero from "@/components/features/home/hero.astro"
 import FeaturedListing from "@/components/features/home/featured-listing.astro"
 import heroIllustration from "@/assets/images/hero-illustration.svg"
-import { Image } from "astro:assets"
 import BlogCard from "@/components/features/blog/blog-card.astro"
 import ProjectCard from "@/components/features/projects/project-card.astro"
 import {
@@ -58,9 +57,9 @@ const seo = resolvePageSeo(
       },
     }}
   >
-    <Image
+    <img
       slot="image"
-      src={heroIllustration}
+      src={heroIllustration.src}
       alt={t(locale, "hero.imageAlt")}
       width={800}
       height={600}

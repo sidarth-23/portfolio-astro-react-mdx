@@ -1,5 +1,7 @@
 import { getViteConfig } from "astro/config"
 import { defineConfig } from "vitest/config"
+import react from "@astrojs/react"
+import { fileURLToPath } from "node:url"
 
 const config = {
   test: {
@@ -31,10 +33,17 @@ const config = {
       },
     },
   },
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
 }
 
-// @ts-expect-error Astro and Vitest bundle different Vite versions, causing type mismatches at the library boundary. The runtime behavior is correct.
-const viteConfig = getViteConfig(config)
+const viteConfig = getViteConfig(config, {
+  configFile: false,
+  integrations: [react()],
+})
 
 // @ts-expect-error Astro and Vitest bundle different Vite versions, causing type mismatches at the library boundary. The runtime behavior is correct.
 export default defineConfig(viteConfig)

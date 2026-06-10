@@ -87,7 +87,7 @@ test.describe("Projects List Page", () => {
     const failedRequests: string[] = []
 
     page.on("response", (response) => {
-      if (response.status() === 404 && response.url().match(/\.(webp|jpg|jpeg|png|gif)/i)) {
+      if (response.status() === 404 && response.url().match(/\/_astro\/.*\.(webp|jpg|jpeg|png|gif|svg|js|css)/i)) {
         failedRequests.push(response.url())
       }
     })

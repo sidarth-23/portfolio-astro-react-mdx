@@ -12,18 +12,15 @@ import { filenameTransformer } from "./src/lib/codeblock/shiki"
 import { rehypeCodeBlocks } from "./src/lib/codeblock/rehype"
 import { remarkCodeGroup } from "./src/lib/codeblock/remark"
 
-const isTest = typeof process !== "undefined" && process.env.VITEST !== undefined
 
 // https://astro.build/config
 export default defineConfig({
-  adapter: isTest
-    ? undefined
-    : cloudflare({
-        imageService: {
-          build: "compile",
-          runtime: "cloudflare-binding",
-        },
-      }),
+  adapter: cloudflare({
+    imageService: {
+      build: "compile",
+      runtime: "cloudflare-binding",
+    },
+  }),
   vite: {
     plugins: [tailwindcss()],
   },
