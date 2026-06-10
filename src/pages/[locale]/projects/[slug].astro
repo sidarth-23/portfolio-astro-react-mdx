@@ -113,9 +113,8 @@ const readingTime = estimateReadingTime(project.body ?? "")
     <BlurBackdropImage
       src={project.data.coverImage}
       alt={project.data.title}
-      width={1280}
-      height={720}
-      fit="contain"
+      width={project.data.coverImage.width}
+      height={project.data.coverImage.height}
       format="webp"
       class="mb-10 aspect-video w-full rounded-xl bg-muted/30"
     />

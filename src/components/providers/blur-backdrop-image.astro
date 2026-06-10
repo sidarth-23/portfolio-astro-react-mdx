@@ -1,13 +1,13 @@
 ---
 import { Image } from "astro:assets"
 import type { ImageMetadata } from "astro"
+import { getBlurBackdropForegroundClass } from "./blur-backdrop-image"
 
 interface Props {
   src: ImageMetadata
   alt: string
   width: number
   height: number
-  fit?: "cover" | "contain"
   class?: string
   imageClass?: string
   blurScaleClass?: string
@@ -21,7 +21,6 @@ const {
   alt,
   width,
   height,
-  fit = "contain",
   class: className = "",
   imageClass = "",
   blurScaleClass = "scale-110",
@@ -29,6 +28,10 @@ const {
   decoding = "async",
   format = "webp",
 } = Astro.props as Props
+
+const foregroundClass = getBlurBackdropForegroundClass(imageClass)
+const blurWidth = 64
+const blurHeight = Math.max(1, Math.round((blurWidth * height) / width))
 ---
 
 <div class={`relative overflow-hidden bg-black/5 ${className}`}>
@@ -36,8 +39,8 @@ const {
     src={src}
     alt=""
     aria-hidden="true"
-    width={64}
-    height={36}
+    width={blurWidth}
+    height={blurHeight}
     quality={25}
     fit="cover"
     format={format}
@@ -49,11 +52,9 @@ const {
     src={src}
     alt={alt}
     width={width}
-    height={height}
-    fit={fit}
     format={format}
     loading={loading}
     decoding={decoding}
-    class={`relative z-10 h-full w-full object-${fit} ${imageClass}`}
+    class={foregroundClass}
   />
 </div>
