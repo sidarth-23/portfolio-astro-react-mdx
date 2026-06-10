@@ -1,6 +1,12 @@
 ---
 import { Badge } from "@/components/ui/astro/badge"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/astro/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/astro/card"
 import { Spinner } from "@/components/ui/astro/spinner"
 import BaseLayout from "@/layouts/base/BaseLayout.astro"
 import { defaultLocale, localeLabels, locales } from "@/i18n/config"
@@ -43,7 +49,10 @@ const homeSeoByLocale = Object.fromEntries(
 >
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`5;url=${targetPath}`} />
-    <script is:inline define:vars={{ targetPath, defaultLocale, locales, homeSeoByLocale }}>
+    <script
+      is:inline
+      define:vars={{ targetPath, defaultLocale, locales, homeSeoByLocale }}
+    >
       const available = new Set(locales)
 
       const resolveLocale = () => {
@@ -96,24 +105,37 @@ const homeSeoByLocale = Object.fromEntries(
   </Fragment>
 
   <div class="pointer-events-none absolute inset-0">
-    <div class="absolute -left-20 top-8 h-72 w-72 rounded-full bg-primary/18 blur-3xl" />
-    <div class="absolute -right-12 bottom-0 h-64 w-64 rounded-full bg-chart-2/16 blur-3xl" />
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,theme(colors.background),transparent_55%)]" />
+    <div
+      class="absolute top-8 -left-20 h-72 w-72 rounded-full bg-primary/18 blur-3xl"
+    >
+    </div>
+    <div
+      class="absolute -right-12 bottom-0 h-64 w-64 rounded-full bg-chart-2/16 blur-3xl"
+    >
+    </div>
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_top,theme(colors.background),transparent_55%)]"
+    >
+    </div>
   </div>
 
   <main class="relative z-10 grid min-h-svh place-items-center px-6">
     <Card class="w-full max-w-xl border-border/70 bg-card/85 backdrop-blur">
       <CardHeader class="space-y-3">
-        <Badge variant="secondary" class="w-fit uppercase tracking-[0.16em]">
+        <Badge variant="secondary" class="w-fit tracking-[0.16em] uppercase">
           Sid Portfolio
         </Badge>
-        <CardTitle class="text-2xl md:text-3xl">Preparing your experience</CardTitle>
+        <CardTitle class="text-2xl md:text-3xl"
+          >Preparing your experience</CardTitle
+        >
         <CardDescription class="text-base text-muted-foreground">
           Taking you to {localeLabels[defaultLocale]} content.
         </CardDescription>
       </CardHeader>
       <CardContent class="flex items-center justify-between gap-4">
-        <div class="inline-flex items-center gap-3 text-sm text-muted-foreground">
+        <div
+          class="inline-flex items-center gap-3 text-sm text-muted-foreground"
+        >
           <Spinner class="size-5 text-primary" />
           Redirecting to your localized home...
         </div>
@@ -122,7 +144,10 @@ const homeSeoByLocale = Object.fromEntries(
     </Card>
     <noscript>
       <p class="mt-6 text-center text-sm text-muted-foreground">
-        JavaScript is disabled. Continue to <a class="underline" href={targetPath}>{targetPath}</a>.
+        JavaScript is disabled. Continue to <a
+          class="underline"
+          href={targetPath}>{targetPath}</a
+        >.
       </p>
     </noscript>
   </main>

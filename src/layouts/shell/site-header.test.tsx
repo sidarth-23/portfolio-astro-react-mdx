@@ -18,12 +18,16 @@ describe("Breadcrumbs", () => {
       "sm:inline-flex"
     )
 
-    const ellipsis = container.querySelectorAll('[data-slot="breadcrumb-ellipsis"]')
+    const ellipsis = container.querySelectorAll(
+      '[data-slot="breadcrumb-ellipsis"]'
+    )
     expect(ellipsis).toHaveLength(1)
     const nav = container.querySelector('[data-slot="breadcrumb"]')
     expect(nav).toHaveClass("min-w-0", "overflow-hidden")
 
-    const currentPage = screen.getByRole("link", { name: "Stop Trusting the Client" })
+    const currentPage = screen.getByRole("link", {
+      name: "Stop Trusting the Client",
+    })
     expect(currentPage).toHaveClass("block", "max-w-full", "truncate")
     expect(currentPage.closest('[data-slot="breadcrumb-item"]')).toHaveClass(
       "min-w-0",

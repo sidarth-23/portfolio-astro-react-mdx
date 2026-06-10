@@ -21,6 +21,8 @@ describe("ImageGalleryCarousel", () => {
     const blurImage = container.querySelector("img[aria-hidden='true']")
     expect(blurImage).toBeInTheDocument()
     expect(blurImage).toHaveClass("blur-2xl", "scale-110")
-    expect(getByRole("img", { name: "Bluebook dashboard preview" })).toBeInTheDocument()
+    expect(
+      getByRole("img", { name: "Bluebook dashboard preview" })
+    ).toBeInTheDocument()
   })
 })

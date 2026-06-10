@@ -1,9 +1,11 @@
-
 import { getCollection } from "astro:content"
 import { createMarkdownProcessor } from "@astrojs/markdown-remark"
 
 export async function getResumeContent() {
-  const entries = await getCollection("resume", ({ data }) => data.locale === "en")
+  const entries = await getCollection(
+    "resume",
+    ({ data }) => data.locale === "en"
+  )
   const entry = entries[0]
   if (!entry) {
     throw new Error("Resume content is missing. Add src/content/resume/en.md.")

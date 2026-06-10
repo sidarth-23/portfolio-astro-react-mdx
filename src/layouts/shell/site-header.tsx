@@ -113,7 +113,9 @@ export function Breadcrumbs({
           {breadcrumbs.map((crumb, index) => (
             <React.Fragment key={crumb.href}>
               {index > 0 && <BreadcrumbSeparator />}
-              <BreadcrumbItem className={crumb.isCurrent ? "min-w-0 max-w-full" : undefined}>
+              <BreadcrumbItem
+                className={crumb.isCurrent ? "max-w-full min-w-0" : undefined}
+              >
                 {crumb.isCurrent ? (
                   <BreadcrumbPage className="block max-w-full truncate">
                     {crumb.title}
@@ -166,7 +168,7 @@ export function Breadcrumbs({
           </DropdownMenu>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbItem className="min-w-0 max-w-full">
+        <BreadcrumbItem className="max-w-full min-w-0">
           <BreadcrumbPage className="block max-w-full truncate">
             {last.title}
           </BreadcrumbPage>

@@ -20,7 +20,9 @@ test.describe("Blog List Page", () => {
   test("images are optimized webp", async ({ page }) => {
     await page.waitForLoadState("networkidle")
 
-    const images = page.locator("picture img").filter({ has: page.locator("[loading='lazy']") })
+    const images = page
+      .locator("picture img")
+      .filter({ has: page.locator("[loading='lazy']") })
     const count = await images.count()
 
     for (let i = 0; i < count; i++) {
@@ -60,7 +62,9 @@ test.describe("Blog List Page", () => {
   test("filters by categories and updates URL", async ({ page }) => {
     await page.getByRole("button", { name: "Backend Systems" }).click()
     await page.waitForLoadState("networkidle")
-    await expect(page).toHaveURL(/categories=Backend\+Systems|categories=Backend%20Systems/)
+    await expect(page).toHaveURL(
+      /categories=Backend\+Systems|categories=Backend%20Systems/
+    )
     await expect(page.locator("[data-testid='blog-card']")).toHaveCount(1)
 
     await page.getByRole("button", { name: "Backend Systems" }).click()
@@ -82,7 +86,10 @@ test.describe("Blog List Page", () => {
     const failedRequests: string[] = []
 
     page.on("response", (response) => {
-      if (response.status() === 404 && response.url().match(/\.(webp|jpg|jpeg|png|gif)/i)) {
+      if (
+        response.status() === 404 &&
+        response.url().match(/\.(webp|jpg|jpeg|png|gif)/i)
+      ) {
         failedRequests.push(response.url())
       }
     })

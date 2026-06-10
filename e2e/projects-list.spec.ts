@@ -20,7 +20,9 @@ test.describe("Projects List Page", () => {
   test("images are optimized webp", async ({ page }) => {
     await page.waitForLoadState("networkidle")
 
-    const images = page.locator("picture img").filter({ has: page.locator("[loading='lazy']") })
+    const images = page
+      .locator("picture img")
+      .filter({ has: page.locator("[loading='lazy']") })
     const count = await images.count()
 
     for (let i = 0; i < count; i++) {
@@ -43,7 +45,9 @@ test.describe("Projects List Page", () => {
   })
 
   test("filters by search and updates URL", async ({ page }) => {
-    const initialCards = await page.locator("[data-testid='project-card']").count()
+    const initialCards = await page
+      .locator("[data-testid='project-card']")
+      .count()
     const searchInput = page.locator("[data-testid='search-input']")
 
     await searchInput.fill("bluebook")
@@ -51,7 +55,9 @@ test.describe("Projects List Page", () => {
 
     await expect(page).toHaveURL(/search=bluebook/)
 
-    const filteredCards = await page.locator("[data-testid='project-card']").count()
+    const filteredCards = await page
+      .locator("[data-testid='project-card']")
+      .count()
     expect(filteredCards).toBe(1)
     expect(filteredCards).toBeLessThan(initialCards)
   })
@@ -74,7 +80,9 @@ test.describe("Projects List Page", () => {
   })
 
   test("supports infinite scroll", async ({ page }) => {
-    const initialCards = await page.locator("[data-testid='project-card']").count()
+    const initialCards = await page
+      .locator("[data-testid='project-card']")
+      .count()
 
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await page.waitForLoadState("networkidle")
@@ -87,7 +95,12 @@ test.describe("Projects List Page", () => {
     const failedRequests: string[] = []
 
     page.on("response", (response) => {
-      if (response.status() === 404 && response.url().match(/\/_astro\/.*\.(webp|jpg|jpeg|png|gif|svg|js|css)/i)) {
+      if (
+        response.status() === 404 &&
+        response
+          .url()
+          .match(/\/_astro\/.*\.(webp|jpg|jpeg|png|gif|svg|js|css)/i)
+      ) {
         failedRequests.push(response.url())
       }
     })

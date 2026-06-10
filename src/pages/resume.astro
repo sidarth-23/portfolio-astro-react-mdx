@@ -3,11 +3,7 @@ import BaseLayout from "@/layouts/base/BaseLayout.astro"
 import { resolvePageSeo } from "@/lib/seo/resolve"
 import { Button } from "@/components/ui/astro/button"
 import { Icon } from "@/components/ui/astro/icon"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/astro/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/astro/card"
 import { getResumeContent } from "@/lib/resume/service"
 
 const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
@@ -30,7 +26,13 @@ const { html, markdown } = await getResumeContent()
     <Card class="mx-auto w-full max-w-4xl">
       <CardHeader class="gap-4">
         <div class="flex items-center justify-between gap-3">
-          <Button as="a" href="/en" variant="outline" size="icon" aria-label="Back to App">
+          <Button
+            as="a"
+            href="/en"
+            variant="outline"
+            size="icon"
+            aria-label="Back to App"
+          >
             <Icon name="arrow-left" class="size-4" aria-hidden="true" />
           </Button>
 
@@ -61,7 +63,10 @@ const { html, markdown } = await getResumeContent()
       copyButton.addEventListener("click", async () => {
         try {
           await navigator.clipboard.writeText(markdown)
-          if (defaultIcon instanceof HTMLElement && successIcon instanceof HTMLElement) {
+          if (
+            defaultIcon instanceof HTMLElement &&
+            successIcon instanceof HTMLElement
+          ) {
             defaultIcon.classList.add("hidden")
             successIcon.classList.remove("hidden")
             window.setTimeout(() => {

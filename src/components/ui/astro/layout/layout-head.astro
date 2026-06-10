@@ -67,7 +67,10 @@ const openGraphImage =
         }
       : undefined
 
-const robots = [noindex ? "noindex" : "index", nofollow ? "nofollow" : "follow"].join(",")
+const robots = [
+  noindex ? "noindex" : "index",
+  nofollow ? "nofollow" : "follow",
+].join(",")
 ---
 
 <head data-slot="layout-head" {...props}>
@@ -85,18 +88,42 @@ const robots = [noindex ? "noindex" : "index", nofollow ? "nofollow" : "follow"]
   <meta property="og:type" content="website" />
   {name && <meta property="og:site_name" content={name} />}
   {openGraphImage && <meta property="og:image" content={openGraphImage.url} />}
-  {openGraphImage?.alt && <meta property="og:image:alt" content={openGraphImage.alt} />}
-  {openGraphImage?.width && <meta property="og:image:width" content={String(openGraphImage.width)} />}
-  {openGraphImage?.height && <meta property="og:image:height" content={String(openGraphImage.height)} />}
-  {openGraphImage?.type && <meta property="og:image:type" content={openGraphImage.type} />}
-  {openGraphImage?.url?.startsWith("https://") && (
-    <meta property="og:image:secure_url" content={openGraphImage.url} />
-  )}
+  {
+    openGraphImage?.alt && (
+      <meta property="og:image:alt" content={openGraphImage.alt} />
+    )
+  }
+  {
+    openGraphImage?.width && (
+      <meta property="og:image:width" content={String(openGraphImage.width)} />
+    )
+  }
+  {
+    openGraphImage?.height && (
+      <meta
+        property="og:image:height"
+        content={String(openGraphImage.height)}
+      />
+    )
+  }
+  {
+    openGraphImage?.type && (
+      <meta property="og:image:type" content={openGraphImage.type} />
+    )
+  }
+  {
+    openGraphImage?.url?.startsWith("https://") && (
+      <meta property="og:image:secure_url" content={openGraphImage.url} />
+    )
+  }
 
   {title && <meta name="twitter:title" content={title} />}
   {description && <meta name="twitter:description" content={description} />}
   {openGraphImage && <meta name="twitter:image" content={openGraphImage.url} />}
-  <meta name="twitter:card" content={openGraphImage ? "summary_large_image" : "summary"} />
+  <meta
+    name="twitter:card"
+    content={openGraphImage ? "summary_large_image" : "summary"}
+  />
 
   <slot name="head" />
   <slot />

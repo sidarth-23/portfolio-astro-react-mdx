@@ -212,7 +212,11 @@ export function SearchFilterBar({
                   setSortBy(null)
                   setSheetOpen(false)
                 }}
-                disabled={activeTags.length === 0 && activeCategories.length === 0 && !sortBy}
+                disabled={
+                  activeTags.length === 0 &&
+                  activeCategories.length === 0 &&
+                  !sortBy
+                }
               >
                 {t(locale, "filters.clearFilters")}
               </Button>
@@ -231,12 +235,12 @@ export function SearchFilterBar({
           <ScrollArea className="flex-1 whitespace-nowrap">
             <div className="flex items-center gap-1.5 py-1">
               {categories.map((category) => (
-                  <button
-                    key={category}
-                    data-testid="category-filter"
-                    onClick={() => handleCategoryToggle(category)}
-                    className="shrink-0 cursor-pointer"
-                  >
+                <button
+                  key={category}
+                  data-testid="category-filter"
+                  onClick={() => handleCategoryToggle(category)}
+                  className="shrink-0 cursor-pointer"
+                >
                   <Badge
                     variant={
                       activeCategories.includes(category)

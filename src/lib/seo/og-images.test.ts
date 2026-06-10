@@ -29,10 +29,7 @@ describe("OG image files", () => {
         const filename = `og-${page}-${locale}.png`
         const filepath = path.join(ogDir, filename)
 
-        expect(
-          existsSync(filepath),
-          `Missing OG image: ${filename}`
-        ).toBe(true)
+        expect(existsSync(filepath), `Missing OG image: ${filename}`).toBe(true)
       }
     }
   })
@@ -47,7 +44,9 @@ describe("OG image files", () => {
       if (existsSync(filepath)) {
         const stats = statSync(filepath)
         expect(stats.size, `OG image ${filename} is empty`).toBeGreaterThan(0)
-        expect(stats.size, `OG image ${filename} is too small`).toBeGreaterThan(1000)
+        expect(stats.size, `OG image ${filename} is too small`).toBeGreaterThan(
+          1000
+        )
       }
     }
   })

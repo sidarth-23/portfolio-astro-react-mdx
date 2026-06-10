@@ -21,7 +21,11 @@ export function ProjectLinkButtons({ links }: { links: Link[] }) {
           {link.type === "github" ? (
             <GitHubIcon className="size-4" />
           ) : (
-            <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={2} />
+            <HugeiconsIcon
+              icon={ArrowUpRight01Icon}
+              size={16}
+              strokeWidth={2}
+            />
           )}
           <span className="text-xs text-muted-foreground">
             {link.type === "github" ? "GitHub" : "Live"}

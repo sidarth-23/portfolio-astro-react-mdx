@@ -38,14 +38,14 @@ const isCompact = variant === "compact"
 <a href={card.href} class="group block h-full">
   {
     isFeatured ? (
-      <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:ring-foreground/20 hover:shadow-md sm:flex-row">
+      <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:shadow-md hover:ring-foreground/20 sm:flex-row">
         <div class="sm:w-[55%]">
           <BlurBackdropImage
             src={project.data.coverImage}
             alt={project.data.title}
             width={800}
             height={450}
-            class="aspect-video w-full h-full sm:aspect-auto"
+            class="aspect-video h-full w-full sm:aspect-auto"
             imageClass="transition-transform duration-300"
           />
         </div>
@@ -63,7 +63,7 @@ const isCompact = variant === "compact"
               {card.formattedDate}
             </Badge>
           </div>
-          <p class="mt-4 line-clamp-3 text-sm text-muted-foreground/80 leading-relaxed flex-1">
+          <p class="mt-4 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground/80">
             {card.summary}
           </p>
           {card.tags.length > 0 && (
@@ -73,7 +73,7 @@ const isCompact = variant === "compact"
               ))}
             </div>
           )}
-          <div class="mt-auto pt-5 flex justify-end">
+          <div class="mt-auto flex justify-end pt-5">
             <HugeiconsIcon
               icon={ArrowRight01Icon}
               size={20}
@@ -84,9 +84,7 @@ const isCompact = variant === "compact"
         </div>
       </article>
     ) : (
-      <article
-        class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:ring-foreground/20 hover:shadow-md"
-      >
+      <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:shadow-md hover:ring-foreground/20">
         <BlurBackdropImage
           src={project.data.coverImage}
           alt={project.data.title}
@@ -101,21 +99,19 @@ const isCompact = variant === "compact"
               {card.category}
             </Badge>
           )}
-          <h3 class="text-lg leading-snug font-medium">
-            {card.title}
-          </h3>
+          <h3 class="text-lg leading-snug font-medium">{card.title}</h3>
           <div class="mt-2">
             <Badge variant="outline" class="w-fit text-muted-foreground/80">
               {card.formattedDate}
             </Badge>
           </div>
-          
+
           {!isCompact && (
-            <p class="mt-3 line-clamp-2 text-sm text-muted-foreground/80 flex-1">
+            <p class="mt-3 line-clamp-2 flex-1 text-sm text-muted-foreground/80">
               {card.summary}
             </p>
           )}
-          
+
           {!isCompact && card.tags.length > 0 && (
             <div class="mt-3 flex flex-wrap gap-1.5">
               {card.tags.map((tag) => (
@@ -123,8 +119,8 @@ const isCompact = variant === "compact"
               ))}
             </div>
           )}
-          
-          <div class="mt-auto pt-4 flex justify-end">
+
+          <div class="mt-auto flex justify-end pt-4">
             <HugeiconsIcon
               icon={ArrowRight01Icon}
               size={20}

@@ -8,7 +8,8 @@ describe("clampText", () => {
   })
 
   it("truncates text and adds ellipsis when over max length", () => {
-    const text = "This is a very long text that definitely exceeds the maximum length allowed"
+    const text =
+      "This is a very long text that definitely exceeds the maximum length allowed"
     const result = clampText(text, 20)
     expect(result.length).toBeLessThanOrEqual(20)
     expect(result.endsWith("…")).toBe(true)

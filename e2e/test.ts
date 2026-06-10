@@ -12,7 +12,9 @@ export const test = base.extend({
 
     const devices = await android.devices()
     if (devices.length === 0) {
-      throw new Error("No Android device detected. Start emulator/device and ensure `adb devices` lists it.")
+      throw new Error(
+        "No Android device detected. Start emulator/device and ensure `adb devices` lists it."
+      )
     }
 
     const device = devices[0]!

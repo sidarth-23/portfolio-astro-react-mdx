@@ -12,7 +12,12 @@ vi.mock("astro:assets", () => ({
   getImage: (...args: Parameters<typeof mockGetImage>) => mockGetImage(...args),
 }))
 
-import { getBlogListing, getProjectListing, getBlogFilters, getProjectFilters } from "./listing-api"
+import {
+  getBlogListing,
+  getProjectListing,
+  getBlogFilters,
+  getProjectFilters,
+} from "./listing-api"
 import type { CollectionEntry } from "astro:content"
 
 // Helper to create mock blog entries
@@ -42,7 +47,9 @@ function createMockBlogEntries(count: number): CollectionEntry<"blog">[] {
 }
 
 // Helper to create mock project entries
-function createMockProjectEntries(count: number): CollectionEntry<"projects">[] {
+function createMockProjectEntries(
+  count: number
+): CollectionEntry<"projects">[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `en/project-${i + 1}`,
     collection: "projects" as const,
@@ -82,13 +89,18 @@ describe("listing-api", () => {
 
   describe("getBlogListing", () => {
     beforeEach(() => {
-      mockGetCollection.mockImplementation(async (_collection: string, filter?: (entry: CollectionEntry<'blog'>) => boolean) => {
-        const entries = createMockBlogEntries(24)
-        if (filter) {
-          return entries.filter(filter)
+      mockGetCollection.mockImplementation(
+        async (
+          _collection: string,
+          filter?: (entry: CollectionEntry<"blog">) => boolean
+        ) => {
+          const entries = createMockBlogEntries(24)
+          if (filter) {
+            return entries.filter(filter)
+          }
+          return entries
         }
-        return entries
-      })
+      )
     })
 
     it("returns paginated results with default limit", async () => {
@@ -101,62 +113,76 @@ describe("listing-api", () => {
 
     it("filters by search term in title, description, or tags", async () => {
       const result = await getBlogListing("en", { search: "astro" })
-      expect(result.items.every(item =>
-        item.title.toLowerCase().includes("astro") ||
-        item.description.toLowerCase().includes("astro") ||
-        item.tags.some(tag => tag.toLowerCase().includes("astro"))
-      )).toBe(true)
+      expect(
+        result.items.every(
+          (item) =>
+            item.title.toLowerCase().includes("astro") ||
+            item.description.toLowerCase().includes("astro") ||
+            item.tags.some((tag) => tag.toLowerCase().includes("astro"))
+        )
+      ).toBe(true)
     })
 
     it("filters by search term matching tags", async () => {
       const result = await getBlogListing("en", { search: "react" })
-      expect(result.items.every(item =>
-        item.title.toLowerCase().includes("react") ||
-        item.description.toLowerCase().includes("react") ||
-        item.tags.some(tag => tag.toLowerCase().includes("react"))
-      )).toBe(true)
+      expect(
+        result.items.every(
+          (item) =>
+            item.title.toLowerCase().includes("react") ||
+            item.description.toLowerCase().includes("react") ||
+            item.tags.some((tag) => tag.toLowerCase().includes("react"))
+        )
+      ).toBe(true)
       expect(result.items.length).toBeGreaterThan(0)
     })
 
     it("filters by tags", async () => {
       const result = await getBlogListing("en", { tags: ["react"] })
-      expect(result.items.every(item => item.tags.includes("react"))).toBe(true)
+      expect(result.items.every((item) => item.tags.includes("react"))).toBe(
+        true
+      )
     })
 
     it("filters by categories", async () => {
       const result = await getBlogListing("en", { categories: ["Backend"] })
-      expect(result.items.every(item => item.category === "Backend")).toBe(true)
+      expect(result.items.every((item) => item.category === "Backend")).toBe(
+        true
+      )
     })
 
     it("sorts by newest", async () => {
       const result = await getBlogListing("en", { sort: "newest" })
       for (let i = 1; i < result.items.length; i++) {
-        expect(new Date(result.items[i - 1].date).getTime()).toBeGreaterThanOrEqual(
-          new Date(result.items[i].date).getTime()
-        )
+        expect(
+          new Date(result.items[i - 1].date).getTime()
+        ).toBeGreaterThanOrEqual(new Date(result.items[i].date).getTime())
       }
     })
 
     it("sorts by oldest", async () => {
       const result = await getBlogListing("en", { sort: "oldest" })
       for (let i = 1; i < result.items.length; i++) {
-        expect(new Date(result.items[i - 1].date).getTime()).toBeLessThanOrEqual(
-          new Date(result.items[i].date).getTime()
-        )
+        expect(
+          new Date(result.items[i - 1].date).getTime()
+        ).toBeLessThanOrEqual(new Date(result.items[i].date).getTime())
       }
     })
 
     it("sorts by title", async () => {
       const result = await getBlogListing("en", { sort: "title" })
       for (let i = 1; i < result.items.length; i++) {
-        expect(result.items[i - 1].title.localeCompare(result.items[i].title)).toBeLessThanOrEqual(0)
+        expect(
+          result.items[i - 1].title.localeCompare(result.items[i].title)
+        ).toBeLessThanOrEqual(0)
       }
     })
 
     it("returns second page", async () => {
       const result = await getBlogListing("en", { page: 2, limit: 5 })
       expect(result.page).toBe(2)
-      expect(result.items).toHaveLength(Math.min(5, Math.max(0, result.total - 5)))
+      expect(result.items).toHaveLength(
+        Math.min(5, Math.max(0, result.total - 5))
+      )
     })
 
     it("includes optimized image data", async () => {
@@ -167,8 +193,8 @@ describe("listing-api", () => {
       expect(result.items[0].coverImage).toHaveProperty("srcSet")
       expect(result.items[0].coverImage).toHaveProperty("sizes")
       expect(mockGetImage).toHaveBeenCalledTimes(3)
-      const widths = mockGetImage.mock.calls.map((call) =>
-        (call[0] as { width: number }).width
+      const widths = mockGetImage.mock.calls.map(
+        (call) => (call[0] as { width: number }).width
       )
       expect(widths).toEqual([400, 600, 1200])
     })
@@ -176,13 +202,18 @@ describe("listing-api", () => {
 
   describe("getProjectListing", () => {
     beforeEach(() => {
-      mockGetCollection.mockImplementation(async (_collection: string, filter?: (entry: CollectionEntry<'projects'>) => boolean) => {
-        const entries = createMockProjectEntries(24)
-        if (filter) {
-          return entries.filter(filter)
+      mockGetCollection.mockImplementation(
+        async (
+          _collection: string,
+          filter?: (entry: CollectionEntry<"projects">) => boolean
+        ) => {
+          const entries = createMockProjectEntries(24)
+          if (filter) {
+            return entries.filter(filter)
+          }
+          return entries
         }
-        return entries
-      })
+      )
     })
 
     it("returns paginated results with default limit", async () => {
@@ -193,44 +224,59 @@ describe("listing-api", () => {
 
     it("filters by search term in title or summary", async () => {
       const result = await getProjectListing("en", { search: "active" })
-      expect(result.items.every(item =>
-        item.title.toLowerCase().includes("active") ||
-        item.summary.toLowerCase().includes("active")
-      ) || result.items.length === 0).toBe(true)
+      expect(
+        result.items.every(
+          (item) =>
+            item.title.toLowerCase().includes("active") ||
+            item.summary.toLowerCase().includes("active")
+        ) || result.items.length === 0
+      ).toBe(true)
     })
 
     it("filters by search term matching tags", async () => {
       const result = await getProjectListing("en", { search: "react" })
-      expect(result.items.every(item =>
-        item.title.toLowerCase().includes("react") ||
-        item.summary.toLowerCase().includes("react") ||
-        item.tags.some(tag => tag.toLowerCase().includes("react"))
-      )).toBe(true)
+      expect(
+        result.items.every(
+          (item) =>
+            item.title.toLowerCase().includes("react") ||
+            item.summary.toLowerCase().includes("react") ||
+            item.tags.some((tag) => tag.toLowerCase().includes("react"))
+        )
+      ).toBe(true)
       expect(result.items.length).toBeGreaterThan(0)
     })
 
     it("filters by multiple tags", async () => {
       const result = await getProjectListing("en", { tags: ["react", "vue"] })
-      expect(result.items.every(item => 
-        item.tags.includes("react") || item.tags.includes("vue")
-      )).toBe(true)
+      expect(
+        result.items.every(
+          (item) => item.tags.includes("react") || item.tags.includes("vue")
+        )
+      ).toBe(true)
     })
 
     it("filters by categories", async () => {
       const result = await getProjectListing("en", { categories: ["Web App"] })
-      expect(result.items.every(item => item.category === "Web App")).toBe(true)
+      expect(result.items.every((item) => item.category === "Web App")).toBe(
+        true
+      )
     })
   })
 
   describe("getBlogFilters", () => {
     beforeEach(() => {
-      mockGetCollection.mockImplementation(async (_collection: string, filter?: (entry: CollectionEntry<'blog'>) => boolean) => {
-        const entries = createMockBlogEntries(24)
-        if (filter) {
-          return entries.filter(filter)
+      mockGetCollection.mockImplementation(
+        async (
+          _collection: string,
+          filter?: (entry: CollectionEntry<"blog">) => boolean
+        ) => {
+          const entries = createMockBlogEntries(24)
+          if (filter) {
+            return entries.filter(filter)
+          }
+          return entries
         }
-        return entries
-      })
+      )
     })
 
     it("returns unique sorted tags", async () => {
@@ -252,13 +298,18 @@ describe("listing-api", () => {
 
   describe("getProjectFilters", () => {
     beforeEach(() => {
-      mockGetCollection.mockImplementation(async (_collection: string, filter?: (entry: CollectionEntry<'projects'>) => boolean) => {
-        const entries = createMockProjectEntries(24)
-        if (filter) {
-          return entries.filter(filter)
+      mockGetCollection.mockImplementation(
+        async (
+          _collection: string,
+          filter?: (entry: CollectionEntry<"projects">) => boolean
+        ) => {
+          const entries = createMockProjectEntries(24)
+          if (filter) {
+            return entries.filter(filter)
+          }
+          return entries
         }
-        return entries
-      })
+      )
     })
 
     it("returns unique sorted tags", async () => {

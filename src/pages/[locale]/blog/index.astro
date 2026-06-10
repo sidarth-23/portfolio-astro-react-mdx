@@ -19,9 +19,10 @@ const sort = url.searchParams.get("sort")
 
 const tags = tagsParam ? tagsParam.split(",") : []
 const categories = categoriesParam ? categoriesParam.split(",") : []
-const sortMode = sort && ["newest", "oldest", "title"].includes(sort)
-  ? sort as "newest" | "oldest" | "title"
-  : null
+const sortMode =
+  sort && ["newest", "oldest", "title"].includes(sort)
+    ? (sort as "newest" | "oldest" | "title")
+    : null
 
 const [initialData, availableFilters] = await Promise.all([
   getBlogListing(locale, {
@@ -49,10 +50,10 @@ const seo = resolvePageSeo(
 ---
 
 <ContentLayout seo={seo} locale={locale}>
-  <h1 class="text-3xl font-bold tracking-tight mb-2">
+  <h1 class="mb-2 text-3xl font-bold tracking-tight">
     {t(locale, "blog.title")}
   </h1>
-  <p class="text-muted-foreground mb-8">{t(locale, "blog.description")}</p>
+  <p class="mb-8 text-muted-foreground">{t(locale, "blog.description")}</p>
 
   <BlogListWithProvider
     client:load

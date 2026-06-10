@@ -27,10 +27,8 @@ import { Badge } from "@/components/ui/astro/badge"
 import { SkillIcon } from "@/components/icon/skill-icons"
 import avatarImage from "@/assets/images/avatar.jpg"
 import { Image } from "astro:assets"
-import type { CollectionEntry } from "astro:content"
 import { createMarkdownProcessor } from "@astrojs/markdown-remark"
-
-type ProfileData = CollectionEntry<"profile">["data"]
+import type { ProfileLocaleContent } from "@/content/content.types"
 
 type ExperienceRole = {
   title: string
@@ -54,7 +52,7 @@ type ExperienceItem = {
 }
 
 interface Props {
-  data: ProfileData
+  data: ProfileLocaleContent
   experiences: ExperienceItem[]
 }
 

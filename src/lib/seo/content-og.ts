@@ -13,4 +13,3 @@ export function buildContentOgFilename(
 ): string {
   return `og-${type}-${locale}-${slugToOgToken(slug)}.png`
 }
-

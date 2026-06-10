@@ -8,7 +8,11 @@ import { Skeleton } from "@/components/ui/react"
 import { Spinner } from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
-import type { BlogListingItem, ProjectListingItem, ListingResponse } from "@/lib/api/listing-api"
+import type {
+  BlogListingItem,
+  ProjectListingItem,
+  ListingResponse,
+} from "@/lib/api/listing-api"
 
 interface ItemListClientProps<T extends BlogListingItem | ProjectListingItem> {
   endpoint: string
@@ -19,7 +23,9 @@ interface ItemListClientProps<T extends BlogListingItem | ProjectListingItem> {
   initialTags: string[]
   initialCategories: string[]
   initialSortBy: string | null
-  initialData?: ListingResponse<BlogListingItem> | ListingResponse<ProjectListingItem>
+  initialData?:
+    | ListingResponse<BlogListingItem>
+    | ListingResponse<ProjectListingItem>
   gridClassName: string
   skeletonCount: number
   CardComponent: ComponentType<{ item: T; locale: Locale }>
@@ -49,7 +55,8 @@ export function ItemListClient<T extends BlogListingItem | ProjectListingItem>({
 }: ItemListClientProps<T>) {
   const [search, setSearch] = useState(initialSearch)
   const [activeTags, setActiveTags] = useState<string[]>(initialTags)
-  const [activeCategories, setActiveCategories] = useState<string[]>(initialCategories)
+  const [activeCategories, setActiveCategories] =
+    useState<string[]>(initialCategories)
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title" | null>(
     initialSortBy as "newest" | "oldest" | "title" | null
   )

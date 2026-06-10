@@ -26,9 +26,7 @@ function isInsideCodeGroup(ancestors: Node[]): boolean {
     }
 
     if (!isElement(ancestor)) return false
-    return (
-      ancestor.properties?.["data-code-group"] !== undefined
-    )
+    return ancestor.properties?.["data-code-group"] !== undefined
   })
 }
 

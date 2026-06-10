@@ -19,7 +19,9 @@ const hasToc = Astro.slots.has("toc")
     class="mx-auto w-full max-w-7xl flex-1 px-6 py-12"
     transition:animate="fade"
   >
-    <div class={hasToc ? "grid grid-cols-1 gap-12 xl:grid-cols-[1fr_280px]" : ""}>
+    <div
+      class={hasToc ? "grid grid-cols-1 gap-12 xl:grid-cols-[1fr_280px]" : ""}
+    >
       <div>
         <slot />
       </div>

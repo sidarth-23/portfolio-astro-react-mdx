@@ -12,7 +12,7 @@ const { class: className, lang, ...props } = Astro.props
 
 <html
   class={cn(
-    "bg-background text-foreground has-data-[variant=inset]:bg-sidebar overscroll-none scroll-smooth",
+    "overscroll-none scroll-smooth bg-background text-foreground has-data-[variant=inset]:bg-sidebar",
     className
   )}
   data-slot="layout"

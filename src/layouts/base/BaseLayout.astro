@@ -38,8 +38,16 @@ const {
     <meta name="twitter:title" content={seo.title} />
     <meta name="twitter:description" content={seo.description} />
     {seo.ogImage && <meta name="twitter:image" content={seo.ogImage} />}
-    {seo.publishedTime && <meta property="article:published_time" content={seo.publishedTime} />}
-    {seo.modifiedTime && <meta property="article:modified_time" content={seo.modifiedTime} />}
+    {
+      seo.publishedTime && (
+        <meta property="article:published_time" content={seo.publishedTime} />
+      )
+    }
+    {
+      seo.modifiedTime && (
+        <meta property="article:modified_time" content={seo.modifiedTime} />
+      )
+    }
     <slot name="head" />
 
     <script is:inline data-astro-rerun>
@@ -66,13 +74,14 @@ const {
         e.newDocument.documentElement.classList.add(currentTheme)
       })
     </script>
-    {includeClientRouter && (
-      <script>
-        import { initNavigationTopLoader } from "@/lib/navigation/top-loader"
-
-        initNavigationTopLoader()
-      </script>
-    )}
+    {
+      includeClientRouter && (
+        <script>
+          import {initNavigationTopLoader} from "@/lib/navigation/top-loader"
+          initNavigationTopLoader()
+        </script>
+      )
+    }
   </head>
   <body class={bodyClass}>
     <slot />

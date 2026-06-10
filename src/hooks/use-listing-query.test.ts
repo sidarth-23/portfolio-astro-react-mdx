@@ -28,22 +28,28 @@ function createWrapper() {
   }
 }
 
-function createMockListingResponse(page: number, total: number = 24): ListingResponse<BlogListingItem> {
-  const items = Array.from({ length: Math.min(12, total - (page - 1) * 12) }, (_, i) => ({
-    slug: `post-${(page - 1) * 12 + i + 1}`,
-    title: `Post ${(page - 1) * 12 + i + 1}`,
-    description: `Description ${(page - 1) * 12 + i + 1}`,
-    date: new Date().toISOString(),
-    tags: ["astro"],
-    coverImage: {
-      src: "/test.webp",
-      srcSet: "/test-400.webp 400w",
-      sizes: "100vw",
-      width: 600,
-      height: 340,
-      alt: "Test",
-    },
-  }))
+function createMockListingResponse(
+  page: number,
+  total: number = 24
+): ListingResponse<BlogListingItem> {
+  const items = Array.from(
+    { length: Math.min(12, total - (page - 1) * 12) },
+    (_, i) => ({
+      slug: `post-${(page - 1) * 12 + i + 1}`,
+      title: `Post ${(page - 1) * 12 + i + 1}`,
+      description: `Description ${(page - 1) * 12 + i + 1}`,
+      date: new Date().toISOString(),
+      tags: ["astro"],
+      coverImage: {
+        src: "/test.webp",
+        srcSet: "/test-400.webp 400w",
+        sizes: "100vw",
+        width: 600,
+        height: 340,
+        alt: "Test",
+      },
+    })
+  )
 
   return {
     items,
@@ -63,11 +69,12 @@ describe("useListingQuery", () => {
     const initialData = createMockListingResponse(1)
 
     const { result } = renderHook(
-      () => useListingQuery<BlogListingItem>({
-        endpoint: "/api/blog.json",
-        locale: "en",
-        initialData,
-      }),
+      () =>
+        useListingQuery<BlogListingItem>({
+          endpoint: "/api/blog.json",
+          locale: "en",
+          initialData,
+        }),
       { wrapper: createWrapper() }
     )
 
@@ -83,10 +90,11 @@ describe("useListingQuery", () => {
     } as Response)
 
     const { result } = renderHook(
-      () => useListingQuery<BlogListingItem>({
-        endpoint: "/api/blog.json",
-        locale: "en",
-      }),
+      () =>
+        useListingQuery<BlogListingItem>({
+          endpoint: "/api/blog.json",
+          locale: "en",
+        }),
       { wrapper: createWrapper() }
     )
 
@@ -97,7 +105,9 @@ describe("useListingQuery", () => {
     })
 
     expect(result.current.allItems).toHaveLength(12)
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/blog.json"))
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining("/api/blog.json")
+    )
   })
 
   it("includes search params in API request", async () => {
@@ -108,14 +118,15 @@ describe("useListingQuery", () => {
     } as Response)
 
     renderHook(
-      () => useListingQuery<BlogListingItem>({
-        endpoint: "/api/blog.json",
-        locale: "en",
-        search: "astro",
-        tags: ["react", "typescript"],
-        categories: ["Frontend"],
-        sort: "newest",
-      }),
+      () =>
+        useListingQuery<BlogListingItem>({
+          endpoint: "/api/blog.json",
+          locale: "en",
+          search: "astro",
+          tags: ["react", "typescript"],
+          categories: ["Frontend"],
+          sort: "newest",
+        }),
       { wrapper: createWrapper() }
     )
 
@@ -140,11 +151,12 @@ describe("useListingQuery", () => {
     } as Response)
 
     const { result } = renderHook(
-      () => useListingQuery<BlogListingItem>({
-        endpoint: "/api/blog.json",
-        locale: "en",
-        initialData,
-      }),
+      () =>
+        useListingQuery<BlogListingItem>({
+          endpoint: "/api/blog.json",
+          locale: "en",
+          initialData,
+        }),
       { wrapper: createWrapper() }
     )
 
@@ -190,11 +202,12 @@ describe("useListingQuery", () => {
     const initialData = createMockListingResponse(1, 5) // Only 5 items total
 
     const { result } = renderHook(
-      () => useListingQuery<BlogListingItem>({
-        endpoint: "/api/blog.json",
-        locale: "en",
-        initialData,
-      }),
+      () =>
+        useListingQuery<BlogListingItem>({
+          endpoint: "/api/blog.json",
+          locale: "en",
+          initialData,
+        }),
       { wrapper: createWrapper() }
     )
 
@@ -205,10 +218,11 @@ describe("useListingQuery", () => {
     mockFetch.mockRejectedValueOnce(new Error("Network error"))
 
     const { result } = renderHook(
-      () => useListingQuery<BlogListingItem>({
-        endpoint: "/api/blog.json",
-        locale: "en",
-      }),
+      () =>
+        useListingQuery<BlogListingItem>({
+          endpoint: "/api/blog.json",
+          locale: "en",
+        }),
       { wrapper: createWrapper() }
     )
 
@@ -227,11 +241,12 @@ describe("useListingQuery", () => {
     } as Response)
 
     const { result, rerender } = renderHook(
-      ({ search }) => useListingQuery<BlogListingItem>({
-        endpoint: "/api/blog.json",
-        locale: "en",
-        search,
-      }),
+      ({ search }) =>
+        useListingQuery<BlogListingItem>({
+          endpoint: "/api/blog.json",
+          locale: "en",
+          search,
+        }),
       {
         wrapper: createWrapper(),
         initialProps: { search: "" },

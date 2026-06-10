@@ -60,7 +60,7 @@ export default function CodeGroupClient({
       data-code-group=""
       value={activeTab}
       onValueChange={setActiveTab}
-      className="relative my-6 overflow-hidden rounded-lg border gap-0"
+      className="relative my-6 gap-0 overflow-hidden rounded-lg border"
     >
       <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-3 px-3 py-2">
         <TabsList variant="line" className="min-w-0 overflow-x-auto">
@@ -91,7 +91,7 @@ export default function CodeGroupClient({
       <TabsContent
         value={activeTab}
         forceMount
-        className="m-0 text-[1em] [&_pre]:!m-0 [&_pre]:!pt-16 [&_pre]:rounded-none [&_pre]:border-0 [&_pre[hidden]]:hidden"
+        className="m-0 text-[1em] [&_pre]:!m-0 [&_pre]:rounded-none [&_pre]:border-0 [&_pre]:!pt-16 [&_pre[hidden]]:hidden"
       >
         <div ref={contentRef}>{children}</div>
       </TabsContent>

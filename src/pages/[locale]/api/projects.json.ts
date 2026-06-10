@@ -10,7 +10,11 @@ export const GET: APIRoute = async ({ url, params }) => {
   const search = url.searchParams.get("search") || undefined
   const tagsParam = url.searchParams.get("tags")
   const categoriesParam = url.searchParams.get("categories")
-  const sort = url.searchParams.get("sort") as "newest" | "oldest" | "title" | undefined
+  const sort = url.searchParams.get("sort") as
+    | "newest"
+    | "oldest"
+    | "title"
+    | undefined
   const page = parseInt(url.searchParams.get("page") || "1", 10)
   const limit = parseInt(url.searchParams.get("limit") || "12", 10)
 
@@ -46,12 +50,9 @@ export const GET: APIRoute = async ({ url, params }) => {
     )
   } catch (error) {
     console.error("Projects API error:", error)
-    return new Response(
-      JSON.stringify({ error: "Failed to fetch projects" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    )
+    return new Response(JSON.stringify({ error: "Failed to fetch projects" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    })
   }
 }

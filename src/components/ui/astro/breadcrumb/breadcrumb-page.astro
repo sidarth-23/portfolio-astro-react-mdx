@@ -13,7 +13,7 @@ const { class: className, ...props } = Astro.props
   role="link"
   aria-disabled="true"
   aria-current="page"
-  class={cn("text-foreground font-normal", className)}
+  class={cn("font-normal text-foreground", className)}
   {...props}
 >
   <slot />

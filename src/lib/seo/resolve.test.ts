@@ -16,7 +16,9 @@ describe("resolveContentSeo", () => {
         title: "My Blog Post Title",
         description: "A description of my blog post.",
         date: new Date("2024-01-15"),
-        coverImage: { src: "/images/blog/post.jpg" } as unknown as import("astro").ImageMetadata,
+        coverImage: {
+          src: "/images/blog/post.jpg",
+        } as unknown as import("astro").ImageMetadata,
       },
       collection: "blog" as const,
     } as unknown as ContentEntry
@@ -25,7 +27,9 @@ describe("resolveContentSeo", () => {
 
     expect(result.title).toBe("My Blog Post | Sidarth G")
     expect(result.description).toBe("A description of my blog post.")
-    expect(result.ogImage).toBe("https://sidshub.in/og/og-blog-en-my-blog-post.png")
+    expect(result.ogImage).toBe(
+      "https://sidshub.in/og/og-blog-en-my-blog-post.png"
+    )
     expect(result.ogType).toBe("article")
     expect(result.ogLocale).toBe("en")
     expect(result.canonicalUrl).toBe("https://sidshub.in/en/blog/my-blog-post")
@@ -45,7 +49,9 @@ describe("resolveContentSeo", () => {
         summary: "A summary of my project.",
         date: new Date("2024-02-20"),
         updatedDate: new Date("2024-03-01"),
-        coverImage: { src: "/images/projects/project.png" } as unknown as import("astro").ImageMetadata,
+        coverImage: {
+          src: "/images/projects/project.png",
+        } as unknown as import("astro").ImageMetadata,
       },
       collection: "projects" as const,
     } as unknown as ContentEntry
@@ -54,7 +60,9 @@ describe("resolveContentSeo", () => {
 
     expect(result.title).toBe("My Project | Sidarth G")
     expect(result.description).toBe("A description of my project.")
-    expect(result.ogImage).toBe("https://sidshub.in/og/og-projects-en-my-project.png")
+    expect(result.ogImage).toBe(
+      "https://sidshub.in/og/og-projects-en-my-project.png"
+    )
     expect(result.ogType).toBe("website")
     expect(result.publishedTime).toBe("2024-02-20T00:00:00.000Z")
     expect(result.modifiedTime).toBe("2024-03-01T00:00:00.000Z")
@@ -71,7 +79,9 @@ describe("resolveContentSeo", () => {
         title: "Blog Post Title",
         description: "Description.",
         date: new Date("2024-01-01"),
-        coverImage: { src: "/cover.jpg" } as unknown as import("astro").ImageMetadata,
+        coverImage: {
+          src: "/cover.jpg",
+        } as unknown as import("astro").ImageMetadata,
       },
       collection: "blog" as const,
     } as unknown as ContentEntry
@@ -93,14 +103,18 @@ describe("resolveContentSeo", () => {
         title: "Deep Post Title",
         description: "Deep description.",
         date: new Date("2024-01-01"),
-        coverImage: { src: "/deep.jpg" } as unknown as import("astro").ImageMetadata,
+        coverImage: {
+          src: "/deep.jpg",
+        } as unknown as import("astro").ImageMetadata,
       },
       collection: "blog" as const,
     } as unknown as ContentEntry
 
     const result = resolveContentSeo(mockEntry, "blog", "fr", mockSiteUrl)
 
-    expect(result.canonicalUrl).toBe("https://sidshub.in/fr/blog/deep/nested/path")
+    expect(result.canonicalUrl).toBe(
+      "https://sidshub.in/fr/blog/deep/nested/path"
+    )
   })
 })
 

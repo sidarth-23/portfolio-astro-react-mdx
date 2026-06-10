@@ -63,7 +63,11 @@ export function hasCoverImage(coverImageDataUrl?: string): boolean {
   return Boolean(coverImageDataUrl?.trim())
 }
 
-function OgTemplate({ title, description, coverImageDataUrl }: OgTemplateProps) {
+function OgTemplate({
+  title,
+  description,
+  coverImageDataUrl,
+}: OgTemplateProps) {
   const displayTitle = clampText(title, 60)
   const displayDescription = clampText(description, 132)
 
@@ -75,7 +79,8 @@ function OgTemplate({ title, description, coverImageDataUrl }: OgTemplateProps) 
         height: 630,
         display: "flex",
         flexDirection: "column",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)",
+        background:
+          "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)",
         padding: "56px 64px",
         position: "relative",
         fontFamily: "'Atkinson Hyperlegible', sans-serif",

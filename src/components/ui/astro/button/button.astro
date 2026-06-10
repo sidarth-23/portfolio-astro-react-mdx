@@ -3,7 +3,10 @@ import type { HTMLTag, Polymorphic } from "astro/types"
 
 import { cn } from "@/lib/utils"
 
-import { buttonVariants, type ButtonVariantProps } from "@/components/ui/astro/button/button-variants"
+import {
+  buttonVariants,
+  type ButtonVariantProps,
+} from "@/components/ui/astro/button/button-variants"
 
 type Props<Tag extends HTMLTag = "button"> = Polymorphic<{ as: Tag }> &
   ButtonVariantProps

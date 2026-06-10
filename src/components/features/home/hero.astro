@@ -25,29 +25,40 @@ const { heading, role, description, buttons, className } = Astro.props
 
 <section class:list={["flex min-h-[calc(100vh-4rem)] items-center", className]}>
   <div class="container grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
-    <div class="mx-auto flex flex-col items-center text-center md:ml-auto lg:max-w-3xl lg:items-start lg:text-left">
+    <div
+      class="mx-auto flex flex-col items-center text-center md:ml-auto lg:max-w-3xl lg:items-start lg:text-left"
+    >
       <h1 class="mt-6 text-4xl font-bold text-pretty lg:text-6xl xl:text-7xl">
         {heading}
       </h1>
       <p class="mt-2 text-lg font-medium text-primary lg:text-xl">
         {role}
       </p>
-      <p class="mb-12 mt-6 max-w-xl text-muted-foreground leading-relaxed lg:text-lg">
+      <p
+        class="mt-6 mb-12 max-w-xl leading-relaxed text-muted-foreground lg:text-lg"
+      >
         {description}
       </p>
-      <div class="flex w-full flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+      <div
+        class="flex w-full flex-col justify-center gap-3 sm:flex-row lg:justify-start"
+      >
         <a
           href={buttons.primary.url}
-          class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80 w-full sm:w-auto"
+          class="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80 sm:w-auto"
         >
           {buttons.primary.text}
         </a>
         <a
           href={buttons.secondary.url}
-          class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-foreground dark:border-input dark:bg-input/30 w-full sm:w-auto"
+          class="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-foreground sm:w-auto dark:border-input dark:bg-input/30"
         >
           {buttons.secondary.text}
-          <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={ArrowUpRight01Icon}
+            size={16}
+            strokeWidth={2}
+            className="size-4"
+          />
         </a>
       </div>
     </div>

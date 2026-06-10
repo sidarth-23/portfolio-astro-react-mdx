@@ -23,9 +23,13 @@ describe("SearchFilterBar", () => {
 
   it("renders all category badges", () => {
     renderReact(<SearchFilterBar {...defaultProps} />)
-    expect(screen.getByRole("button", { name: "Web Application" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: "Web Application" })
+    ).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Website" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Experiment" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: "Experiment" })
+    ).toBeInTheDocument()
   })
 
   it("toggles category on click", async () => {
@@ -37,7 +41,9 @@ describe("SearchFilterBar", () => {
       />
     )
 
-    const categoryButton = screen.getByRole("button", { name: "Web Application" })
+    const categoryButton = screen.getByRole("button", {
+      name: "Web Application",
+    })
     await userEvent.click(categoryButton)
 
     // Wait for debounce
@@ -116,8 +122,8 @@ describe("SearchFilterBar", () => {
     const dialogs = document.querySelectorAll('[role="dialog"]')
     const dialog = dialogs.length > 0 ? dialogs[dialogs.length - 1] : null
     const sheetClearButton = dialog
-      ? Array.from(dialog.querySelectorAll('button')).find((btn) =>
-          btn.textContent?.includes('Clear filters')
+      ? Array.from(dialog.querySelectorAll("button")).find((btn) =>
+          btn.textContent?.includes("Clear filters")
         )
       : null
 
@@ -150,8 +156,8 @@ describe("SearchFilterBar", () => {
     const dialogs = document.querySelectorAll('[role="dialog"]')
     const dialog = dialogs.length > 0 ? dialogs[dialogs.length - 1] : null
     const sheetClearButton = dialog
-      ? Array.from(dialog.querySelectorAll('button')).find((btn) =>
-          btn.textContent?.includes('Clear filters')
+      ? Array.from(dialog.querySelectorAll("button")).find((btn) =>
+          btn.textContent?.includes("Clear filters")
         )
       : null
 

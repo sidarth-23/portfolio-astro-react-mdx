@@ -15,12 +15,12 @@ import {
   SheetTitle,
 } from "@/components/ui/react"
 import { Skeleton } from "@/components/ui/react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/react"
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
+  SidebarContext,
+  type SidebarContextProps,
+  useSidebar,
 } from "@/components/ui/react"
-import { SidebarContext, type SidebarContextProps, useSidebar } from "@/components/ui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { SidebarLeftIcon } from "@hugeicons/core-free-icons"
 

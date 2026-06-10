@@ -2,23 +2,17 @@
 import ContentLayout from "@/layouts/content/ContentLayout.astro"
 import ProfileContent from "@/components/features/profile/profile-content.astro"
 import { defaultLocale, locales, type Locale } from "@/i18n/config"
-import { getProfileByLocale, getProfileExperienceByLocale } from "@/lib/content/queries"
+import { getProfileExperienceByLocale } from "@/lib/content/queries"
 import { resolvePageSeo } from "@/lib/seo/resolve"
 import { getPageSeo } from "@/lib/seo/pages"
+import { profileContent } from "@/content/content"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))
 }
 
 const { locale } = Astro.params as { locale: Locale }
-const entry =
-  (await getProfileByLocale(locale)) ?? (await getProfileByLocale(defaultLocale))
-
-if (!entry) {
-  throw new Error(
-    "Profile content is missing. Add files under src/content/profile/*.json"
-  )
-}
+const entry = profileContent[locale] ?? profileContent[defaultLocale]
 
 const experienceEntries =
   (await getProfileExperienceByLocale(locale)).length > 0
@@ -43,5 +37,5 @@ const seo = resolvePageSeo(
 ---
 
 <ContentLayout seo={seo} headerTitle="Profile" locale={locale}>
-  <ProfileContent data={entry.data} experiences={experiences} />
+  <ProfileContent data={entry} experiences={experiences} />
 </ContentLayout>

@@ -51,7 +51,11 @@ const readingTime = estimateReadingTime(project.body ?? "")
 ---
 
 <ProjectLayout project={project} locale={locale}>
-  <MobileToc slot="mobile-toc" items={headings} onThisPageLabel={t(locale, "toc.onThisPage")} />
+  <MobileToc
+    slot="mobile-toc"
+    items={headings}
+    onThisPageLabel={t(locale, "toc.onThisPage")}
+  />
   <TocScrollspy />
 
   <article class="max-w-none">
@@ -124,5 +128,9 @@ const readingTime = estimateReadingTime(project.body ?? "")
     </div>
   </article>
 
-  <TableOfContents slot="toc" items={headings} onThisPageLabel={t(locale, "toc.onThisPage")} />
+  <TableOfContents
+    slot="toc"
+    items={headings}
+    onThisPageLabel={t(locale, "toc.onThisPage")}
+  />
 </ProjectLayout>

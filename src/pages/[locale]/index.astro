@@ -13,7 +13,7 @@ import { locales, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import { resolvePageSeo } from "@/lib/seo/resolve"
 import { getPageSeo } from "@/lib/seo/pages"
-import { getGlobalLink, homeCtaLinkIds } from "@/content/global-links.data"
+import { getGlobalLink, homeCtaLinkIds } from "@/content/content"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))

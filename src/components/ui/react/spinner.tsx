@@ -8,7 +8,12 @@ interface SpinnerProps {
 
 function Spinner({ className }: SpinnerProps) {
   return (
-    <HugeiconsIcon icon={Loading03Icon} role="status" aria-label="Loading" className={cn("size-4 animate-spin", className)} />
+    <HugeiconsIcon
+      icon={Loading03Icon}
+      role="status"
+      aria-label="Loading"
+      className={cn("size-4 animate-spin", className)}
+    />
   )
 }
 

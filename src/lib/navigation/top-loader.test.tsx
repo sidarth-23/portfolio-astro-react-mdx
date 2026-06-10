@@ -20,7 +20,7 @@ describe("initNavigationTopLoader", () => {
     config.mockReset()
     document.body.innerHTML = ""
     document.documentElement.removeAttribute(
-      "data-navigation-top-loader-initialized",
+      "data-navigation-top-loader-initialized"
     )
   })
 

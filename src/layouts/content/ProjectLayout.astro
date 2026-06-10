@@ -15,11 +15,7 @@ const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
 const seo = resolveContentSeo(project, "projects", locale, siteUrl)
 ---
 
-<ContentLayout
-  seo={seo}
-  headerTitle={project.data.title}
-  locale={locale}
->
+<ContentLayout seo={seo} headerTitle={project.data.title} locale={locale}>
   <slot />
   <slot name="toc" slot="toc" />
   <slot name="mobile-toc" slot="mobile-toc" />

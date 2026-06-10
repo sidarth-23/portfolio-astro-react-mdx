@@ -140,10 +140,9 @@ function filterByLocale<T extends { id: string; data: { locale?: string } }>(
   })
 }
 
-function applyFilters<T extends { title: string; tags: string[]; category?: string }>(
-  items: T[],
-  filters: ListingFilters
-): T[] {
+function applyFilters<
+  T extends { title: string; tags: string[]; category?: string },
+>(items: T[], filters: ListingFilters): T[] {
   let filtered = [...items]
 
   if (filters.search) {
@@ -220,15 +219,15 @@ export async function getBlogListing(
   const filteredByLocale = filterByLocale(posts, locale)
 
   const items: BlogListingItemBase[] = filteredByLocale.map((post) => ({
-      slug: getContentSlug(post.id),
-      title: post.data.title,
-      description: post.data.description,
-      date: post.data.date.toISOString(),
-      updatedDate: post.data.updatedDate?.toISOString(),
-      category: post.data.category,
-      tags: post.data.tags,
-      coverImageSource: post.data.coverImage,
-    }))
+    slug: getContentSlug(post.id),
+    title: post.data.title,
+    description: post.data.description,
+    date: post.data.date.toISOString(),
+    updatedDate: post.data.updatedDate?.toISOString(),
+    category: post.data.category,
+    tags: post.data.tags,
+    coverImageSource: post.data.coverImage,
+  }))
 
   let filtered = applyFilters(items, filters)
   filtered = applySorting(filtered, filters.sort)
@@ -237,16 +236,18 @@ export async function getBlogListing(
   const limit = filters.limit ?? DEFAULT_LIMIT
   const paginated = applyPagination(filtered, page, limit)
   const paginatedItems = await Promise.all(
-    paginated.items.map(async (post): Promise<BlogListingItem> => ({
-      slug: post.slug,
-      title: post.title,
-      description: post.description,
-      date: post.date,
-      updatedDate: post.updatedDate,
-      category: post.category,
-      tags: post.tags,
-      coverImage: await createListingImage(post.coverImageSource, post.title),
-    }))
+    paginated.items.map(
+      async (post): Promise<BlogListingItem> => ({
+        slug: post.slug,
+        title: post.title,
+        description: post.description,
+        date: post.date,
+        updatedDate: post.updatedDate,
+        category: post.category,
+        tags: post.tags,
+        coverImage: await createListingImage(post.coverImageSource, post.title),
+      })
+    )
   )
 
   return {
@@ -264,17 +265,17 @@ export async function getProjectListing(
   const filteredByLocale = filterByLocale(projects, locale)
 
   const items: ProjectListingItemBase[] = filteredByLocale.map((project) => ({
-      slug: getContentSlug(project.id),
-      title: project.data.title,
-      summary: project.data.summary,
-      date: project.data.date.toISOString(),
-      updatedDate: project.data.updatedDate?.toISOString(),
-      featured: project.data.featured,
-      status: project.data.status,
-      category: project.data.category,
-      tags: project.data.tags,
-      coverImageSource: project.data.coverImage,
-    }))
+    slug: getContentSlug(project.id),
+    title: project.data.title,
+    summary: project.data.summary,
+    date: project.data.date.toISOString(),
+    updatedDate: project.data.updatedDate?.toISOString(),
+    featured: project.data.featured,
+    status: project.data.status,
+    category: project.data.category,
+    tags: project.data.tags,
+    coverImageSource: project.data.coverImage,
+  }))
 
   let filtered = applyFilters(items, filters)
   filtered = applySorting(filtered, filters.sort)
@@ -283,18 +284,23 @@ export async function getProjectListing(
   const limit = filters.limit ?? DEFAULT_LIMIT
   const paginated = applyPagination(filtered, page, limit)
   const paginatedItems = await Promise.all(
-    paginated.items.map(async (project): Promise<ProjectListingItem> => ({
-      slug: project.slug,
-      title: project.title,
-      summary: project.summary,
-      date: project.date,
-      updatedDate: project.updatedDate,
-      featured: project.featured,
-      status: project.status,
-      category: project.category,
-      tags: project.tags,
-      coverImage: await createListingImage(project.coverImageSource, project.title),
-    }))
+    paginated.items.map(
+      async (project): Promise<ProjectListingItem> => ({
+        slug: project.slug,
+        title: project.title,
+        summary: project.summary,
+        date: project.date,
+        updatedDate: project.updatedDate,
+        featured: project.featured,
+        status: project.status,
+        category: project.category,
+        tags: project.tags,
+        coverImage: await createListingImage(
+          project.coverImageSource,
+          project.title
+        ),
+      })
+    )
   )
 
   return {

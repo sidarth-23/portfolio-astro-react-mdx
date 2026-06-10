@@ -7,13 +7,15 @@ type Props = Omit<HTMLAttributes<"svg">, "name" | "href"> & {
   name?: string | number | null
 }
 
-const { name, href, class: className = "size-[1em] text-base", ...props } =
-  Astro.props as Props
+const {
+  name,
+  href,
+  class: className = "size-[1em] text-base",
+  ...props
+} = Astro.props as Props
 
 const Comp = resolveIcon(name, href?.toString())
 const iconProps = props as Record<string, unknown>
 ---
 
-{
-  Comp && <Comp class={className} {...iconProps} />
-}
+{Comp && <Comp class={className} {...iconProps} />}

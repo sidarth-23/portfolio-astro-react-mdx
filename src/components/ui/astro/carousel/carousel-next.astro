@@ -2,7 +2,10 @@
 import type { HTMLAttributes } from "astro/types"
 
 import { cn } from "@/lib/utils"
-import { buttonVariants, type ButtonVariantProps } from "@/components/ui/astro/button"
+import {
+  buttonVariants,
+  type ButtonVariantProps,
+} from "@/components/ui/astro/button"
 import { Icon } from "@/components/ui/astro/icon"
 
 type Props = Omit<HTMLAttributes<"button">, "type"> & ButtonVariantProps

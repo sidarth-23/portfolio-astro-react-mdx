@@ -32,10 +32,12 @@ export function AppShell({
           locale={locale}
         />
         <SidebarInset>
-          <SiteHeader currentPath={currentPath} pageTitle={pageTitle} locale={locale} />
-          <div className="flex-1">
-            {children}
-          </div>
+          <SiteHeader
+            currentPath={currentPath}
+            pageTitle={pageTitle}
+            locale={locale}
+          />
+          <div className="flex-1">{children}</div>
           <Footer currentPath={currentPath} locale={locale} />
         </SidebarInset>
       </SidebarProvider>

@@ -17,7 +17,9 @@ function isWhitespaceNode(node: RootContent): boolean {
   if (node.type !== "paragraph") return false
 
   const paragraph = node as Paragraph
-  const textChildren = paragraph.children.filter((child) => child.type === "text")
+  const textChildren = paragraph.children.filter(
+    (child) => child.type === "text"
+  )
   return (
     textChildren.length === paragraph.children.length &&
     textChildren.every((child) => /^\s*$/.test(child.value))

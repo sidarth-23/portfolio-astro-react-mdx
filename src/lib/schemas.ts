@@ -12,7 +12,7 @@ export const seoSchema = z.object({
 
 export const linkSchema = z.object({
   type: z.enum(["github", "link"]),
-        url: z.url(),
+  url: z.url(),
 })
 
 export const tagSchema = z.string().min(1).max(50)
@@ -58,7 +58,7 @@ export const profileSchema = z.object({
     .array(
       z.object({
         title: z.string().min(1),
-  url: z.url(),
+        url: z.url(),
       })
     )
     .min(1),
@@ -77,14 +77,13 @@ const profileExperienceRoleSchema = z
     path: ["end"],
   })
 
-export const profileExperienceSchema = z
-  .object({
-    id: z.number().int().positive(),
-    locale: z.enum(["en", "es", "fr"]),
-    company: z.string().min(1),
-    companyLocation: z.string().min(1),
-    role: profileExperienceRoleSchema,
-  })
+export const profileExperienceSchema = z.object({
+  id: z.number().int().positive(),
+  locale: z.enum(["en", "es", "fr"]),
+  company: z.string().min(1),
+  companyLocation: z.string().min(1),
+  role: profileExperienceRoleSchema,
+})
 
 export const resumeSchema = z.object({
   locale: z.enum(["en", "es", "fr"]).default("en"),

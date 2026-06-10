@@ -2,6 +2,7 @@ import { existsSync, mkdirSync } from "fs"
 import { readdir, readFile, writeFile } from "fs/promises"
 import path from "path"
 import matter from "gray-matter"
+import { pageSeo } from "../src/content/content"
 import { renderOgImage } from "../src/lib/seo/generate-image"
 import { buildContentOgFilename } from "../src/lib/seo/content-og"
 
@@ -64,19 +65,29 @@ async function generateContentOgImages(type: ContentType) {
       if (!locale) continue
 
       const relativeFromType = path.relative(baseDir, filePath)
-      const slug = relativeFromType.replace(/\\/g, "/").replace(/\.mdx$/, "").split("/").slice(1).join("/")
+      const slug = relativeFromType
+        .replace(/\\/g, "/")
+        .replace(/\.mdx$/, "")
+        .split("/")
+        .slice(1)
+        .join("/")
       if (!slug) continue
 
       const title = frontmatter.seo?.title ?? frontmatter.title
       const description =
-        frontmatter.seo?.description ?? frontmatter.description ?? frontmatter.summary
+        frontmatter.seo?.description ??
+        frontmatter.description ??
+        frontmatter.summary
       const coverImageRaw = frontmatter.coverImage
 
       if (!title || !description || !coverImageRaw) continue
 
       const coverImagePath = path.resolve(path.dirname(filePath), coverImageRaw)
       const coverBuffer = await readFile(coverImagePath)
-      const coverImageDataUrl = toDataUrl(coverBuffer, path.extname(coverImagePath))
+      const coverImageDataUrl = toDataUrl(
+        coverBuffer,
+        path.extname(coverImagePath)
+      )
 
       const buffer = await renderOgImage({
         title,
@@ -89,20 +100,20 @@ async function generateContentOgImages(type: ContentType) {
       await writeFile(outputPath, buffer)
       console.log(`Generated: ${filename}`)
     } catch (error) {
-      console.error(`Failed to generate OG image for content file ${filePath}:`, error)
+      console.error(
+        `Failed to generate OG image for content file ${filePath}:`,
+        error
+      )
     }
   }
 }
 
 async function generatePageOgImages() {
-  const configPath = path.resolve(process.cwd(), "src/content/page-seo.json")
-  const configRaw = await readFile(configPath, "utf-8")
-  const config = JSON.parse(configRaw) as Record<
-    string,
-    Record<string, { title: string; description: string }>
-  >
+  const config = pageSeo
 
-  console.log(`Generating OG images for ${Object.keys(config).length} page types`)
+  console.log(
+    `Generating OG images for ${Object.keys(config).length} page types`
+  )
 
   for (const [pageName, byLocale] of Object.entries(config)) {
     for (const [locale, { title, description }] of Object.entries(byLocale)) {
@@ -113,7 +124,10 @@ async function generatePageOgImages() {
         await writeFile(outputPath, buffer)
         console.log(`Generated: ${filename}`)
       } catch (error) {
-        console.error(`Failed to generate OG image for ${pageName}-${locale}:`, error)
+        console.error(
+          `Failed to generate OG image for ${pageName}-${locale}:`,
+          error
+        )
       }
     }
   }

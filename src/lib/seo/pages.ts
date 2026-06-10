@@ -1,9 +1,11 @@
-import pageSeoJson from "@/content/page-seo.json"
+import { pageSeo } from "@/content/content"
+import type { PageSeoConfig } from "@/content/content.types"
 
-export type PageSeoConfig = typeof pageSeoJson
-
-export function getPageSeo(page: string, locale: string): { title: string; description: string } {
-  const config = pageSeoJson as PageSeoConfig
+export function getPageSeo(
+  page: string,
+  locale: string
+): { title: string; description: string } {
+  const config = pageSeo as PageSeoConfig
   const pageConfig = config[page as keyof PageSeoConfig]
   if (!pageConfig) {
     throw new Error(`No SEO config found for page: ${page}`)
@@ -15,9 +17,19 @@ export function getPageSeo(page: string, locale: string): { title: string; descr
   return localeConfig as { title: string; description: string }
 }
 
-export function getAllPageSeoEntries(): Array<{ page: string; locale: string; title: string; description: string }> {
-  const config = pageSeoJson as PageSeoConfig
-  const entries: Array<{ page: string; locale: string; title: string; description: string }> = []
+export function getAllPageSeoEntries(): Array<{
+  page: string
+  locale: string
+  title: string
+  description: string
+}> {
+  const config = pageSeo as PageSeoConfig
+  const entries: Array<{
+    page: string
+    locale: string
+    title: string
+    description: string
+  }> = []
 
   for (const [page, locales] of Object.entries(config)) {
     for (const [locale, data] of Object.entries(locales)) {

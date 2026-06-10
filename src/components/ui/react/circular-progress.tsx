@@ -57,9 +57,7 @@ function CircularProgress({
         className={cn("stroke-current/25", trackClassName)}
       />
       <circle
-        {...(indicatorDataAttribute
-          ? { [indicatorDataAttribute]: "" }
-          : {})}
+        {...(indicatorDataAttribute ? { [indicatorDataAttribute]: "" } : {})}
         data-circumference={circumference}
         cx={size / 2}
         cy={size / 2}

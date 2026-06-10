@@ -23,14 +23,19 @@ function getViewportHeight(): number {
 }
 
 function collectHeadingIdsFromLinks(): string[] {
-  const ids = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"))
+  const ids = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")
+  )
     .map((link) => link.getAttribute("href") ?? "")
     .filter((href) => href.startsWith("#"))
     .map((href) => decodeURIComponent(href.slice(1)))
   return ids.filter((id, index) => id.length > 0 && ids.indexOf(id) === index)
 }
 
-function collectHeadingPositions(ids: string[], scrollTop: number): HeadingPosition[] {
+function collectHeadingPositions(
+  ids: string[],
+  scrollTop: number
+): HeadingPosition[] {
   return ids
     .map((id) => {
       const node = document.getElementById(id)
@@ -67,15 +72,20 @@ function updateMobileSummaryAndProgress(
   headingIds: string[],
   mobileLinks: HTMLAnchorElement[]
 ): void {
-  const mobileSummary = document.querySelector<HTMLElement>("[data-toc-summary]")
+  const mobileSummary =
+    document.querySelector<HTMLElement>("[data-toc-summary]")
   if (mobileSummary && firstActiveId) {
-    const activeLink = mobileLinks.find((link) => (link.getAttribute("href") ?? "") === `#${firstActiveId}`)
+    const activeLink = mobileLinks.find(
+      (link) => (link.getAttribute("href") ?? "") === `#${firstActiveId}`
+    )
     if (activeLink) {
       mobileSummary.textContent = activeLink.textContent?.trim() ?? ""
     }
   }
 
-  const mobileProgress = document.querySelector<SVGCircleElement>("[data-toc-progress-value]")
+  const mobileProgress = document.querySelector<SVGCircleElement>(
+    "[data-toc-progress-value]"
+  )
   const circumference = Number(mobileProgress?.dataset.circumference ?? "0")
   if (mobileProgress && circumference > 0 && latestActiveId) {
     const endIndex = headingIds.indexOf(latestActiveId)
@@ -86,10 +96,21 @@ function updateMobileSummaryAndProgress(
 
 function ensureActiveMobileLinkVisible(latestActiveId: string): void {
   const mobileToc = document.querySelector('[data-toc="mobile"]')
-  if (!(mobileToc instanceof HTMLDetailsElement) || !mobileToc.open || !latestActiveId) return
+  if (
+    !(mobileToc instanceof HTMLDetailsElement) ||
+    !mobileToc.open ||
+    !latestActiveId
+  )
+    return
 
-  const link = document.querySelector<HTMLAnchorElement>(`[data-toc='mobile'] [data-toc-link][href='#${latestActiveId}']`)
-  link?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "auto" })
+  const link = document.querySelector<HTMLAnchorElement>(
+    `[data-toc='mobile'] [data-toc-link][href='#${latestActiveId}']`
+  )
+  link?.scrollIntoView({
+    block: "nearest",
+    inline: "nearest",
+    behavior: "auto",
+  })
 }
 
 function initTocScrollspy(): void {
@@ -110,9 +131,12 @@ function initTocScrollspy(): void {
     const activeIds = getActiveHeadingIds(positions, scrollTop, viewportHeight)
     const firstActiveId = activeIds[0] ?? ""
     const latestActiveId = activeIds.at(-1) ?? ""
-    const mobileOpen = document.querySelector('[data-toc="mobile"]') instanceof HTMLDetailsElement
-      ? (document.querySelector('[data-toc="mobile"]') as HTMLDetailsElement).open
-      : false
+    const mobileOpen =
+      document.querySelector('[data-toc="mobile"]') instanceof
+      HTMLDetailsElement
+        ? (document.querySelector('[data-toc="mobile"]') as HTMLDetailsElement)
+            .open
+        : false
 
     const key = `${activeIds.join("|")}|open:${mobileOpen ? "1" : "0"}`
     if (key === lastKey) return
@@ -120,15 +144,24 @@ function initTocScrollspy(): void {
 
     const activeSet = new Set(activeIds)
     const desktopLinks = Array.from(
-      document.querySelectorAll<HTMLAnchorElement>('[data-toc="desktop"] [data-toc-link]')
+      document.querySelectorAll<HTMLAnchorElement>(
+        '[data-toc="desktop"] [data-toc-link]'
+      )
     )
     const mobileLinks = Array.from(
-      document.querySelectorAll<HTMLAnchorElement>('[data-toc="mobile"] [data-toc-link]')
+      document.querySelectorAll<HTMLAnchorElement>(
+        '[data-toc="mobile"] [data-toc-link]'
+      )
     )
 
     updateLinks(desktopLinks, activeSet)
     updateLinks(mobileLinks, activeSet)
-    updateMobileSummaryAndProgress(firstActiveId, latestActiveId, headingIds, mobileLinks)
+    updateMobileSummaryAndProgress(
+      firstActiveId,
+      latestActiveId,
+      headingIds,
+      mobileLinks
+    )
     ensureActiveMobileLinkVisible(latestActiveId)
   }
 
@@ -165,7 +198,10 @@ function initTocScrollspy(): void {
   const onMobileToggle = (): void => sync()
 
   window.addEventListener("scroll", onScroll, { passive: true })
-  document.addEventListener("scroll", onScroll, { passive: true, capture: true })
+  document.addEventListener("scroll", onScroll, {
+    passive: true,
+    capture: true,
+  })
   window.addEventListener("resize", onResize)
   window.addEventListener("orientationchange", onResize)
   document.addEventListener("visibilitychange", onVisibility)
@@ -197,7 +233,9 @@ function initTocScrollspy(): void {
 
 export function mountTocScrollspy(): void {
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initTocScrollspy, { once: true })
+    document.addEventListener("DOMContentLoaded", initTocScrollspy, {
+      once: true,
+    })
   } else {
     initTocScrollspy()
   }

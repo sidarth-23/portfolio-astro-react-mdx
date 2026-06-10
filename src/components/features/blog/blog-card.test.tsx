@@ -27,7 +27,9 @@ describe("BlogCard", () => {
     )
 
     expect(container.querySelectorAll("img")).toHaveLength(2)
-    expect(container.querySelectorAll("picture source[type='image/webp']")).toHaveLength(2)
+    expect(
+      container.querySelectorAll("picture source[type='image/webp']")
+    ).toHaveLength(2)
     const blurImage = container.querySelector("img[aria-hidden='true']")
     expect(blurImage).toBeInTheDocument()
     expect(blurImage).toHaveClass("blur-2xl", "scale-110", "object-cover")

@@ -26,7 +26,9 @@ test.describe("Profile Page", () => {
     await expect(experienceSection).toBeVisible()
 
     // Should have timeline items or company names visible
-    const companyNames = experienceSection.locator("text=/Company|Truvanta|IBM|Google/i")
+    const companyNames = experienceSection.locator(
+      "text=/Company|Truvanta|IBM|Google/i"
+    )
     await expect(companyNames.first()).toBeVisible()
   })
 
@@ -47,12 +49,16 @@ test.describe("Profile Page", () => {
   })
 
   test("technologies and skills section is visible", async ({ page }) => {
-    const skillsHeading = page.locator("h2", { hasText: /Technologies|Skills/i })
+    const skillsHeading = page.locator("h2", {
+      hasText: /Technologies|Skills/i,
+    })
     await expect(skillsHeading).toBeVisible()
   })
 
   test("certifications section is visible", async ({ page }) => {
-    const certificationsHeading = page.locator("h2", { hasText: "Certifications" })
+    const certificationsHeading = page.locator("h2", {
+      hasText: "Certifications",
+    })
     await expect(certificationsHeading).toBeVisible()
   })
 })

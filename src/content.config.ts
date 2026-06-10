@@ -6,7 +6,6 @@ import {
   linkSchema,
   tagSchema,
   dateSchema,
-  profileSchema,
   profileExperienceSchema,
   resumeSchema,
 } from "@/lib/schemas"
@@ -49,11 +48,6 @@ const projects = defineCollection({
     }),
 })
 
-const profile = defineCollection({
-  loader: glob({ pattern: "*.json", base: "./src/content/profile" }),
-  schema: profileSchema,
-})
-
 const profileExperience = defineCollection({
   loader: glob({
     pattern: "**/*.md",
@@ -73,7 +67,6 @@ const resume = defineCollection({
 export const collections = {
   blog,
   projects,
-  profile,
   profileExperience,
   resume,
 }

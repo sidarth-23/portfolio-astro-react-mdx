@@ -108,14 +108,6 @@ export async function getProjectsByTag(tag: Tag, locale: Locale = "en") {
   return filtered.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
 
-export async function getProfileByLocale(
-  locale: Locale = "en"
-): Promise<CollectionEntry<"profile"> | null> {
-  const entries = await getCollection("profile")
-  const entry = entries.find((item) => item.data.locale === locale)
-  return entry ?? null
-}
-
 export async function getProfileExperienceByLocale(locale: Locale = "en") {
   const entries = await getCollection("profileExperience")
 
@@ -190,9 +182,7 @@ export function getAllProjectTags(
   return Array.from(tags).sort()
 }
 
-export function getAllCategories(
-  posts: CollectionEntry<"blog">[]
-): string[] {
+export function getAllCategories(posts: CollectionEntry<"blog">[]): string[] {
   const categories = new Set<string>()
   for (const post of posts) {
     if (post.data.category) {

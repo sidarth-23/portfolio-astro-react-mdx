@@ -159,7 +159,8 @@ const translations: Record<Locale, TranslationSchema> = {
       blog: "Blog",
       profile: "Profil",
       archive: "Site Archive",
-      downloadResume: "Profil",    },
+      downloadResume: "Profil",
+    },
     footer: {
       designedBy: "Designed by Sidarth",
     },

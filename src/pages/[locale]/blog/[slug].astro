@@ -50,7 +50,11 @@ const readingTime = estimateReadingTime(post.body ?? "")
 ---
 
 <BlogPostLayout post={post} locale={locale}>
-  <MobileToc slot="mobile-toc" items={headings} onThisPageLabel={t(locale, "toc.onThisPage")} />
+  <MobileToc
+    slot="mobile-toc"
+    items={headings}
+    onThisPageLabel={t(locale, "toc.onThisPage")}
+  />
   <TocScrollspy />
 
   <article class="max-w-none">
@@ -116,5 +120,9 @@ const readingTime = estimateReadingTime(post.body ?? "")
     </div>
   </article>
 
-  <TableOfContents slot="toc" items={headings} onThisPageLabel={t(locale, "toc.onThisPage")} />
+  <TableOfContents
+    slot="toc"
+    items={headings}
+    onThisPageLabel={t(locale, "toc.onThisPage")}
+  />
 </BlogPostLayout>

@@ -21,7 +21,9 @@ test.describe("Homepage", () => {
     await expect(page).toHaveTitle(/.+/)
   })
 
-  test("loads sidebar avatar and hero illustration assets", async ({ page }) => {
+  test("loads sidebar avatar and hero illustration assets", async ({
+    page,
+  }) => {
     const failedRequests: string[] = []
 
     page.on("response", (response) => {
@@ -47,22 +49,30 @@ test.describe("Homepage", () => {
     expect(avatarBox!.height).toBeGreaterThanOrEqual(78)
     expect(avatarBox!.height).toBeLessThanOrEqual(82)
 
-    const hero = page.getByRole("img", { name: "Sidarth G — Software Developer" })
+    const hero = page.getByRole("img", {
+      name: "Sidarth G — Software Developer",
+    })
     await expect(hero).toBeVisible()
     const heroSrc = await hero.getAttribute("src")
     expect(heroSrc).toContain("hero-illustration")
     expect(heroSrc).toMatch(/\.svg$/i)
-    const naturalWidth = await hero.evaluate((el: HTMLImageElement) => el.naturalWidth)
+    const naturalWidth = await hero.evaluate(
+      (el: HTMLImageElement) => el.naturalWidth
+    )
     expect(naturalWidth).toBeGreaterThan(0)
 
     expect(failedRequests).toHaveLength(0)
   })
 
-  test("featured project image uses contained foreground over blur", async ({ page }) => {
+  test("featured project image uses contained foreground over blur", async ({
+    page,
+  }) => {
     await page.goto("/en")
     await page.waitForLoadState("networkidle")
 
-    const featuredLink = page.locator('a[href="/en/projects/elecsavers-ecommerce-platform"]').first()
+    const featuredLink = page
+      .locator('a[href="/en/projects/elecsavers-ecommerce-platform"]')
+      .first()
     await expect(featuredLink).toBeVisible()
 
     const blurImage = featuredLink.locator("img[aria-hidden='true']")
@@ -83,6 +93,6 @@ test.describe("Homepage", () => {
     expect(wrapperBox).not.toBeNull()
     const ratio = wrapperBox!.width / wrapperBox!.height
     expect(ratio).toBeGreaterThanOrEqual(1.72)
-    expect(ratio).toBeLessThanOrEqual(1.80)
+    expect(ratio).toBeLessThanOrEqual(1.8)
   })
 })

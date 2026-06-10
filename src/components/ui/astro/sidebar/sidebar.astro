@@ -40,7 +40,7 @@ const desktopCollapsible = desktopState === "collapsed" ? collapsible : ""
       data-side={side}
       data-sidebar-collapsible="none"
       class={cn(
-        "bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+        "flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
         className
       )}
       {...props}
@@ -58,7 +58,7 @@ const desktopCollapsible = desktopState === "collapsed" ? collapsible : ""
           data-mobile="true"
           style="--sidebar-width: var(--sidebar-width-mobile);"
           class={cn(
-            "bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 md:hidden",
+            "w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground md:hidden",
             className
           )}
         >
@@ -79,7 +79,7 @@ const desktopCollapsible = desktopState === "collapsed" ? collapsible : ""
         data-variant={variant}
         data-side={side}
         data-sidebar-collapsible={collapsible}
-        class="group peer text-sidebar-foreground hidden md:block"
+        class="group peer hidden text-sidebar-foreground md:block"
       >
         <div
           data-slot="sidebar-gap"
@@ -107,7 +107,7 @@ const desktopCollapsible = desktopState === "collapsed" ? collapsible : ""
           <div
             data-sidebar="sidebar"
             data-slot="sidebar-inner"
-            class="bg-sidebar group-data-[variant=floating]:ring-sidebar-border flex size-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1"
+            class="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
           >
             <slot />
           </div>

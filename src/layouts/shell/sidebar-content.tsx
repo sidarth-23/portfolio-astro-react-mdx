@@ -12,10 +12,10 @@ import { GitHubIcon, LinkedInIcon, RssIcon, MailIcon } from "@/components/icon"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import {
+  getGlobalLink,
   sidebarNavigationContent,
   sidebarProfileContent,
-} from "@/content/sidebar-content.data"
-import { getGlobalLink } from "@/content/global-links.data"
+} from "@/content/content"
 
 export interface NavigationItem {
   title: string
@@ -87,10 +87,12 @@ function buildNavigation(locale: Locale): NavigationItem[] {
 }
 
 function buildSecondary(locale: Locale): NavigationItem[] {
-  return ([
-    { id: "archive", title: t(locale, "nav.archive") },
-    { id: "resume", title: t(locale, "nav.downloadResume") },
-  ] as const).map((item) => {
+  return (
+    [
+      { id: "archive", title: t(locale, "nav.archive") },
+      { id: "resume", title: t(locale, "nav.downloadResume") },
+    ] as const
+  ).map((item) => {
     const link = getGlobalLink(item.id)
     return {
       title: item.title,
