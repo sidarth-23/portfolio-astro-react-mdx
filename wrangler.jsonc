@@ -1,0 +1,6 @@
+{
+  "name": "portfolio-astro-react",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2025-06-10",
+  "compatibility_flags": ["nodejs_compat"]
+}

@@ -8,8 +8,7 @@
     "preinstall": "bun -e \"const exec = process.env.npm_execpath || ''; if (!exec.includes('bun')) { console.error('Use bun (or bunx), not npm/yarn/pnpm'); process.exit(1); } const min = [1,2,0]; const cur = (process.versions.bun || '0.0.0').split('.').map((n) => Number.parseInt(n, 10) || 0); for (let i = 0; i < 3; i += 1) { if (cur[i] > min[i]) break; if (cur[i] < min[i]) { console.error('Bun >= 1.2.0 is required. Current: ' + (process.versions.bun || 'unknown')); process.exit(1); } }\"",
     "dev": "astro dev",
     "build": "astro build",
-    "start": "bun ./dist/server/entry.mjs",
-    "preview": "astro preview",
+    "preview": "wrangler pages dev ./dist",
     "astro": "astro",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx,astro}\"",
@@ -23,8 +22,8 @@
     "test:e2e:android:all": "playwright test --project=android-real"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^13.7.0",
     "@astrojs/mdx": "^5.0.6",
-    "@astrojs/node": "^10.1.1",
     "@astrojs/react": "^5.0.5",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
@@ -81,6 +80,7 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.57.1",
     "vite": "7.3.3",
-    "vitest": "^4.1.7"
+    "vitest": "^4.1.7",
+    "wrangler": "^4.99.0"
   }
 }

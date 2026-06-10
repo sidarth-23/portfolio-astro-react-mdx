@@ -33,6 +33,8 @@ const config = {
   },
 }
 
-const viteConfig = getViteConfig(config as Parameters<typeof getViteConfig>[0])
+// @ts-expect-error Astro and Vitest bundle different Vite versions, causing type mismatches at the library boundary. The runtime behavior is correct.
+const viteConfig = getViteConfig(config)
 
-export default defineConfig(viteConfig as Parameters<typeof defineConfig>[0])
+// @ts-expect-error Astro and Vitest bundle different Vite versions, causing type mismatches at the library boundary. The runtime behavior is correct.
+export default defineConfig(viteConfig)

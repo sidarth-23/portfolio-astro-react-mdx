@@ -61,8 +61,7 @@ Other useful commands:
 
 ```bash
 bun run format          # format .ts/.tsx/.astro
-bun run preview         # preview static build
-bun run start           # run built server output (dist/server/entry.mjs)
+bun run preview         # preview production build via Wrangler locally
 ```
 
 ## OG image generation

@@ -10,7 +10,7 @@
 - Install deps: `bun install` (enforced by `preinstall`; npm/yarn/pnpm will fail).
 - Dev server: `bun run dev`.
 - Validation pass: `bun run lint && bun run typecheck && bun run build`.
-- Production run after build: `bun run start` (serves `dist/server/entry.mjs`).
+- Preview built output: `bun run preview` (serves via Wrangler locally).
 - Formatting: `bun run format`.
 
 ## Real entrypoints to edit

@@ -5,20 +5,26 @@ import { defineConfig } from "astro/config"
 import react from "@astrojs/react"
 import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
-import node from "@astrojs/node"
+import cloudflare from "@astrojs/cloudflare"
 import { execFileSync } from "node:child_process"
 import rehypeSlug from "rehype-slug"
 import { filenameTransformer } from "./src/lib/codeblock/shiki"
 import { rehypeCodeBlocks } from "./src/lib/codeblock/rehype"
 import { remarkCodeGroup } from "./src/lib/codeblock/remark"
 
+const isTest = typeof process !== "undefined" && process.env.VITEST !== undefined
+
 // https://astro.build/config
 export default defineConfig({
-  adapter: node({
-    mode: "standalone",
-  }),
+  adapter: isTest
+    ? undefined
+    : cloudflare({
+        imageService: {
+          build: "compile",
+          runtime: "cloudflare-binding",
+        },
+      }),
   vite: {
-    // @ts-expect-error Astro currently resolves a different Vite type instance than @tailwindcss/vite.
     plugins: [tailwindcss()],
   },
   integrations: [
