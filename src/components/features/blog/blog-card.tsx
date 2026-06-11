@@ -91,20 +91,11 @@ export function BlogCard({ item, locale }: BlogCardProps) {
               {card.formattedDate}
             </Badge>
           </div>
-          <CardDescription className="mt-3 line-clamp-2 flex-1">
+          <CardDescription className="mt-3 line-clamp-3">
             {card.description}
           </CardDescription>
-          {card.tags.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {card.tags.map((tag) => (
-                <Badge key={tag} variant="secondary">
-                  #{tag}
-                </Badge>
-              ))}
-            </div>
-          )}
         </CardContent>
-        <CardFooter className="mt-auto justify-end border-0 bg-transparent pt-2 pb-4">
+        <CardFooter className="justify-end border-0 bg-transparent pt-2 pb-4">
           <HugeiconsIcon
             icon={ArrowRight01Icon}
             size={20}

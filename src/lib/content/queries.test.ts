@@ -53,6 +53,16 @@ function createMockBlogEntries(
       links: [],
       tags: [],
       locale: locale as "en" | "es" | "fr",
+      coverImage: {
+        src: `/images/post-${i + 1}.png`,
+        width: 1200,
+        height: 630,
+        format: "png" as const,
+      },
+      seo: {
+        title: `Post ${i + 1}`,
+        description: `Description ${i + 1}`,
+      },
     },
     body: "",
     rendered: undefined,
