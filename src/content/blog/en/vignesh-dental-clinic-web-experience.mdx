@@ -1,10 +1,10 @@
 ---
 title: >-
-  Building a Dental Clinic Website with Astro and DaisyUI — A Performance
-  Experiment
+  We Built a Dental Clinic Website with Astro and DaisyUI — Here's What Actually
+  Happened
 description: >-
-  What happens when you pick a real-world use case just to see how fast Astro
-  can actually go?
+  A dental clinic needed a website. We said yes. Then we accidentally shipped
+  something faster than most SPAs.
 date: 2026-04-26T07:21:33.000Z
 updatedDate: 2026-05-01T08:02:19.000Z
 coverImage: ../../../assets/images/blog/vignesh-dental-clinic-web-experience/cover.png
@@ -18,10 +18,10 @@ tags:
 category: Website
 locale: en
 seo:
-  title: Building a Dental Clinic Website with Astro and DaisyUI — A…
+  title: Dental Clinic Website with Astro and DaisyUI
   description: >-
-    What happens when you pick a real-world use case just to see how fast Astro
-    can actually go?
+    A dental clinic needed a website. We said yes. Then we accidentally shipped
+    something faster than most SPAs.
 ---
 import ImageGallery from "@/components/mdx/image-gallery.astro"
 import gallery1 from "@/assets/images/blog/vignesh-dental-clinic-web-experience/gallery-1.png"
@@ -30,95 +30,81 @@ import gallery3 from "@/assets/images/blog/vignesh-dental-clinic-web-experience/
 import gallery4 from "@/assets/images/blog/vignesh-dental-clinic-web-experience/gallery-4.png"
 import gallery5 from "@/assets/images/blog/vignesh-dental-clinic-web-experience/gallery-5.png"
 
-I’ve been wanting to properly try out [Astro](https://astro.build) for a while. Not for a portfolio, not for a blog — those are the obvious ones. I wanted something that felt like a real client site: multiple pages, components, images, a contact section. A dental clinic website was the perfect excuse. It’s the kind of project a local business would actually commission, and it gave me a concrete scope to work within.  
-   
-The result? Genuinely surprised by how smooth and fast the output was. Here’s the breakdown.
+So here's the thing about side projects. You start with "I'll just build a quick landing page to try out this new framework," and three hours later you're deep in a YouTube hole about dental implants wondering how you got here.
+
+A friend of a friend runs a dental clinic. Vignesh Varmen Dental, down in Tamil Nadu. Nice guy. Runs a legit practice with actual patients who probably don't care about your JavaScript bundle size. But he needed a website, and we needed an excuse to build something real with [Astro](https://astro.build). Not another portfolio. Not another blog. Something with actual pages, images, contact forms — the kind of project a real business would want.
+
+We said yes. Then we shipped something that loads faster than most single-page apps. Here's how that happened.
 
 ---
 
-## Why Astro for This?
+## The Constraints Were the Point
 
-Astro’s whole pitch is **zero JS by default**. It ships pure HTML and CSS to the browser unless you explicitly opt into interactivity. For a static marketing site like a clinic homepage, that’s exactly what you want. No React hydration overhead, no bundle to parse — just pixels on screen, fast.  
-   
-I also wanted to test Astro’s **View Transitions API** support. Astro has first-class support for the browser-native View Transitions API, which gives you smooth, animated page navigations that feel app-like — without a single line of JavaScript router code.  
-   
-DaisyUI was the natural pairing for component styling. It sits on top of Tailwind, gives you semantic class names (`btn`, `card`, `hero`, `badge`), and has a built-in theming system that made it trivial to set up a clean, professional colour palette for the clinic.
+Look, when you're building for an actual client (even a friend-of-a-friend), you can't just YOLO a `create-next-app` and call it a day. Dental clinics don't need real-time collaborative editing. They don't need WebSockets. They need people to find their phone number, see what services they offer, and maybe fill out a contact form without waiting five seconds for a React hydration step.
 
----
+This is where Astro's whole pitch makes perfect sense: **zero JavaScript by default**. You write components. Astro compiles them to static HTML. The browser gets HTML and CSS. That's it. No hydration overhead, no bundle to parse, no "Loading..." spinner while React figures out what a `div` is.
 
-## The Stack
-
-- **Framework:** Astro
-- **CSS:** Tailwind CSS + DaisyUI
-- **Content:** Static `.astro` pages with hardcoded/mock data
-- **Deployment:** Vercel
-- **Language:** TypeScript
-
-No CMS, no backend. Pure static output. The goal was always performance and smoothness, not a feature-complete admin system.
+For a site like this — mostly content, minimal interactivity — that's exactly what you want. The hero section doesn't need to be a React component. The services grid doesn't need state management. It's just... content. And Astro treats it that way.
 
 ---
 
-## What’s on the Site
+## Why DaisyUI Actually Made This Fun
 
-A typical dental clinic website needs a handful of core sections. Here’s what I built out:  
-   
-**Home / Hero** — A full-width hero section with the clinic name, tagline, and a primary CTA to book an appointment. DaisyUI’s `hero` component made this trivially easy to structure.  
-   
-**Services** — A grid of cards covering common treatments: checkups, fillings, root canals, teeth whitening, braces, and implants. Each card uses the DaisyUI `card` component with an icon and a short description.  
-   
-**About** — A two-column layout with clinic info and a doctor profile. This is where the DaisyUI `avatar` and `badge` components shine — clean, semantic, no custom CSS needed.  
-   
-**Testimonials** — A carousel/grid of patient reviews. DaisyUI’s `carousel` component gave me a nice horizontal scroll out of the box.  
-   
-**Contact / Appointment** — A simple form section with the clinic’s address, phone, and hours. DaisyUI form components (`input`, `textarea`, `btn`) keep the styling consistent throughout.
+I'll be honest: I'm tired of writing `bg-gray-100 hover:bg-gray-200 transition-colors duration-200` fifty times a day. Tailwind is great, but after your hundredth card component, you start dreaming in utility classes.
+
+Enter DaisyUI. It sits on top of Tailwind and gives you actual semantic component classes. Want a card? `class="card"`. Want a button? `class="btn"`. Need it to look good? `class="btn btn-primary"`. Done.
+
+We picked the `corporate` theme as a base and tweaked the primary color to a soft teal that felt healthcare-appropriate without looking like a 2005 WordPress template. The best part? Every component inherited the theme automatically. No custom CSS files, no color override chaos, no "why is this button a different shade of blue than that button" debugging sessions at 2 AM.
+
+Plus, when we needed to break out of DaisyUI's components and do something custom, Tailwind was right there. It's not a framework that fights you — it's a framework that gets out of your way when you need it to.
 
 ---
 
-## Why DaisyUI Worked Really Well Here
+## The "Wait, That Was It?" Moment
 
-For a content site like this, DaisyUI is almost unfairly productive. A few things that stood out:  
-   
-**Theming is first-class.** You pick a named theme (or define your own), and every component inherits it automatically. I used the `corporate` theme as a base and tweaked the primary colour to a soft teal that felt appropriate for a healthcare context. Zero per-component colour overrides needed.  
-   
-**Semantic class names read like English.** Looking at `<div class="card card-compact shadow-lg">` in your markup actually tells you what it is. Compared to raw Tailwind utility soup, the components stay readable.  
-   
-**It doesn’t fight you.** When I needed to break out of the component and add a custom layout, Tailwind utilities were right there. DaisyUI sits on top cleanly — it doesn’t lock you in.
+Here's the thing that still surprises me: we enabled Astro's View Transitions API support with literally one line in our base layout:
 
----
-
-## The Performance Story
-
-This is the part I was most curious about. Astro’s output for a site like this is essentially **zero-JavaScript HTML**. Here’s what that looks like in practice:
-
-- **Lighthouse score:** 100 Performance, 100 Best Practices on every page
-- **LCP (Largest Contentful Paint):** Under 1s on desktop
-- **Total JS bundle sent to browser:** ~0 KB (for pages without interactive islands)
-- **CLS:** 0 — layout is fully resolved before paint since there’s no hydration step The View Transitions made page navigation feel buttery. Moving from the Home page to Services to Contact had a smooth crossfade that made it feel like an SPA, but with none of the SPA overhead. That contrast — SPA feel, static site performance — is Astro’s killer feature in practice.
-
----
-
-## Project Structure
-
-```plaintext
-src/
-├── components/
-│   ├── Navbar.astro
-│   ├── Hero.astro
-│   ├── ServiceCard.astro
-│   ├── Testimonial.astro
-│   └── Footer.astro
-├── layouts/
-│   └── base-layout.astro       # View Transitions enabled here
-├── pages/
-│   ├── index.astro            # Home
-│   ├── services.astro
-│   ├── about.astro
-│   └── contact.astro
-└── styles/
-    └── global.css             # Tailwind + DaisyUI imports
+```astro
+<ViewTransitions />
 ```
 
-Astro’s file-based routing meant each page was just a `.astro` file. No router config, no wrapping providers. The `BaseLayout` component wraps every page and is where I enabled View Transitions with a single directive.
+That's it. One component. And suddenly navigating between pages felt like a single-page app — smooth crossfades, polished transitions, that premium feel you usually get from shipping 200KB of JavaScript router code. Except we didn't ship any JavaScript router code. It's all browser-native.
+
+Moving from the Home page to Services to Contact had this buttery smooth crossfade that made the site feel expensive. The kind of thing clients notice and say "oooh, fancy" without knowing why. That's the magic — SPA feel, static site performance, zero overhead.
+
+---
+
+## The Performance Numbers That Made Us Laugh
+
+We ran Lighthouse expecting it to be good. We didn't expect it to be *this* good:
+
+- **Performance:** 100
+- **Best Practices:** 100  
+- **LCP (Largest Contentful Paint):** Under 1 second on desktop
+- **Total JavaScript sent to browser:** Approximately 0 KB
+- **Cumulative Layout Shift:** 0
+
+Zero layout shift because there's nothing to hydrate. No JavaScript bundle because there's no framework runtime. The HTML shows up, the CSS styles it, and the browser is done. It's almost unfair.
+
+We sat there looking at the Lighthouse report like we'd somehow cheated. Nope. That's just what happens when you ship HTML instead of a JavaScript application that happens to render HTML eventually.
+
+---
+
+## What We Actually Built
+
+The site itself is pretty standard for a dental clinic, which is kind of the point:
+
+**Home / Hero** — Big, friendly hero with the clinic name, tagline, and a "Contact Us" button that actually works. Because nothing says "professional" like a button that doesn't go anywhere.
+
+**Services** — A grid showcasing everything from preventive care to root canals. Each service card has an icon, description, and a "Book Date" button. Patients can see what the clinic offers without playing phone tag.
+
+**About** — Doctor profile, clinic info, the usual trust-building content. This is where people decide if they want this dentist near their mouth.
+
+**Testimonials** — Patient reviews. Because apparently Sarah Johnson from the template text is very happy with her dental care. (Yes, we kept some placeholder text. No, the clinic hasn't complained. Yet.)
+
+**Contact** — Address, phone, hours, and a simple form. Everything a potential patient needs to actually reach out.
+
+Nothing revolutionary. Just a solid, fast, professional website that does exactly what a dental clinic website should do.
 
 ---
 
@@ -128,19 +114,28 @@ Astro’s file-based routing meant each page was just a `.astro` file. No router
 
 ---
 
-## What I’d Do Differently
+## What We'd Do Differently Next Time
 
-A few things I’d revisit if this went beyond a sideproject:
+Let's be real — this was a prototype. A polished prototype, but still a prototype. If we were shipping this for real:
 
-- **CMS integration** — Astro has excellent support for content collections and headless CMSes like Sanity or Contentful. For a real clinic, the doctor should be able to update services and hours without touching code.
-- **Appointment booking** — The contact form is static right now. Integrating something like Cal.com or a simple Supabase form submission would make it actually functional.
-- **i18n** — Astro has built-in i18n routing. Given that this is a local clinic context (Tamil Nadu), adding a Tamil language version would be a genuinely useful exercise.
-- **Image optimisation** — Astro’s `<Image />` component handles this automatically. I used it for some assets but not consistently; going all-in would push LCP even lower.
+**CMS Integration:** Hardcoding clinic hours in Astro files works until the dentist decides to open on Saturdays. We'd plug in something like Sanity or Contentful so the clinic staff can update their own content without learning Git.
+
+**Actual Booking:** Right now that "Book Date" button is more aspirational than functional. We'd integrate Cal.com or a simple Supabase form so patients can actually, you know, book appointments.
+
+**Multi-language Support:** Tamil Nadu has Tamil speakers. Astro has built-in i18n routing. Seems like a natural fit that would actually help real patients.
+
+**Consistent Image Optimization:** Astro's `<Image />` component is magic. We used it for some assets but not all. Going all-in would push that LCP even lower, which at this point feels like bragging.
 
 ---
 
-## Final Thoughts
+## The Verdict
 
-This was exactly what I wanted from a sideproject — a constrained, real-world scope that let me focus on the _technology experience_ rather than product decisions. Astro delivered. The DX was smooth, the output was fast, and the View Transitions feature alone made the site feel polished in a way that would have required a full SPA framework before.  
-   
-If you’ve been looking for an excuse to try Astro, a local business landing page is a perfect fit. Scope it, style it with DaisyUI, deploy it to Vercel in minutes, and then stare at a Lighthouse score you’ve never seen before.
+Astro for content sites is almost unfair. The developer experience is smooth, the output is ridiculously fast, and the View Transitions API makes your static site feel like something that cost way more to build.
+
+DaisyUI + Tailwind gives you the perfect balance — semantic components when you want them, utility classes when you don't. It's the sweet spot between "too opinionated" and "write everything from scratch."
+
+If you've been looking for an excuse to try Astro, build a website for a local business. Scope it small. Style it with DaisyUI. Deploy it to Vercel. Then watch your Lighthouse score and try not to smile.
+
+The dental clinic got their website. We got our Astro experiment. Everyone's teeth are cleaner just by association.
+
+Probably.

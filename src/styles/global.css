@@ -130,6 +130,16 @@
   }
 }
 
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 #topbar {
   position: fixed;
   z-index: 9999;

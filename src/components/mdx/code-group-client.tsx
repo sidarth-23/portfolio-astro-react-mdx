@@ -64,7 +64,10 @@ export default function CodeGroupClient({
       className="relative my-6 gap-0 overflow-hidden rounded-lg border"
     >
       <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-3 px-3 py-2">
-        <TabsList variant="line" className="min-w-0 overflow-x-auto">
+        <TabsList
+          variant="line"
+          className="no-scrollbar min-w-0 overflow-x-auto"
+        >
           {panels.map((panel) => (
             <TabsTrigger
               key={panel.filename}

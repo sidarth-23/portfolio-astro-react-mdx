@@ -1,11 +1,12 @@
 ---
-title: ElecSavers — Engineering a Document-First Electronics E-commerce Platform
+title: ElecSavers — Prototyping an Electronics Store on a Serverless Budget
 description: >-
-  A high-performance, serverless electronics marketplace built with Next.js 15,
-  Turso, and Better Auth. Features a robust admin dashboard for real-time
-  analytics and multi-vendor management.
+  A client wanted to test the electronics e-commerce waters without sinking money
+  into heavy infrastructure. I built ElecSavers: a real store front, a working
+  admin panel with role-based SSO, and a payment flow ready for a live provider —
+  all on a stack that costs almost nothing at rest.
 date: 2026-04-26T07:47:48.000Z
-updatedDate: 2026-05-01T08:06:11.000Z
+updatedDate: 2026-06-11T12:00:00.000Z
 coverImage: ../../../assets/images/blog/elecsavers-ecommerce-platform/cover.png
 featured: true
 links:
@@ -18,11 +19,10 @@ tags:
 category: Web Application
 locale: en
 seo:
-  title: ElecSavers — Engineering a Document-First Electronics E-com…
+  title: ElecSavers — Serverless Electronics Prototype
   description: >-
-    A high-performance, serverless electronics marketplace built with Next.js
-    15, Turso, and Better Auth. Features a robust admin dashboard for real-time
-    analytics…
+    How I built a real, low-cost electronics e-commerce prototype with a working
+    admin dashboard, role-based SSO, and a payment flow ready for a live provider.
 ---
 
 import ImageGallery from "@/components/mdx/image-gallery.astro"
@@ -32,32 +32,49 @@ import gallery3 from "@/assets/images/blog/elecsavers-ecommerce-platform/gallery
 import gallery4 from "@/assets/images/blog/elecsavers-ecommerce-platform/gallery-4.png"
 import gallery5 from "@/assets/images/blog/elecsavers-ecommerce-platform/gallery-5.png"
 
-In today’s fast-paced digital economy, many clients want to “test the waters” with a new niche—like high-end electronics—without committing to massive upfront infrastructure costs. For this project, we built **ElecSavers**: a modern, serverless e-commerce platform designed for low-cost deployments and high performance.
+A client came to me with a familiar request: they wanted to test whether an electronics store could work for their business, but they weren't ready to commit to a full enterprise build. They needed something real enough to show customers and investors — real products, real prices, a working cart, and an admin interface where they could manage inventory and watch sales. They also wanted authentication with roles, so different team members could do different things, and a payment flow that could be swapped for a real provider the moment they decided to go live.
+
+The catch? They wanted all of this without paying for servers that might sit idle. If no one visited, the bill should be close to zero. If a campaign drove traffic, it should scale without anyone waking up at 3 AM to restart a server.
+
+That brief became **ElecSavers**.
+
+<ImageGallery images={[gallery1, gallery2, gallery3, gallery4, gallery5]} title="The ElecSavers storefront and admin interface" />
 
 ---
 
-## The Mission: Testing the Waters on a Budget
+## The Constraint: Credibility on a Shoestring
 
-The client needed an e-commerce site that felt “premium” but operated on a “pay-as-you-grow” model. Our goal was to leverage managed, serverless infrastructure to ensure that if the site has zero traffic, the costs are near zero, yet it can scale instantly when a marketing campaign hits.
+Most "test the waters" prototypes fail because they look like prototypes. Customers don't trust a store that feels half-built, and a client can't learn anything meaningful from a demo that no one would actually buy from. At the same time, building a full Shopify-grade platform before validation is expensive overkill.
 
-### The Stack Choice
+The goal was a narrow band: **credible enough to convert, cheap enough to abandon.**
 
-To achieve this, we selected a cutting-edge, edge-compatible stack:
+That shaped every decision. I needed a stack that could:
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router) for hybrid rendering and serverless functions.
-- **Database**: [Turso](https://turso.tech/) (LibSQL) – a managed SQLite database that lives on the edge.
-- **ORM**: [Drizzle ORM](https://orm.drizzle.team/) – lightweight, type-safe, and perfect for serverless cold starts.
-- **Auth**: [Better Auth](https://better-auth.com/) – a modern, flexible authentication solution.
-- **Styling**: Tailwind CSS v4 + [shadcn/ui](https://ui.shadcn.com/) for a polished, responsive interface.
-- **Package Manager**: [Bun](https://bun.sh/) for lightning-fast installs and execution.
+- Run essentially for free at low traffic.
+- Scale horizontally without manual ops work.
+- Let me ship a real admin panel, real inventory, real invoices, and real GST calculations for the Indian market.
+- Keep the payment provider as a pluggable piece, ready to be turned on.
 
 ---
 
-## Architecture & Technical Deep Dive
+## The Stack Choice
 
-### 1. Edge-Ready Database Schema
+I ended up with a serverless-first, edge-friendly stack:
 
-Using Drizzle ORM, we defined a schema that supports complex e-commerce requirements like multi-vendor support and GST-compliant invoicing, all while remaining lean enough for SQLite.
+- **Framework**: [Next.js 15](https://nextjs.org/) App Router for server-side rendering, API routes, and server actions in one deployable unit.
+- **Database**: [Turso](https://turso.tech/) (LibSQL) — a managed SQLite database replicated to the edge. SQLite is famously small and fast; Turso makes it serverless.
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/) for type-safe queries and minimal cold-start overhead.
+- **Auth**: [Better Auth](https://better-auth.com/) for email/password, Google OAuth, and role-based access control.
+- **UI**: Tailwind CSS v4 + [shadcn/ui](https://ui.shadcn.com/) for a clean, consistent interface without reinventing components.
+- **Tooling**: [Bun](https://bun.sh/) for fast installs and script execution.
+
+The reasoning was simple. Next.js on Vercel starts at $0. Turso's starter tier is generous enough for this stage. SQLite keeps the data model simple. Better Auth avoids a separate auth service. The combined monthly cost can be effectively zero while the site is quiet, and the architecture can absorb spikes without re-platforming.
+
+---
+
+## The Data Model: Just Enough Schema
+
+E-commerce schemas can balloon quickly. I deliberately kept the core small: products, orders, and the relationships needed for multi-vendor support and Indian tax compliance. Drizzle made it easy to express this in type-safe SQLite.
 
 ```typescript filename="schema.ts"
 import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core"
@@ -77,6 +94,8 @@ export const orders = sqliteTable("orders", {
 })
 ```
 
+The query layer stayed equally minimal. Because Drizzle knows the schema types at compile time, the frontend gets the same guarantees the database does.
+
 ```typescript filename="queries.ts"
 import { eq } from "drizzle-orm"
 import { db } from "./db"
@@ -91,53 +110,50 @@ export async function getOrdersByUser(userId: string) {
 }
 ```
 
-### 2. Performance-First Admin Dashboard
-
-One of the highlights of this repo is the Admin Panel. To keep the dashboard snappy even with thousands of products, we implemented a **Cached Count Strategy**. Instead of running expensive `COUNT(*)` queries on every page load, we maintain a `tableCounts` table that updates via server actions.
+This isn't the whole schema — vendors, stock levels, GST rates, and invoices all have their own tables — but the core idea is the same: keep the model lean enough that a single SQLite file on Turso can handle it comfortably, and rich enough that the business logic is real.
 
 ---
 
-## Key Features
+## The Admin Panel: Where the Business Actually Runs
 
-### Comprehensive E-commerce Flow
+The storefront is what customers see, but the admin panel is where the client decides whether the experiment is working. I can't show screenshots of the live admin because it's behind authentication, but the structure is straightforward.
 
-From a sleek homepage to a multi-step checkout, the user journey is optimized for conversion.
+On signing in, an admin lands on a dashboard with counts for products, orders, customers, and revenue. To keep these numbers snappy, I avoided running expensive `COUNT(*)` queries on every page load. Instead, the dashboard uses a cached-count table that updates when products or orders change. It costs a little more logic upfront and saves a lot of perceived slowness later.
 
-- **Persistent Cart**: Powered by Zustand and synced with the database for logged-in users.
-- **GST Compliance**: Automated tax calculations (CGST/SGST/IGST) based on the shipping state—crucial for markets like India.
-- **Invoicing**: Dynamic PDF generation for orders using `@react-pdf/renderer`.
+The sidebar gives access to:
 
-### Robust Authentication
+- **Products**: add, edit, or deactivate inventory, set prices and featured flags, manage vendor stock references.
+- **Categories**: organize the catalog into the groups customers filter by.
+- **Vendors**: track the South Indian supplier partners whose stock the store surfaces.
+- **Orders**: see what customers have bought, update statuses, and download invoices.
+- **Customers**: view registered users and their order history.
 
-We integrated **Better Auth** to handle:
-
-- Email/Password & Google OAuth.
-- Role-Based Access Control (RBAC) ensuring only admins can access `/admin`.
-- Secure session management with a 7-day expiry.
+Every action is gated by roles. Better Auth handles the session, and the role field on each user decides whether they can access `/admin` at all, and what they can touch once inside. A support user might read orders; an operations user can edit products; only an admin can manage vendors and commissions.
 
 ---
 
-## Image Gallery
+## The Storefront: Real Enough to Trust
 
-<ImageGallery images={[gallery1, gallery2, gallery3, gallery4, gallery5]} />
+The public site is built to look like a store that has been around for a while. The homepage leads with value props — free shipping over ₹500, secure payment, easy returns — and a featured-products section. The products page supports search, category filters, brand filters, price ranges, and grid or list views. Product pages include specs, HSN codes, GST rates, and related products.
 
----
+The cart persists across sessions for logged-in users. At checkout, the system calculates CGST, SGST, or IGST depending on the shipping state and generates a PDF invoice using `@react-pdf/renderer`. The numbers are real, the tax logic is real, and the invoice format is ready for actual fulfillment.
 
-## Developer Experience (DX)
-
-For a “test the waters” project, speed of iteration is key.
-
-- **Realistic Seeding**: The repo includes a `db:seed:real` script that populates the DB with 33+ authentic electronics products, realistic South Indian vendors, and sample orders. This allows developers to see the full flow instantly.
-- **Type Safety**: End-to-end type safety from the database schema to the frontend components using Drizzle and Zod.
+The payment step is intentionally left as a wired-but-swappable integration. The client could plug in Razorpay, Stripe, or another provider without rewriting the order flow. Until then, the prototype demonstrates the full purchase path end to end.
 
 ---
 
-## Conclusion: The Serverless Advantage
+## Developer Experience: Seed, Build, Iterate
 
-By choosing Next.js, Turso, and Drizzle, we’ve built a platform that:
+A prototype only helps if you can reason about it quickly. I included a `db:seed:real` script that populates the database with 68 authentic electronics products, realistic vendor references, sample orders, and categories. The first time the client opens the site, it looks lived-in rather than empty.
 
-1. **Costs $0/month** on starter tiers of Vercel and Turso.
-2. **Scales Infinitely** without manual server management.
-3. **Performs Globally** by placing data and compute closer to the user.
+End-to-end type safety from the schema through the server actions to the UI components means refactors are cheap. When the client inevitably asks for a new field or a new report, the compiler catches most mistakes before they reach the browser.
 
-Whether you’re building a small electronics store or a multi-vendor marketplace, this stack provides the perfect balance between low cost and high scalability.
+---
+
+## What This Actually Is
+
+ElecSavers is not a finished, enterprise-grade marketplace. It is a **validated starting point**: a real store front, a real admin back end, real inventory and invoicing, and a payment slot waiting for the client's go-live signal.
+
+The bet is that the client can run real traffic through it, learn whether the electronics niche works for their audience, and make an informed decision about whether to invest in the next phase — without having paid for infrastructure they didn't need while they were still guessing.
+
+That, to me, is the right shape for a prototype: credible enough to teach you something, affordable enough to throw away if the lesson is "not yet."
