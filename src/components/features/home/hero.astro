@@ -52,9 +52,7 @@ const { heading, role, description, buttons, className } = Astro.props
         <a
           href={buttons.secondary.url}
           target={buttons.secondary.isExternal ? "_blank" : undefined}
-          rel={
-            buttons.secondary.isExternal ? "noopener noreferrer" : undefined
-          }
+          rel={buttons.secondary.isExternal ? "noopener noreferrer" : undefined}
           class="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-foreground sm:w-auto dark:border-input dark:bg-input/30"
         >
           {buttons.secondary.text}

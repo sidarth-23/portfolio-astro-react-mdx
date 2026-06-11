@@ -12,7 +12,6 @@ import type { ListingSort } from "@/lib/api/listing-query"
 
 import type { ComponentType } from "react"
 
-
 interface ItemListWithProviderProps<
   T extends BlogListingItem | ProjectListingItem,
 > {

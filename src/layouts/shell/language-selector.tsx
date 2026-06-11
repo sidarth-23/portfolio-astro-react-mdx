@@ -11,7 +11,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger, Button 
+  DropdownMenuTrigger,
+  Button,
 } from "@/components/ui/react"
 import {
   locales,

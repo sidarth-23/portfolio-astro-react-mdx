@@ -30,9 +30,7 @@ export function NavSecondary({
                 <a
                   href={item.url}
                   target={item.isExternal ? "_blank" : undefined}
-                  rel={
-                    item.isExternal ? "noopener noreferrer" : undefined
-                  }
+                  rel={item.isExternal ? "noopener noreferrer" : undefined}
                 >
                   {item.icon}
                   <span>{item.title}</span>

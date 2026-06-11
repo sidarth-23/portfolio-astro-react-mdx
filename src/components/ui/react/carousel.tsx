@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/react"
 import type { CarouselApi } from "@/components/ui/react"
 import { cn } from "@/lib/utils"
 
-
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
 type CarouselOptions = UseCarouselParameters[0]
 type CarouselPlugin = UseCarouselParameters[1]

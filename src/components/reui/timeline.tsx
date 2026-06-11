@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils"
 
 import type { HTMLAttributes } from "react"
 
-
 // Types
 type TimelineContextValue = {
   activeStep: number

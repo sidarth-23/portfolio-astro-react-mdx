@@ -4,12 +4,14 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import { createProjectCardView } from "@/components/features/listing/card-presenters"
-import { Badge,
+import {
+  Badge,
   Card,
   CardContent,
   CardFooter,
   CardTitle,
-  CardDescription } from "@/components/ui/react"
+  CardDescription,
+} from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
 import type { ProjectListingItem } from "@/lib/api/listing-api"
 import { formatShortDate } from "@/lib/content"

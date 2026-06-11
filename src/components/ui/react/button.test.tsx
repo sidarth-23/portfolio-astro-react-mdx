@@ -6,7 +6,6 @@ import { renderReact } from "@/test/utils"
 
 import { Button } from "./button"
 
-
 describe("Button", () => {
   it("renders default variant", () => {
     renderReact(<Button>Click me</Button>)

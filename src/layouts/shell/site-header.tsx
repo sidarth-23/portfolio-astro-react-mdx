@@ -4,7 +4,10 @@ import { PanelLeft } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import * as React from "react"
 
-import { useSidebar, Separator , Button ,
+import {
+  useSidebar,
+  Separator,
+  Button,
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
@@ -15,7 +18,8 @@ import { useSidebar, Separator , Button ,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger } from "@/components/ui/react"
+  DropdownMenuTrigger,
+} from "@/components/ui/react"
 import { defaultLocale, isValidLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import { LanguageSelector } from "@/layouts/shell/language-selector"
@@ -100,7 +104,37 @@ export function Breadcrumbs({
 }) {
   const breadcrumbs = buildBreadcrumbs(currentPath, pageTitle)
 
-  // If only 2 items (Home + 1), no collapse
+  const first = breadcrumbs[0]
+  const middle = breadcrumbs.slice(1, -1)
+  const last = breadcrumbs[breadcrumbs.length - 1]
+
+  // With only a single middle segment, show it directly instead of hiding it
+  // behind an ellipsis.
+  if (middle.length === 1) {
+    const mid = middle[0]
+
+    return (
+      <Breadcrumb className="min-w-0 overflow-hidden">
+        <BreadcrumbList className="flex-nowrap">
+          <BreadcrumbItem className="inline-flex">
+            <BreadcrumbLink href={first.href}>{first.title}</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator className="block" />
+          <BreadcrumbItem>
+            <BreadcrumbLink href={mid.href}>{mid.title}</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem className="max-w-full min-w-0">
+            <BreadcrumbPage className="block max-w-full truncate">
+              {last.title}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    )
+  }
+
+  // One or two items: render normally without collapse.
   if (breadcrumbs.length <= 2) {
     return (
       <Breadcrumb className="min-w-0 overflow-hidden">
@@ -128,11 +162,7 @@ export function Breadcrumbs({
     )
   }
 
-  // Collapse middle items into ellipsis dropdown
-  const first = breadcrumbs[0]
-  const middle = breadcrumbs.slice(1, -1)
-  const last = breadcrumbs[breadcrumbs.length - 1]
-
+  // Collapse multiple middle items into an ellipsis dropdown.
   return (
     <Breadcrumb className="min-w-0 overflow-hidden">
       <BreadcrumbList className="flex-nowrap">

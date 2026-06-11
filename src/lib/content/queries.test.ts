@@ -4,7 +4,6 @@ import { getProfileExperienceByLocale } from "./queries"
 
 import type { CollectionEntry } from "astro:content"
 
-
 // Mock astro:content
 const mockGetCollection = vi.fn()
 vi.mock("astro:content", () => ({

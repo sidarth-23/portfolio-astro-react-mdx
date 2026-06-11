@@ -4,12 +4,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 import * as React from "react"
 
-import { Button, Input , Separator ,
+import {
+  Button,
+  Input,
+  Separator,
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle, Skeleton , Tooltip, TooltipContent, TooltipTrigger  } from "@/components/ui/react"
+  SheetTitle,
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/react"
 import {
   SidebarContext,
   type SidebarContextProps,
@@ -17,7 +25,6 @@ import {
 } from "@/components/ui/react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
-
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

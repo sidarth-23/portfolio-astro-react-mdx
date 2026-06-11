@@ -39,4 +39,26 @@ describe("Breadcrumbs", () => {
       screen.getByRole("link", { name: "Stop Trusting the Client" })
     ).toBeInTheDocument()
   })
+
+  it("shows the single parent segment directly instead of collapsing it", () => {
+    const { container } = renderReact(
+      <Breadcrumbs
+        currentPath="/en/blog/the-beautiful-overengineered-portfolio-i-walked-away-from"
+        pageTitle="The Beautiful, Over-Engineered Portfolio I Walked Away From"
+      />
+    )
+
+    expect(
+      container.querySelectorAll('[data-slot="breadcrumb-ellipsis"]')
+    ).toHaveLength(0)
+    expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute(
+      "href",
+      "/en/blog"
+    )
+    expect(
+      screen.getByRole("link", {
+        name: "The Beautiful, Over-Engineered Portfolio I Walked Away From",
+      })
+    ).toBeInTheDocument()
+  })
 })

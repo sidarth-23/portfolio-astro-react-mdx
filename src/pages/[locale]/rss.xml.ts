@@ -5,7 +5,6 @@ import { locales, defaultLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import { getPublishedBlogPosts } from "@/lib/content/queries"
 
-
 export const prerender = true
 
 export async function getStaticPaths() {

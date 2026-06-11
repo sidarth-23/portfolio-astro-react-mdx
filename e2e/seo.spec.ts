@@ -79,7 +79,7 @@ test.describe("SEO meta tags", () => {
     page,
   }) => {
     await page.goto("/")
-    await page.waitForURL("/en")
+    await page.waitForFunction(() => location.pathname === "/en")
     await expectSeoTags(page, "/en", "en", "website")
   })
 

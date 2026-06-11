@@ -7,7 +7,6 @@ import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
 
 import { useListingQuery } from "./use-listing-query"
 
-
 // Mock fetch
 const mockFetch = vi.fn()
 global.fetch = mockFetch

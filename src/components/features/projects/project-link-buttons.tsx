@@ -6,7 +6,6 @@ import type { linkSchema } from "@/lib/schemas"
 
 import type { z } from "astro/zod"
 
-
 type Link = z.infer<typeof linkSchema>
 
 export function ProjectLinkButtons({ links }: { links: Link[] }) {

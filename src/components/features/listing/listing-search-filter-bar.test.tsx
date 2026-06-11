@@ -6,7 +6,6 @@ import { renderReact } from "@/test/utils"
 
 import { SearchFilterBar } from "./listing-search-filter-bar"
 
-
 describe("SearchFilterBar", () => {
   const defaultProps = {
     locale: "en" as const,

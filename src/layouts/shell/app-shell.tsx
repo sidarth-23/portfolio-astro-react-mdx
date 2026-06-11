@@ -1,6 +1,10 @@
 import * as React from "react"
 
-import { SidebarProvider, SidebarInset, TooltipProvider  } from "@/components/ui/react"
+import {
+  SidebarProvider,
+  SidebarInset,
+  TooltipProvider,
+} from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
 import { AppSidebar } from "@/layouts/shell/app-sidebar"
 import { Footer } from "@/layouts/shell/footer"

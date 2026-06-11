@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { useCallback, useState, type ComponentType } from "react"
 
 import { SearchFilterBar } from "@/components/features/listing/listing-search-filter-bar"
-import { Skeleton, Spinner  } from "@/components/ui/react"
+import { Skeleton, Spinner } from "@/components/ui/react"
 import { useListingQuery } from "@/hooks/use-listing-query"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
