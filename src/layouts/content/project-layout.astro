@@ -1,21 +1,21 @@
 ---
-import ContentLayout from "@/layouts/content/ContentLayout.astro"
+import ContentLayout from "@/layouts/content/content-layout.astro"
 import type { CollectionEntry } from "astro:content"
 import type { Locale } from "@/i18n/config"
 import { resolveContentSeo } from "@/lib/seo/resolve"
 
 interface Props {
-  post: CollectionEntry<"blog">
+  project: CollectionEntry<"projects">
   locale?: Locale
 }
 
-const { post, locale = "en" } = Astro.props
+const { project, locale = "en" } = Astro.props
 
 const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
-const seo = resolveContentSeo(post, "blog", locale, siteUrl)
+const seo = resolveContentSeo(project, "projects", locale, siteUrl)
 ---
 
-<ContentLayout seo={seo} headerTitle={post.data.title} locale={locale}>
+<ContentLayout seo={seo} headerTitle={project.data.title} locale={locale}>
   <slot />
   <slot name="toc" slot="toc" />
   <slot name="mobile-toc" slot="mobile-toc" />

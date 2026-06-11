@@ -1,5 +1,5 @@
 ---
-import BlogPostLayout from "@/layouts/content/BlogPostLayout.astro"
+import BlogPostLayout from "@/layouts/content/blog-post-layout.astro"
 import TableOfContents from "@/layouts/toc/table-of-contents.astro"
 import MobileToc from "@/layouts/toc/mobile-toc.astro"
 import TocScrollspy from "@/layouts/toc/toc-scrollspy.astro"
@@ -11,7 +11,7 @@ import { locales, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import { render } from "astro:content"
 import type { CollectionEntry } from "astro:content"
-import CodeGroup from "@/components/mdx/CodeGroup.astro"
+import CodeGroup from "@/components/mdx/code-group.astro"
 
 export async function getStaticPaths() {
   const paths: Array<{

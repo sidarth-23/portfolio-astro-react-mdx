@@ -15,7 +15,7 @@
 
 ## Real entrypoints to edit
 - Pages/routes: `src/pages/**` (root redirects to `/${defaultLocale}` in `src/pages/index.astro`).
-- Shared layout shell: `src/layouts/base/Layout.astro` + `src/layouts/shell/app-shell.tsx`.
+- Shared layout shell: `src/layouts/base/layout.astro` + `src/layouts/shell/app-shell.tsx`.
 - Client-side filtered lists use API + React Query: `src/pages/api/*.json.ts` + `src/components/*/*-list-with-provider.tsx`.
 
 ## Agent Rules

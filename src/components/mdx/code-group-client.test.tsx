@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest"
 import { screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderReact } from "@/test/utils"
-import CodeGroupClient, { type CodePanel } from "./CodeGroupClient"
+import CodeGroupClient, { type CodePanel } from "./code-group-client"
 
 const panels: CodePanel[] = [
   {
