@@ -1,5 +1,5 @@
 {
-  "name": "portfolio-astro-react",
+  "name": "portfolio-astro-react-mdx",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2025-06-10",
   "compatibility_flags": ["nodejs_compat"],
