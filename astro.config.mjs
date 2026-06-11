@@ -13,9 +13,10 @@ import { filenameTransformer } from "./src/lib/codeblock/shiki"
 import { rehypeCodeBlocks } from "./src/lib/codeblock/rehype"
 import { remarkCodeGroup } from "./src/lib/codeblock/remark"
 
-const env = loadEnv(process.env.NODE_ENV ?? "production", import.meta.dirname, "")
-const siteUrl = env.SITE_URL
-if (!siteUrl) throw new Error("SITE_URL is required. Set it in .env or the process environment.")
+const { SITE_URL: siteUrl } = loadEnv(process.env.NODE_ENV ?? "production", import.meta.dirname, "")
+if (!siteUrl) {
+  throw new Error("SITE_URL is required. Set it in .env or the process environment.")
+}
 
 // https://astro.build/config
 export default defineConfig({

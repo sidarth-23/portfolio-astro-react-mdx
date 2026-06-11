@@ -25,9 +25,13 @@ async function walkMdxFiles(dir: string): Promise<string[]> {
   const files = await Promise.all(
     entries.map(async (entry) => {
       const fullPath = path.join(dir, entry.name)
-      if (entry.isDirectory()) return walkMdxFiles(fullPath)
-      if (entry.isFile() && fullPath.endsWith(".mdx")) return [fullPath]
-      return [] as string[]
+      if (entry.isDirectory()) {
+        return walkMdxFiles(fullPath)
+      }
+      if (entry.isFile() && entry.name.endsWith(".mdx")) {
+        return [fullPath]
+      }
+      return []
     })
   )
 
@@ -49,91 +53,57 @@ function toDataUrl(imageBuffer: Buffer, extension: string): string {
 }
 
 async function generateContentOgImages(type: ContentType) {
-  const baseDir = path.resolve(process.cwd(), `src/content/${type}`)
-  const files = await walkMdxFiles(baseDir)
+  const contentDir = path.resolve(process.cwd(), `src/content/${type}`)
+  const files = await walkMdxFiles(contentDir)
 
-  for (const filePath of files) {
-    try {
-      const fileRaw = await readFile(filePath, "utf-8")
-      const parsed = matter(fileRaw)
-      const frontmatter = parsed.data as {
-        locale?: string
-        seo?: { title?: string; description?: string }
-        title?: string
-        description?: string
-        summary?: string
-        coverImage?: string
-      }
+  for (const file of files) {
+    const raw = await readFile(file, "utf-8")
+    const { data } = matter(raw)
+    const locale: string = data.locale || "en"
+    const slug = path.basename(file, ".mdx")
+    const filename = buildContentOgFilename(type, slug, locale)
+    const outPath = path.join(OUTPUT_DIR, filename)
 
-      const locale = frontmatter.locale
-      if (!locale) continue
+    const coverImagePath = data.coverImage
+      ? path.resolve(process.cwd(), "public", data.coverImage.replace(/^\//, ""))
+      : undefined
 
-      const relativeFromType = path.relative(baseDir, filePath)
-      const slug = relativeFromType
-        .replace(/\\/g, "/")
-        .replace(/\.mdx$/, "")
-        .split("/")
-        .slice(1)
-        .join("/")
-      if (!slug) continue
-
-      const title = frontmatter.seo?.title ?? frontmatter.title
-      const description =
-        frontmatter.seo?.description ??
-        frontmatter.description ??
-        frontmatter.summary
-      const coverImageRaw = frontmatter.coverImage
-
-      if (!title || !description || !coverImageRaw) continue
-
-      const coverImagePath = path.resolve(path.dirname(filePath), coverImageRaw)
-      const coverBuffer = await readFile(coverImagePath)
-      const coverImageDataUrl = toDataUrl(
-        coverBuffer,
-        path.extname(coverImagePath)
-      )
-
-      const buffer = await renderOgImage({
-        title,
-        description,
-        coverImageDataUrl,
-        siteLabel,
-      })
-
-      const filename = buildContentOgFilename(type, locale, slug)
-      const outputPath = path.join(OUTPUT_DIR, filename)
-      await writeFile(outputPath, buffer)
-      console.log(`Generated: ${filename}`)
-    } catch (error) {
-      console.error(
-        `Failed to generate OG image for content file ${filePath}:`,
-        error
-      )
+    let coverDataUrl: string | undefined
+    if (coverImagePath && existsSync(coverImagePath)) {
+      const imageBuffer = await readFile(coverImagePath)
+      const ext = path.extname(coverImagePath)
+      coverDataUrl = toDataUrl(imageBuffer, ext)
     }
+
+    const title: string = data.title || "Untitled"
+    const description: string = data.description || ""
+
+    const pngBuffer = await renderOgImage({
+      title,
+      description,
+      coverImageDataUrl: coverDataUrl,
+      siteLabel,
+    })
+
+    await writeFile(outPath, pngBuffer)
+    console.log(`Generated OG image: ${outPath}`)
   }
 }
 
 async function generatePageOgImages() {
-  const config = pageSeo
-
-  console.log(
-    `Generating OG images for ${Object.keys(config).length} page types`
-  )
-
-  for (const [pageName, byLocale] of Object.entries(config)) {
+  for (const [pageName, byLocale] of Object.entries(pageSeo)) {
     for (const [locale, { title, description }] of Object.entries(byLocale)) {
-      try {
-        const buffer = await renderOgImage({ title, description, siteLabel })
-        const filename = `og-${pageName}-${locale}.png`
-        const outputPath = path.join(OUTPUT_DIR, filename)
-        await writeFile(outputPath, buffer)
-        console.log(`Generated: ${filename}`)
-      } catch (error) {
-        console.error(
-          `Failed to generate OG image for ${pageName}-${locale}:`,
-          error
-        )
-      }
+      const filename = `og-${pageName}-${locale}.png`
+      const outPath = path.join(OUTPUT_DIR, filename)
+
+      const pngBuffer = await renderOgImage({
+        title,
+        description,
+        siteLabel,
+      })
+
+      await writeFile(outPath, pngBuffer)
+      console.log(`Generated OG image: ${outPath}`)
     }
   }
 }
@@ -143,7 +113,6 @@ async function main() {
   await generatePageOgImages()
   await generateContentOgImages("blog")
   await generateContentOgImages("projects")
-  console.log("OG image generation complete!")
 }
 
 main().catch((error) => {

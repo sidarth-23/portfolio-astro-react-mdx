@@ -41,6 +41,7 @@ Content lives under `src/content/**` and is locale-aware.
 
 ## Local development
 
+```bash
 # install dependencies (bun only)
 bun install
 
@@ -50,6 +51,18 @@ cp .env.example .env
 
 # start dev server (requires SITE_URL in .env or process environment)
 bun run dev
+```
+
+## Cloudflare Pages deployment
+
+`SITE_URL` must be set as an environment variable in the Cloudflare Pages dashboard so it is available at build time.
+
+1. Go to your Cloudflare Pages project dashboard.
+2. Navigate to **Settings > Environment variables**.
+3. Add `SITE_URL` with the value `https://sidshub.in` (or your canonical origin).
+4. Save and trigger a new deployment.
+
+Runtime access is provided by `wrangler.jsonc` — no additional dashboard binding is needed for serving.
 
 ## Quality checks
 
