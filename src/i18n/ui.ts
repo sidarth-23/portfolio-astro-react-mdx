@@ -9,7 +9,6 @@ const translations: Record<Locale, TranslationSchema> = {
   en: {
     nav: {
       home: "Home",
-      projects: "Projects",
       blog: "Blog",
       profile: "Profile",
       archive: "Archive Site",
@@ -24,17 +23,6 @@ const translations: Record<Locale, TranslationSchema> = {
       latest: "Latest Writing",
       viewAll: "View all posts →",
       readMore: "Read more",
-      published: "Published",
-      updated: "Updated",
-      minRead: "min read",
-    },
-    projects: {
-      title: "Projects",
-      description:
-        "A selection of things I have built, shipped, and learned from.",
-      featured: "Featured Projects",
-      viewAll: "View all projects →",
-      featuredLabel: "Featured",
       published: "Published",
       updated: "Updated",
       minRead: "min read",
@@ -81,7 +69,6 @@ const translations: Record<Locale, TranslationSchema> = {
   es: {
     nav: {
       home: "Inicio",
-      projects: "Proyectos",
       blog: "Blog",
       profile: "Perfil",
       archive: "Sitio Archivo",
@@ -97,17 +84,6 @@ const translations: Record<Locale, TranslationSchema> = {
       latest: "Últimas Publicaciones",
       viewAll: "Ver todas las publicaciones →",
       readMore: "Leer más",
-      published: "Publicado",
-      updated: "Actualizado",
-      minRead: "min de lectura",
-    },
-    projects: {
-      title: "Proyectos",
-      description:
-        "Una selección de cosas que he construido, enviado y aprendido.",
-      featured: "Proyectos Destacados",
-      viewAll: "Ver todos los proyectos →",
-      featuredLabel: "Destacado",
       published: "Publicado",
       updated: "Actualizado",
       minRead: "min de lectura",
@@ -155,7 +131,6 @@ const translations: Record<Locale, TranslationSchema> = {
   fr: {
     nav: {
       home: "Accueil",
-      projects: "Projets",
       blog: "Blog",
       profile: "Profil",
       archive: "Site Archive",
@@ -171,17 +146,6 @@ const translations: Record<Locale, TranslationSchema> = {
       latest: "Derniers Articles",
       viewAll: "Voir tous les articles →",
       readMore: "Lire la suite",
-      published: "Publié",
-      updated: "Mis à jour",
-      minRead: "min de lecture",
-    },
-    projects: {
-      title: "Projets",
-      description:
-        "Une sélection de choses que j'ai construites, livrées et apprises.",
-      featured: "Projets en Vedette",
-      viewAll: "Voir tous les projets →",
-      featuredLabel: "En Vedette",
       published: "Publié",
       updated: "Mis à jour",
       minRead: "min de lecture",

@@ -3,11 +3,7 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useRef } from "react"
 
-import type {
-  ListingResponse,
-  BlogListingItem,
-  ProjectListingItem,
-} from "@/lib/api/listing-api"
+import type { ListingResponse, BlogListingItem } from "@/lib/api/listing-api"
 import { serializeListingRequest } from "@/lib/api/listing-query"
 import type { ListingSort } from "@/lib/api/listing-query"
 
@@ -18,15 +14,11 @@ interface UseListingQueryOptions {
   tags?: string[]
   categories?: string[]
   sort?: ListingSort | null
-  initialData?:
-    | ListingResponse<BlogListingItem>
-    | ListingResponse<ProjectListingItem>
+  initialData?: ListingResponse<BlogListingItem>
   limit?: number
 }
 
-export function useListingQuery<
-  T extends BlogListingItem | ProjectListingItem,
->({
+export function useListingQuery<T extends BlogListingItem>({
   endpoint,
   locale,
   search,
@@ -149,9 +141,7 @@ export function usePrefetchListing(options: UseListingQueryOptions) {
         }
         return response.json()
       },
-      getNextPageParam: (
-        lastPage: ListingResponse<BlogListingItem | ProjectListingItem>
-      ) => {
+      getNextPageParam: (lastPage: ListingResponse<BlogListingItem>) => {
         if (!lastPage.hasMore) return undefined
         return lastPage.page + 1
       },

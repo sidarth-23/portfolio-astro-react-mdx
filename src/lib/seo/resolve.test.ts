@@ -39,33 +39,33 @@ describe("resolveContentSeo", () => {
     expect(result.twitterCard).toBe("summary_large_image")
   })
 
-  it("resolves project entry SEO with cover image", () => {
+  it("resolves blog entry SEO with updatedDate", () => {
     const mockEntry = {
-      id: "en/my-project",
+      id: "en/my-project-writeup",
       data: {
         seo: {
-          title: "My Project",
-          description: "A description of my project.",
+          title: "My Project Write-up",
+          description: "A description of my project write-up.",
         },
-        title: "My Project Title",
-        summary: "A summary of my project.",
+        title: "My Project Write-up Title",
+        description: "A description of my project write-up.",
         date: new Date("2024-02-20"),
         updatedDate: new Date("2024-03-01"),
         coverImage: {
-          src: "/images/projects/project.png",
+          src: "/images/blog/project.png",
         } as unknown as import("astro").ImageMetadata,
       },
-      collection: "projects" as const,
+      collection: "blog" as const,
     } as unknown as ContentEntry
 
-    const result = resolveContentSeo(mockEntry, "projects", "en", mockSiteUrl)
+    const result = resolveContentSeo(mockEntry, "blog", "en", mockSiteUrl)
 
-    expect(result.title).toBe("My Project | Sidarth G")
-    expect(result.description).toBe("A description of my project.")
+    expect(result.title).toBe("My Project Write-up | Sidarth G")
+    expect(result.description).toBe("A description of my project write-up.")
     expect(result.ogImage).toBe(
-      "https://sidshub.in/og/og-projects-en-my-project.png"
+      "https://sidshub.in/og/og-blog-en-my-project-writeup.png"
     )
-    expect(result.ogType).toBe("website")
+    expect(result.ogType).toBe("article")
     expect(result.publishedTime).toBe("2024-02-20T00:00:00.000Z")
     expect(result.modifiedTime).toBe("2024-03-01T00:00:00.000Z")
   })
@@ -145,18 +145,18 @@ describe("resolvePageSeo", () => {
 
   it("resolves page SEO for different locales", () => {
     const esResult = resolvePageSeo(
-      "Proyectos",
-      "Una selección de proyectos.",
-      "https://sidshub.in/og/og-projects-es.png",
+      "Blog",
+      "Reflexiones sobre ingeniería.",
+      "https://sidshub.in/og/og-blog-es.png",
       "website",
       "es",
       mockSiteUrl,
-      "/es/projects"
+      "/es/blog"
     )
 
-    expect(esResult.title).toBe("Proyectos | Sidarth G")
+    expect(esResult.title).toBe("Blog | Sidarth G")
     expect(esResult.ogLocale).toBe("es")
-    expect(esResult.canonicalUrl).toBe("https://sidshub.in/es/projects")
+    expect(esResult.canonicalUrl).toBe("https://sidshub.in/es/blog")
   })
 
   it("handles home page path", () => {

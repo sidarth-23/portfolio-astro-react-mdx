@@ -16,7 +16,7 @@ export interface SeoData {
   twitterCard: "summary_large_image"
 }
 
-export type ContentEntry = CollectionEntry<"blog"> | CollectionEntry<"projects">
+export type ContentEntry = CollectionEntry<"blog">
 
 function normalizeSiteUrl(siteUrl: string): string {
   return siteUrl.replace(/\/+$/, "")
@@ -41,7 +41,7 @@ function normalizeAbsoluteUrl(urlString: string): string {
 
 export function resolveContentSeo(
   entry: ContentEntry,
-  type: "blog" | "projects",
+  type: "blog",
   locale: Locale,
   siteUrl: string
 ): SeoData {

@@ -4,10 +4,9 @@ import Hero from "@/components/features/home/hero.astro"
 import FeaturedListing from "@/components/features/home/featured-listing.astro"
 import heroIllustration from "@/assets/images/hero-illustration.svg"
 import BlogCard from "@/components/features/blog/blog-card.astro"
-import ProjectCard from "@/components/features/projects/project-card.astro"
 import {
   getPublishedBlogPosts,
-  getFeaturedProjects,
+  getFeaturedBlogPosts,
 } from "@/lib/content/queries"
 import { locales, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
@@ -23,8 +22,9 @@ export async function getStaticPaths() {
 const { locale } = Astro.params as { locale: Locale }
 
 const posts = await getPublishedBlogPosts(locale)
-const projects = await getFeaturedProjects(locale)
-const latestPosts = posts.slice(0, 3)
+const featured = await getFeaturedBlogPosts(locale)
+const heroPost = featured[0] ?? posts[0]
+const gridPosts = posts.filter((post) => post.id !== heroPost?.id).slice(0, 4)
 const primaryLink = getGlobalLink(homeCtaLinkIds.primary)
 const secondaryLink = getGlobalLink(homeCtaLinkIds.secondary)
 
@@ -70,7 +70,7 @@ const seo = resolvePageSeo(
   </Hero>
 
   {
-    latestPosts.length > 0 && (
+    heroPost && (
       <FeaturedListing
         title={t(locale, "blog.latest")}
         viewAllHref={`/${locale}/blog`}
@@ -79,31 +79,11 @@ const seo = resolvePageSeo(
         <BlogCard
           slot="featured"
           variant="featured"
-          post={latestPosts[0]}
+          post={heroPost}
           locale={locale}
         />
-        {latestPosts.slice(1).map((post) => (
+        {gridPosts.map((post) => (
           <BlogCard variant="compact" post={post} locale={locale} />
-        ))}
-      </FeaturedListing>
-    )
-  }
-
-  {
-    projects.length > 0 && (
-      <FeaturedListing
-        title={t(locale, "projects.featured")}
-        viewAllHref={`/${locale}/projects`}
-        viewAllText={t(locale, "projects.viewAll")}
-      >
-        <ProjectCard
-          slot="featured"
-          variant="featured"
-          project={projects[0]}
-          locale={locale}
-        />
-        {projects.slice(1, 3).map((project) => (
-          <ProjectCard variant="compact" project={project} locale={locale} />
         ))}
       </FeaturedListing>
     )

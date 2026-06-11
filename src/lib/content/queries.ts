@@ -26,15 +26,7 @@ function getContentSlug(slug: string): string {
 function filterByLocale(
   entries: CollectionEntry<"blog">[],
   locale: Locale
-): CollectionEntry<"blog">[]
-function filterByLocale(
-  entries: CollectionEntry<"projects">[],
-  locale: Locale
-): CollectionEntry<"projects">[]
-function filterByLocale(
-  entries: (CollectionEntry<"blog"> | CollectionEntry<"projects">)[],
-  locale: Locale
-): (CollectionEntry<"blog"> | CollectionEntry<"projects">)[] {
+): CollectionEntry<"blog">[] {
   return entries.filter((entry) => {
     const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.id)
     return entryLocale === locale
@@ -79,35 +71,14 @@ export function getAllTags(posts: CollectionEntry<"blog">[]): Tag[] {
   return Array.from(tags).sort()
 }
 
-export async function getFeaturedProjects(locale: Locale = "en") {
-  const projects = await getCollection("projects", ({ data }) => data.featured)
-  return filterByLocale(projects, locale).sort(
+export async function getFeaturedBlogPosts(locale: Locale = "en") {
+  const posts = await getCollection(
+    "blog",
+    ({ data }) => data.featured && !data.draft
+  )
+  return filterByLocale(posts, locale).sort(
     (a, b) => b.data.date.getTime() - a.data.date.getTime()
   )
-}
-
-export async function getAllProjects(locale: Locale = "en") {
-  const projects = await getCollection("projects")
-  return filterByLocale(projects, locale).sort(
-    (a, b) => b.data.date.getTime() - a.data.date.getTime()
-  )
-}
-
-export async function getProjectBySlug(slug: string, locale: Locale = "en") {
-  const projects = await getCollection("projects", (entry) => {
-    const entrySlug = getContentSlug(entry.id)
-    const entryLocale = entry.data.locale ?? getLocaleFromSlug(entry.id)
-    return entrySlug === slug && entryLocale === locale
-  })
-  return projects[0] ?? null
-}
-
-export async function getProjectsByTag(tag: Tag, locale: Locale = "en") {
-  const projects = await getCollection("projects", ({ data }) =>
-    data.tags.includes(tag)
-  )
-  const filtered = filterByLocale(projects, locale)
-  return filtered.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
 
 export async function getProfileExperienceByLocale(locale: Locale = "en") {
@@ -172,35 +143,11 @@ export async function getProfileExperienceByLocale(locale: Locale = "en") {
     .sort((a, b) => a.data.id - b.data.id)
 }
 
-export function getAllProjectTags(
-  projects: CollectionEntry<"projects">[]
-): Tag[] {
-  const tags = new Set<Tag>()
-  for (const project of projects) {
-    for (const tag of project.data.tags) {
-      tags.add(tag)
-    }
-  }
-  return Array.from(tags).sort()
-}
-
 export function getAllCategories(posts: CollectionEntry<"blog">[]): string[] {
   const categories = new Set<string>()
   for (const post of posts) {
     if (post.data.category) {
       categories.add(post.data.category)
-    }
-  }
-  return Array.from(categories).sort()
-}
-
-export function getAllProjectCategories(
-  projects: CollectionEntry<"projects">[]
-): string[] {
-  const categories = new Set<string>()
-  for (const project of projects) {
-    if (project.data.category) {
-      categories.add(project.data.category)
     }
   }
   return Array.from(categories).sort()

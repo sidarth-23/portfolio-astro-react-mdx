@@ -37,14 +37,6 @@ describe("getPageSeo", () => {
     )
   })
 
-  it("returns SEO config for projects page", () => {
-    const result = getPageSeo("projects", "en")
-    expect(result.title).toBe("Projects")
-    expect(result.description).toBe(
-      "A selection of things I have built, shipped, and learned from."
-    )
-  })
-
   it("returns SEO config for profile page", () => {
     const result = getPageSeo("profile", "en")
     expect(result.title).toBe("Profile")
@@ -83,14 +75,13 @@ describe("getAllPageSeoEntries", () => {
 
     expect(pages).toContain("home")
     expect(pages).toContain("blog")
-    expect(pages).toContain("projects")
     expect(pages).toContain("profile")
   })
 
   it("includes all supported locales for each page", () => {
     const entries = getAllPageSeoEntries()
 
-    for (const page of ["home", "blog", "projects", "profile"]) {
+    for (const page of ["home", "blog", "profile"]) {
       const pageLocales = entries
         .filter((e) => e.page === page)
         .map((e) => e.locale)

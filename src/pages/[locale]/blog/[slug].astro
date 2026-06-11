@@ -3,6 +3,7 @@ import BlogPostLayout from "@/layouts/content/blog-post-layout.astro"
 import TableOfContents from "@/layouts/toc/table-of-contents.astro"
 import MobileToc from "@/layouts/toc/mobile-toc.astro"
 import TocScrollspy from "@/layouts/toc/toc-scrollspy.astro"
+import { PostLinkButtons } from "@/components/features/blog/post-link-buttons"
 import { Badge } from "@/components/ui/astro/badge"
 import BlurBackdropImage from "@/components/providers/blur-backdrop-image.astro"
 import { getPublishedBlogPosts } from "@/lib/content/queries"
@@ -101,6 +102,14 @@ const readingTime = estimateReadingTime(post.body ?? "")
                 #{tag}
               </Badge>
             ))}
+          </div>
+        )
+      }
+
+      {
+        post.data.links.length > 0 && (
+          <div class="mt-4">
+            <PostLinkButtons links={post.data.links} />
           </div>
         )
       }

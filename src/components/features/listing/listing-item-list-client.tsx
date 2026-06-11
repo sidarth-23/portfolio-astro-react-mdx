@@ -8,15 +8,11 @@ import { Skeleton, Spinner } from "@/components/ui/react"
 import { useListingQuery } from "@/hooks/use-listing-query"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
-import type {
-  BlogListingItem,
-  ProjectListingItem,
-  ListingResponse,
-} from "@/lib/api/listing-api"
+import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
 import type { ListingSort } from "@/lib/api/listing-query"
 import { mergeListingFilters } from "@/lib/api/listing-query"
 
-interface ItemListClientProps<T extends BlogListingItem | ProjectListingItem> {
+interface ItemListClientProps<T extends BlogListingItem> {
   endpoint: string
   locale: Locale
   tags: string[]
@@ -25,9 +21,7 @@ interface ItemListClientProps<T extends BlogListingItem | ProjectListingItem> {
   initialTags: string[]
   initialCategories: string[]
   initialSortBy: ListingSort | null
-  initialData?:
-    | ListingResponse<BlogListingItem>
-    | ListingResponse<ProjectListingItem>
+  initialData?: ListingResponse<BlogListingItem>
   gridClassName: string
   skeletonCount: number
   CardComponent: ComponentType<{ item: T; locale: Locale }>
@@ -40,7 +34,7 @@ const itemVariants = {
   exit: { opacity: 0, y: -4, scale: 0.98 },
 }
 
-export function ItemListClient<T extends BlogListingItem | ProjectListingItem>({
+export function ItemListClient<T extends BlogListingItem>({
   endpoint,
   locale,
   tags,

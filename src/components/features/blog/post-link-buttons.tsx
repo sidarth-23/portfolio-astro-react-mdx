@@ -8,7 +8,7 @@ import type { z } from "astro/zod"
 
 type Link = z.infer<typeof linkSchema>
 
-export function ProjectLinkButtons({ links }: { links: Link[] }) {
+export function PostLinkButtons({ links }: { links: Link[] }) {
   return (
     <div className="flex flex-wrap gap-2">
       {links.map((link) => (

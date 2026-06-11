@@ -6,7 +6,7 @@ test.describe("Desktop TOC scrollspy", () => {
   test("transitions active links, follows latest active link in container, and does not mutate hash on scroll", async ({
     page,
   }) => {
-    await page.goto("/en/projects/elecsavers-ecommerce-platform")
+    await page.goto("/en/blog/elecsavers-ecommerce-platform")
 
     const initialUrl = page.url()
     const desktopLinks = page.locator("[data-toc='desktop'] [data-toc-link]")

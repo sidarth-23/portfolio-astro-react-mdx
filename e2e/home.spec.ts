@@ -71,7 +71,7 @@ test.describe("Homepage", () => {
     await page.waitForLoadState("networkidle")
 
     const featuredLink = page
-      .locator('a[href="/en/projects/elecsavers-ecommerce-platform"]')
+      .locator('a[href="/en/blog/elecsavers-ecommerce-platform"]')
       .first()
     await expect(featuredLink).toBeVisible()
 

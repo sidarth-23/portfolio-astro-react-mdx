@@ -21,28 +21,11 @@ const blog = defineCollection({
       updatedDate: dateSchema.optional(),
       draft: z.boolean().default(false),
       coverImage: image(),
+      featured: z.boolean().default(false),
+      links: z.array(linkSchema).default([]),
       tags: z.array(tagSchema).default([]),
       category: z.string().min(1).optional(),
       series: z.string().optional(),
-      seo: seoSchema,
-      locale: z.enum(locales).default("en"),
-    }),
-})
-
-const projects = defineCollection({
-  loader: glob({ pattern: "**/*.mdx", base: "./src/content/projects" }),
-  schema: ({ image }) =>
-    z.object({
-      title: z.string().min(1).max(120),
-      summary: z.string().min(1).max(500),
-      date: dateSchema,
-      updatedDate: dateSchema.optional(),
-      coverImage: image(),
-      featured: z.boolean().default(false),
-      status: z.enum(["active", "archived", "concept"]).default("active"),
-      links: z.array(linkSchema).default([]),
-      tags: z.array(tagSchema).default([]),
-      category: z.string().min(1),
       seo: seoSchema,
       locale: z.enum(locales).default("en"),
     }),
@@ -58,6 +41,5 @@ const profileExperience = defineCollection({
 
 export const collections = {
   blog,
-  projects,
   profileExperience,
 }

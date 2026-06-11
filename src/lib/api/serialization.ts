@@ -19,19 +19,6 @@ export interface SerializedBlogPost {
   coverImage: SerializedImage
 }
 
-export interface SerializedProject {
-  slug: string
-  title: string
-  summary: string
-  date: string
-  updatedDate?: string
-  featured: boolean
-  status: string
-  category?: string
-  tags: string[]
-  coverImage: SerializedImage
-}
-
 export interface PaginatedResponse<T> {
   items: T[]
   hasMore: boolean
@@ -65,35 +52,6 @@ export async function serializeBlogPost(
   }
 }
 
-export async function serializeProject(
-  project: CollectionEntry<"projects">
-): Promise<SerializedProject> {
-  const optimizedImage = await getImage({
-    src: project.data.coverImage,
-    width: 600,
-    height: 340,
-    format: "webp",
-    quality: 80,
-  })
-
-  return {
-    slug: project.id.split("/").slice(1).join("/"),
-    title: project.data.title,
-    summary: project.data.summary,
-    date: project.data.date.toISOString(),
-    updatedDate: project.data.updatedDate?.toISOString(),
-    featured: project.data.featured,
-    status: project.data.status,
-    category: project.data.category,
-    tags: project.data.tags,
-    coverImage: {
-      src: optimizedImage.src,
-      width: optimizedImage.attributes.width ?? 600,
-      height: optimizedImage.attributes.height ?? 340,
-    },
-  }
-}
-
 export function filterBySearch<T extends { title: string }>(
   items: T[],
   search: string | null
@@ -106,10 +64,7 @@ export function filterBySearch<T extends { title: string }>(
       item.title.toLowerCase().includes(query) ||
       ("description" in item &&
         typeof item.description === "string" &&
-        item.description.toLowerCase().includes(query)) ||
-      ("summary" in item &&
-        typeof item.summary === "string" &&
-        item.summary.toLowerCase().includes(query))
+        item.description.toLowerCase().includes(query))
   )
 }
 
