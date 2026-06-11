@@ -2,6 +2,7 @@ import rss, { type RSSFeedItem } from "@astrojs/rss"
 import { getPublishedBlogPosts } from "@/lib/content/queries"
 import { locales, defaultLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
+import { SITE_URL } from "astro:env/server"
 
 export const prerender = true
 
@@ -16,7 +17,7 @@ export async function GET(context: { params: { locale: string } }) {
   return rss({
     title: locale === defaultLocale ? "Sid's Blog" : `Sid's Blog (${locale})`,
     description: t(locale, "rss.description"),
-    site: "https://sidshub.in",
+    site: SITE_URL,
     items: posts.map(
       (post): RSSFeedItem => ({
         title: post.data.title,

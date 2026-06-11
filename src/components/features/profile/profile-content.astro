@@ -170,7 +170,7 @@ const experiencesWithRoleDetails = await Promise.all(
           >
             <TimelineHeader>
               <TimelineSeparator
-                className={`group-data-completed/timeline-item:bg-primary group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5 ${itemIndex === experiencesWithRoleDetails.length - 1 ? "!hidden" : "!block"}`}
+                className={`group-data-completed/timeline-item:bg-primary group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5 ${itemIndex === experiencesWithRoleDetails.length - 1 ? "hidden!" : "block!"}`}
               />
               <TimelineTitle className="mt-0.5 text-base font-semibold">
                 {item.company}

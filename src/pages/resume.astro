@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/astro/button"
 import { Icon } from "@/components/ui/astro/icon"
 import { Card, CardContent, CardHeader } from "@/components/ui/astro/card"
 import { getResumeContent } from "@/lib/resume/service"
+import { SITE_URL } from "astro:env/server"
 
-const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const siteUrl = SITE_URL
 const seo = resolvePageSeo(
   "Sidarth G Resume",
   "Resume of Sidarth G in markdown format with export options.",

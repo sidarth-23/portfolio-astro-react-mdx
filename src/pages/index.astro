@@ -12,9 +12,10 @@ import BaseLayout from "@/layouts/base/base-layout.astro"
 import { defaultLocale, localeLabels, locales } from "@/i18n/config"
 import { getPageSeo } from "@/lib/seo/pages"
 import { resolvePageSeo } from "@/lib/seo/resolve"
+import { SITE_URL } from "astro:env/server"
 
 const targetPath = `/${defaultLocale}`
-const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const siteUrl = SITE_URL
 const defaultHomeSeo = getPageSeo("home", defaultLocale)
 const seo = resolvePageSeo(
   defaultHomeSeo.title,

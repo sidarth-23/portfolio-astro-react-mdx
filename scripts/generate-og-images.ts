@@ -3,10 +3,14 @@ import { readdir, readFile, writeFile } from "fs/promises"
 import path from "path"
 import matter from "gray-matter"
 import { pageSeo } from "../src/content/content"
-import { renderOgImage } from "../src/lib/seo/generate-image"
+import { renderOgImage, siteUrlToLabel } from "../src/lib/seo/generate-image"
 import { buildContentOgFilename } from "../src/lib/seo/content-og"
 
 const OUTPUT_DIR = path.resolve(process.cwd(), "public/og")
+
+const siteUrl = process.env.SITE_URL
+if (!siteUrl) throw new Error("SITE_URL is required. Set it in .env or the process environment.")
+const siteLabel = siteUrlToLabel(siteUrl)
 
 type ContentType = "blog" | "projects"
 
@@ -93,6 +97,7 @@ async function generateContentOgImages(type: ContentType) {
         title,
         description,
         coverImageDataUrl,
+        siteLabel,
       })
 
       const filename = buildContentOgFilename(type, locale, slug)
@@ -118,7 +123,7 @@ async function generatePageOgImages() {
   for (const [pageName, byLocale] of Object.entries(config)) {
     for (const [locale, { title, description }] of Object.entries(byLocale)) {
       try {
-        const buffer = await renderOgImage({ title, description })
+        const buffer = await renderOgImage({ title, description, siteLabel })
         const filename = `og-${pageName}-${locale}.png`
         const outputPath = path.join(OUTPUT_DIR, filename)
         await writeFile(outputPath, buffer)

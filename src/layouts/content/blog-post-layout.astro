@@ -3,6 +3,7 @@ import ContentLayout from "@/layouts/content/content-layout.astro"
 import type { CollectionEntry } from "astro:content"
 import type { Locale } from "@/i18n/config"
 import { resolveContentSeo } from "@/lib/seo/resolve"
+import { SITE_URL } from "astro:env/server"
 
 interface Props {
   post: CollectionEntry<"blog">
@@ -11,8 +12,9 @@ interface Props {
 
 const { post, locale = "en" } = Astro.props
 
-const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const siteUrl = SITE_URL
 const seo = resolveContentSeo(post, "blog", locale, siteUrl)
+---
 ---
 
 <ContentLayout seo={seo} headerTitle={post.data.title} locale={locale}>

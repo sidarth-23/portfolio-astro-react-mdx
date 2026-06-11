@@ -41,20 +41,22 @@ Content lives under `src/content/**` and is locale-aware.
 
 ## Local development
 
-```bash
 # install dependencies (bun only)
 bun install
 
-# start dev server
+# copy env example and set SITE_URL
+cp .env.example .env
+# edit .env to set SITE_URL to the canonical origin for your environment
+
+# start dev server (requires SITE_URL in .env or process environment)
 bun run dev
-```
 
 ## Quality checks
 
 Run this full validation pass before pushing:
 
 ```bash
-bun run lint && bun run typecheck && bun run build
+SITE_URL=https://sidshub.in bun run lint && SITE_URL=https://sidshub.in bun run typecheck && SITE_URL=https://sidshub.in bun run build
 ```
 
 Other useful commands:

@@ -14,6 +14,7 @@ import { t } from "@/i18n/ui"
 import { resolvePageSeo } from "@/lib/seo/resolve"
 import { getPageSeo } from "@/lib/seo/pages"
 import { getGlobalLink, homeCtaLinkIds } from "@/content/content"
+import { SITE_URL } from "astro:env/server"
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }))
@@ -27,7 +28,7 @@ const latestPosts = posts.slice(0, 3)
 const primaryLink = getGlobalLink(homeCtaLinkIds.primary)
 const secondaryLink = getGlobalLink(homeCtaLinkIds.secondary)
 
-const siteUrl = Astro.site?.toString() ?? "https://sidshub.in"
+const siteUrl = SITE_URL
 const pageSeo = getPageSeo("home", locale)
 const seo = resolvePageSeo(
   pageSeo.title,

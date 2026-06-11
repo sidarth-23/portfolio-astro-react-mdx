@@ -91,7 +91,7 @@ export default function CodeGroupClient({
       <TabsContent
         value={activeTab}
         forceMount
-        className="m-0 text-[1em] [&_pre]:!m-0 [&_pre]:rounded-none [&_pre]:border-0 [&_pre]:!pt-16 [&_pre[hidden]]:hidden"
+        className="m-0 text-[1em] [&_pre]:m-0! [&_pre]:rounded-none [&_pre]:border-0 [&_pre]:pt-16! [&_pre[hidden]]:hidden"
       >
         <div ref={contentRef}>{children}</div>
       </TabsContent>

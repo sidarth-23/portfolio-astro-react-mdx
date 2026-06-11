@@ -233,7 +233,7 @@ const translations: Record<Locale, TranslationSchema> = {
  * This throws immediately if a locale is missing keys or has wrong types,
  * giving fast feedback before the build starts.
  */
-if (import.meta.env?.DEV ?? true) {
+if (import.meta.env.DEV) {
   for (const [locale, data] of Object.entries(translations)) {
     validateTranslations(locale, data)
   }

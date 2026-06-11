@@ -3,6 +3,9 @@
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2025-06-10",
   "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "SITE_URL": "https://sidshub.in"
+  },
   "images": {
     "binding": "IMAGES"
   }

@@ -38,7 +38,7 @@ const isCompact = variant === "compact"
 <a href={card.href} class="group block h-full">
   {
     isFeatured ? (
-      <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:shadow-md hover:ring-foreground/20 sm:flex-row">
+      <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors hover:shadow-md hover:ring-foreground/20 sm:flex-row">
         <div class="sm:w-[55%]">
           <BlurBackdropImage
             src={post.data.coverImage}
@@ -84,7 +84,7 @@ const isCompact = variant === "compact"
         </div>
       </article>
     ) : (
-      <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors transition-shadow hover:shadow-md hover:ring-foreground/20">
+      <article class="flex h-full flex-col overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10 transition-colors hover:shadow-md hover:ring-foreground/20">
         <BlurBackdropImage
           src={post.data.coverImage}
           alt={post.data.title}

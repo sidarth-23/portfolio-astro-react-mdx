@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { clampText, hasCoverImage } from "./generate-image"
+import { clampText, hasCoverImage, siteUrlToLabel } from "./generate-image"
 
 describe("clampText", () => {
   it("returns text unchanged when under max length", () => {
@@ -58,5 +58,11 @@ describe("hasCoverImage", () => {
 
   it("returns false for whitespace-only image data url", () => {
     expect(hasCoverImage("   ")).toBe(false)
+  })
+})
+
+describe("siteUrlToLabel", () => {
+  it("extracts hostname from a URL with path", () => {
+    expect(siteUrlToLabel("https://example.test/path")).toBe("example.test")
   })
 })

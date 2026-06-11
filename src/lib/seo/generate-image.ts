@@ -57,16 +57,22 @@ export interface OgTemplateProps {
   title: string
   description: string
   coverImageDataUrl?: string
+  siteLabel: string
 }
 
 export function hasCoverImage(coverImageDataUrl?: string): boolean {
   return Boolean(coverImageDataUrl?.trim())
 }
 
+export function siteUrlToLabel(siteUrl: string): string {
+  return new URL(siteUrl).hostname
+}
+
 function OgTemplate({
   title,
   description,
   coverImageDataUrl,
+  siteLabel,
 }: OgTemplateProps) {
   const displayTitle = clampText(title, 60)
   const displayDescription = clampText(description, 132)
@@ -210,7 +216,7 @@ function OgTemplate({
             display: "flex",
           },
         },
-        "sidshub.in"
+        siteLabel
       )
     )
   )
