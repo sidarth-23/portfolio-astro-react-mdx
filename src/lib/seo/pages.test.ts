@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
-import { getPageSeo, getAllPageSeoEntries } from "./pages"
+
 import { locales } from "@/i18n/config"
+
+import { getPageSeo, getAllPageSeoEntries } from "./pages"
 
 describe("getPageSeo", () => {
   it("returns SEO config for home page in English", () => {

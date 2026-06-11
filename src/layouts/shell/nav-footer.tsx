@@ -5,6 +5,7 @@ export function NavFooter({
     title: string
     url: string
     icon: React.ReactNode
+    isExternal: boolean
   }[]
 }) {
   return (
@@ -13,8 +14,8 @@ export function NavFooter({
         <a
           key={item.title}
           href={item.url}
-          target={item.url.startsWith("http") ? "_blank" : undefined}
-          rel={item.url.startsWith("http") ? "noopener noreferrer" : undefined}
+          target={item.isExternal ? "_blank" : undefined}
+          rel={item.isExternal ? "noopener noreferrer" : undefined}
           aria-label={item.title}
           className="text-sidebar-foreground transition-colors hover:text-sidebar-foreground/80"
         >

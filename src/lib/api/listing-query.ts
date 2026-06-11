@@ -1,3 +1,5 @@
+import type { ListingFilters } from "./listing-api"
+
 export type ListingSort = "newest" | "oldest" | "title"
 
 const SORT_VALUES: readonly string[] = ["newest", "oldest", "title"]
@@ -14,10 +16,7 @@ export interface ListingRequestQuery extends ListingFiltersQuery {
   limit: number
 }
 
-function parsePositiveInt(
-  value: string | null,
-  defaultValue: number
-): number {
+function parsePositiveInt(value: string | null, defaultValue: number): number {
   if (value === null) return defaultValue
   const parsed = parseInt(value, 10)
   if (Number.isNaN(parsed) || parsed <= 0) return defaultValue
@@ -130,8 +129,6 @@ export function mergeListingFilters(
   const serialized = params.toString()
   return serialized ? `?${serialized}` : ""
 }
-
-import type { ListingFilters } from "./listing-api"
 
 export function toListingFilters(query: ListingFiltersQuery): ListingFilters {
   const filters: ListingFilters = {}

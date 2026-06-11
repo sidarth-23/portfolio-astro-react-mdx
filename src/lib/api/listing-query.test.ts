@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+
 import {
   parseListingFilters,
   parseListingRequest,
@@ -105,7 +106,9 @@ describe("listing-query codec", () => {
         categories: ["Frontend"],
         sort: "title",
       })
-      expect(result).toBe("search=astro&tags=react&categories=Frontend&sort=title")
+      expect(result).toBe(
+        "search=astro&tags=react&categories=Frontend&sort=title"
+      )
     })
   })
 

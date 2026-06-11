@@ -1,5 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
 
+import {
+  getBlogListing,
+  getProjectListing,
+  getBlogFilters,
+  getProjectFilters,
+} from "./listing-api"
+
+import type { CollectionEntry } from "astro:content"
+
 // Mock astro:content
 const mockGetCollection = vi.fn()
 vi.mock("astro:content", () => ({
@@ -11,14 +20,6 @@ const mockGetImage = vi.fn()
 vi.mock("astro:assets", () => ({
   getImage: (...args: Parameters<typeof mockGetImage>) => mockGetImage(...args),
 }))
-
-import {
-  getBlogListing,
-  getProjectListing,
-  getBlogFilters,
-  getProjectFilters,
-} from "./listing-api"
-import type { CollectionEntry } from "astro:content"
 
 // Helper to create mock blog entries
 function createMockBlogEntries(count: number): CollectionEntry<"blog">[] {

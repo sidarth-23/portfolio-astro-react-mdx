@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
-import Card from "./card.astro"
+
 import { renderAstro } from "@/test/utils"
+
+import Card from "./card.astro"
 
 describe("Card", () => {
   it("renders with default size", async () => {

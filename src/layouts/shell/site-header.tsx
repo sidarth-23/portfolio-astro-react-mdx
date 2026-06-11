@@ -1,13 +1,10 @@
 "use client"
 
-import * as React from "react"
-import { useSidebar } from "@/components/ui/react"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { PanelLeft } from "@hugeicons/core-free-icons"
-import { ThemeToggle } from "@/layouts/shell/theme-toggle"
-import { Separator } from "@/components/ui/react"
-import { Button } from "@/components/ui/react"
-import {
+import { HugeiconsIcon } from "@hugeicons/react"
+import * as React from "react"
+
+import { useSidebar, Separator , Button ,
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
@@ -15,17 +12,15 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/react"
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/react"
-import { LanguageSelector } from "@/layouts/shell/language-selector"
-import { resolvePageTitle } from "@/layouts/shell/sidebar-content"
+  DropdownMenuTrigger } from "@/components/ui/react"
 import { defaultLocale, isValidLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
+import { LanguageSelector } from "@/layouts/shell/language-selector"
+import { resolvePageTitle } from "@/layouts/shell/sidebar-content"
+import { ThemeToggle } from "@/layouts/shell/theme-toggle"
 
 function HeaderSidebarTrigger() {
   const { toggleSidebar } = useSidebar()

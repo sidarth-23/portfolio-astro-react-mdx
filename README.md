@@ -99,8 +99,8 @@ bun scripts/generate-og-images.ts
 - **Multi-language support** — Content available in English, Spanish, and French with locale-prefixed routing and automatic redirection.
 - **Content-driven blog** — MDX-based blog posts with search, tag filtering, and infinite scroll pagination.
 - **Project showcase** — Filterable project listings with search, tags, and pagination; each project has its own detailed MDX page.
-- **Interactive Profile** — Structured resume generated from JSON and Markdown content collections, including work experience.
-- **Collapsible sidebar navigation** — Profile info, primary navigation, social links (GitHub, LinkedIn, RSS, Email), and quick actions (archive, download resume).
+- **Interactive Profile** — Profile page with work experience, skills, and certifications.
+- **Collapsible sidebar navigation** — Profile info, primary navigation, social links (GitHub, LinkedIn, RSS, Email), and quick actions (archive, resume).
 - **Responsive design** — Mobile-friendly layout built with Tailwind CSS.
 - **SEO optimized** — Metadata helpers and structured content for search engines.
 - **Automated OG images** — Build-time Open Graph image generation for pages and MDX content.

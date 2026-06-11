@@ -1,8 +1,11 @@
-import { describe, expect, it, vi } from "vitest"
 import { screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { SearchFilterBar } from "./listing-search-filter-bar"
+import { describe, expect, it, vi } from "vitest"
+
 import { renderReact } from "@/test/utils"
+
+import { SearchFilterBar } from "./listing-search-filter-bar"
+
 
 describe("SearchFilterBar", () => {
   const defaultProps = {

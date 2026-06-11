@@ -1,28 +1,23 @@
-import * as React from "react"
+import { SidebarLeftIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
+import * as React from "react"
 
-import { useIsMobile } from "@/hooks/use-mobile"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/react"
-import { Input } from "@/components/ui/react"
-import { Separator } from "@/components/ui/react"
-import {
+import { Button, Input , Separator ,
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle,
-} from "@/components/ui/react"
-import { Skeleton } from "@/components/ui/react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/react"
+  SheetTitle, Skeleton , Tooltip, TooltipContent, TooltipTrigger  } from "@/components/ui/react"
 import {
   SidebarContext,
   type SidebarContextProps,
   useSidebar,
 } from "@/components/ui/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { SidebarLeftIcon } from "@hugeicons/core-free-icons"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { cn } from "@/lib/utils"
+
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

@@ -1,14 +1,16 @@
-import { describe, expect, it, vi, beforeEach } from "vitest"
-import { renderHook, waitFor } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { useListingQuery } from "./use-listing-query"
+import { renderHook, waitFor } from "@testing-library/react"
+import React from "react"
+import { describe, expect, it, vi, beforeEach } from "vitest"
+
 import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
+
+import { useListingQuery } from "./use-listing-query"
+
 
 // Mock fetch
 const mockFetch = vi.fn()
 global.fetch = mockFetch
-
-import React from "react"
 
 function createWrapper() {
   const queryClient = new QueryClient({

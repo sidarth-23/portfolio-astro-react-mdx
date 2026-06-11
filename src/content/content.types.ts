@@ -10,7 +10,7 @@ export type GlobalLinkId =
 
 export type GlobalLinkIcon =
   | "archive"
-  | "downloadResume"
+  | "externalResume"
   | "github"
   | "linkedin"
   | "rss"
@@ -21,6 +21,7 @@ export interface GlobalLink {
   title: string
   icon: GlobalLinkIcon
   href: (locale: Locale) => string
+  isExternal: boolean
 }
 
 export type SidebarNavigationTitleKey =

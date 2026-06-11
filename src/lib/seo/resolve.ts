@@ -1,6 +1,8 @@
 import type { Locale } from "@/i18n/config"
-import type { CollectionEntry } from "astro:content"
+
 import { buildContentOgFilename } from "./content-og"
+
+import type { CollectionEntry } from "astro:content"
 
 export interface SeoData {
   title: string

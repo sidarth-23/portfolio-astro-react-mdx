@@ -1,8 +1,10 @@
 import rss, { type RSSFeedItem } from "@astrojs/rss"
-import { getPublishedBlogPosts } from "@/lib/content/queries"
+import { SITE_URL } from "astro:env/server"
+
 import { locales, defaultLocale, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
-import { SITE_URL } from "astro:env/server"
+import { getPublishedBlogPosts } from "@/lib/content/queries"
+
 
 export const prerender = true
 

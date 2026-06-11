@@ -1,7 +1,9 @@
 import { getCollection, type CollectionEntry } from "astro:content"
-import type { z } from "astro/zod"
-import type { tagSchema } from "@/lib/schemas"
+
 import { locales, type Locale } from "@/i18n/config"
+import type { tagSchema } from "@/lib/schemas"
+
+import type { z } from "astro/zod"
 
 type Tag = z.infer<typeof tagSchema>
 

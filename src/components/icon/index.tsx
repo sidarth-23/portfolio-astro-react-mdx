@@ -1,9 +1,9 @@
-import { HugeiconsIcon } from "@hugeicons/react"
 import {
   GithubIcon as HugeGithubIcon,
   RssIcon as HugeRssIcon,
   Mail01Icon as HugeMail01Icon,
 } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
 /**
  * Official LinkedIn brand icon.

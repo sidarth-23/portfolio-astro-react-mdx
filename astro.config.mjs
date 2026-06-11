@@ -40,16 +40,6 @@ export default defineConfig({
         },
       },
     },
-    {
-      name: "generate-resume-exports",
-      hooks: {
-        "astro:build:start": () => {
-          execFileSync("bun", ["scripts/generate-resume-exports.ts"], {
-            stdio: "inherit",
-          })
-        },
-      },
-    },
     react(),
     mdx({
       remarkPlugins: [remarkCodeGroup],

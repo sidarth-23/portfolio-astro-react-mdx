@@ -84,8 +84,3 @@ export const profileExperienceSchema = z.object({
   companyLocation: z.string().min(1),
   role: profileExperienceRoleSchema,
 })
-
-export const resumeSchema = z.object({
-  locale: z.enum(["en", "es", "fr"]).default("en"),
-  title: z.string().min(1).default("Resume"),
-})

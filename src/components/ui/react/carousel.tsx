@@ -1,12 +1,12 @@
-import * as React from "react"
-import useEmblaCarousel from "embla-carousel-react"
-
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/react"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import useEmblaCarousel from "embla-carousel-react"
+import * as React from "react"
 
+import { Button } from "@/components/ui/react"
 import type { CarouselApi } from "@/components/ui/react"
+import { cn } from "@/lib/utils"
+
 
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
 type CarouselOptions = UseCarouselParameters[0]

@@ -2,13 +2,14 @@
 
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useRef } from "react"
-import { serializeListingRequest } from "@/lib/api/listing-query"
-import type { ListingSort } from "@/lib/api/listing-query"
+
 import type {
   ListingResponse,
   BlogListingItem,
   ProjectListingItem,
 } from "@/lib/api/listing-api"
+import { serializeListingRequest } from "@/lib/api/listing-query"
+import type { ListingSort } from "@/lib/api/listing-query"
 
 interface UseListingQueryOptions {
   endpoint: string

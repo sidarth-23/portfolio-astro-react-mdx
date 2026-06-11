@@ -1,7 +1,8 @@
+import { fileURLToPath } from "node:url"
+
+import react from "@astrojs/react"
 import { getViteConfig } from "astro/config"
 import { defineConfig } from "vitest/config"
-import react from "@astrojs/react"
-import { fileURLToPath } from "node:url"
 
 const config = {
   test: {

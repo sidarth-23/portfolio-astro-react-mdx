@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
+
 import { filterBySearch, filterByTags, paginate } from "./serialization"
+
 import type { SerializedBlogPost } from "./serialization"
 
 const mockPosts: SerializedBlogPost[] = [

@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
+
 import { renderReact } from "@/test/utils"
+
 import { ImageGalleryCarousel } from "./image-gallery-carousel"
 
 describe("ImageGalleryCarousel", () => {

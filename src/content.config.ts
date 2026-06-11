@@ -1,15 +1,15 @@
-import { defineCollection } from "astro:content"
 import { glob } from "astro/loaders"
 import { z } from "astro/zod"
+import { defineCollection } from "astro:content"
+
+import { locales } from "@/i18n/config"
 import {
   seoSchema,
   linkSchema,
   tagSchema,
   dateSchema,
   profileExperienceSchema,
-  resumeSchema,
 } from "@/lib/schemas"
-import { locales } from "@/i18n/config"
 
 const blog = defineCollection({
   loader: glob({ pattern: "**/*.mdx", base: "./src/content/blog" }),
@@ -56,17 +56,8 @@ const profileExperience = defineCollection({
   schema: profileExperienceSchema,
 })
 
-const resume = defineCollection({
-  loader: glob({
-    pattern: "*.md",
-    base: "./src/content/resume",
-  }),
-  schema: resumeSchema,
-})
-
 export const collections = {
   blog,
   projects,
   profileExperience,
-  resume,
 }

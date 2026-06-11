@@ -1,18 +1,18 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Globe02Icon,
   ArrowDown01Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger, Button 
 } from "@/components/ui/react"
-import { Button } from "@/components/ui/react"
 import {
   locales,
   localeLabels,

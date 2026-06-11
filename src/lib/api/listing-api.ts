@@ -1,8 +1,12 @@
-import { getCollection } from "astro:content"
 import { getImage } from "astro:assets"
-import type { ImageMetadata } from "astro"
+import { getCollection } from "astro:content"
+
+
 import type { Locale } from "@/i18n/config"
 import { locales } from "@/i18n/config"
+
+import type { ListingSort } from "./listing-query"
+import type { ImageMetadata } from "astro"
 
 export interface ListingImage {
   src: string
@@ -67,8 +71,6 @@ export interface ListingResponse<T> {
   total: number
   page: number
 }
-
-import type { ListingSort } from "./listing-query"
 
 export interface ListingFilters {
   search?: string

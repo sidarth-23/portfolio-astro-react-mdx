@@ -1,12 +1,3 @@
-import * as React from "react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/react"
-import { Button } from "@/components/ui/react"
-import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Sun02Icon,
   Moon02Icon,
@@ -14,6 +5,15 @@ import {
   ArrowDown01Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import * as React from "react"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger, Button 
+} from "@/components/ui/react"
 
 type Theme = "light" | "dark" | "system"
 

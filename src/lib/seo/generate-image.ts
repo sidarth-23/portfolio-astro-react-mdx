@@ -1,9 +1,10 @@
-import { createElement } from "react"
-import satori from "satori"
-import sharp from "sharp"
 import { readFile } from "fs/promises"
 import path from "path"
 import { fileURLToPath } from "url"
+
+import { createElement } from "react"
+import satori from "satori"
+import sharp from "sharp"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const FONTS_DIR = path.resolve(__dirname, "../../assets/fonts")

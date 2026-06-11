@@ -1,32 +1,35 @@
-import type { ReactNode } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Home01Icon,
   FolderCodeIcon,
   BookOpen02Icon,
   File02Icon,
   Archive02Icon,
-  Download02Icon,
 } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+
 import { GitHubIcon, LinkedInIcon, RssIcon, MailIcon } from "@/components/icon"
-import type { Locale } from "@/i18n/config"
-import { t } from "@/i18n/ui"
 import {
   getGlobalLink,
   sidebarNavigationContent,
   sidebarProfileContent,
 } from "@/content/content"
+import type { Locale } from "@/i18n/config"
+import { t } from "@/i18n/ui"
+
+import type { ReactNode } from "react"
 
 export interface NavigationItem {
   title: string
   url: string
   icon: ReactNode
+  isExternal: boolean
 }
 
 export interface SocialLink {
   title: string
   url: string
   icon: ReactNode
+  isExternal: boolean
 }
 
 export interface ProfileInfo {
@@ -56,12 +59,12 @@ function navIcon(icon: "home" | "projects" | "blog" | "profile"): ReactNode {
   }
 }
 
-function secondaryIcon(icon: "archive" | "downloadResume"): ReactNode {
+function secondaryIcon(icon: "archive" | "externalResume"): ReactNode {
   switch (icon) {
     case "archive":
       return <HugeiconsIcon icon={Archive02Icon} size={16} strokeWidth={2} />
-    case "downloadResume":
-      return <HugeiconsIcon icon={Download02Icon} size={16} strokeWidth={2} />
+    case "externalResume":
+      return <HugeiconsIcon icon={File02Icon} size={16} strokeWidth={2} />
   }
 }
 
@@ -83,6 +86,7 @@ function buildNavigation(locale: Locale): NavigationItem[] {
     title: t(locale, item.titleKey),
     url: item.path(locale),
     icon: navIcon(item.icon),
+    isExternal: false,
   }))
 }
 
@@ -97,7 +101,8 @@ function buildSecondary(locale: Locale): NavigationItem[] {
     return {
       title: item.title,
       url: link.href(locale),
-      icon: secondaryIcon(link.icon as "archive" | "downloadResume"),
+      icon: secondaryIcon(link.icon as "archive" | "externalResume"),
+      isExternal: link.isExternal,
     }
   })
 }
@@ -109,6 +114,7 @@ function buildSocial(locale: Locale): SocialLink[] {
       title: link.title,
       url: link.href(locale),
       icon: socialIcon(link.icon as "github" | "linkedin" | "rss" | "email"),
+      isExternal: link.isExternal,
     }
   })
 }

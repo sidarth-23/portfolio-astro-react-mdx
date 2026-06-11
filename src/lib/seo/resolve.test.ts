@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
+
 import { resolveContentSeo, resolvePageSeo } from "./resolve"
+
 import type { ContentEntry } from "./resolve"
 
 describe("resolveContentSeo", () => {

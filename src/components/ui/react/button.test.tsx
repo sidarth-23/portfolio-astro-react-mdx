@@ -1,8 +1,11 @@
-import { describe, expect, it, vi } from "vitest"
 import { screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { Button } from "./button"
+import { describe, expect, it, vi } from "vitest"
+
 import { renderReact } from "@/test/utils"
+
+import { Button } from "./button"
+
 
 describe("Button", () => {
   it("renders default variant", () => {

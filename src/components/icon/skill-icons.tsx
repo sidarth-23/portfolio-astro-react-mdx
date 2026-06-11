@@ -1,4 +1,3 @@
-import { HugeiconsIcon } from "@hugeicons/react"
 import {
   CloudIcon,
   DatabaseIcon,
@@ -7,6 +6,7 @@ import {
   CodeIcon,
   Layers01Icon,
 } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
   siGo,
   siPython,

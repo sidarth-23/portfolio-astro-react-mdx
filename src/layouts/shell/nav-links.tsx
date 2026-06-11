@@ -1,4 +1,3 @@
-import type { ReactNode } from "react"
 import {
   SidebarGroup,
   SidebarMenu,
@@ -6,6 +5,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/react"
 import { isActiveLink } from "@/lib/utils"
+
+import type { ReactNode } from "react"
 
 export function NavLinks({
   items,

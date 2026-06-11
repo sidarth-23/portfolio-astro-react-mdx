@@ -3,8 +3,8 @@
 import { BlogCard } from "@/components/features/blog/blog-card"
 import { ItemListWithProvider } from "@/components/providers/listing-item-list"
 import type { Locale } from "@/i18n/config"
-import type { ListingSort } from "@/lib/api/listing-query"
 import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
+import type { ListingSort } from "@/lib/api/listing-query"
 
 interface BlogListWithProviderProps {
   locale: Locale

@@ -1,15 +1,20 @@
 import { existsSync, mkdirSync } from "fs"
 import { readdir, readFile, writeFile } from "fs/promises"
 import path from "path"
+
 import matter from "gray-matter"
+
 import { pageSeo } from "../src/content/content"
-import { renderOgImage, siteUrlToLabel } from "../src/lib/seo/generate-image"
 import { buildContentOgFilename } from "../src/lib/seo/content-og"
+import { renderOgImage, siteUrlToLabel } from "../src/lib/seo/generate-image"
 
 const OUTPUT_DIR = path.resolve(process.cwd(), "public/og")
 
 const siteUrl = process.env.SITE_URL
-if (!siteUrl) throw new Error("SITE_URL is required. Set it in .env or the process environment.")
+if (!siteUrl)
+  throw new Error(
+    "SITE_URL is required. Set it in .env or the process environment."
+  )
 const siteLabel = siteUrlToLabel(siteUrl)
 
 type ContentType = "blog" | "projects"
@@ -65,7 +70,11 @@ async function generateContentOgImages(type: ContentType) {
     const outPath = path.join(OUTPUT_DIR, filename)
 
     const coverImagePath = data.coverImage
-      ? path.resolve(process.cwd(), "public", data.coverImage.replace(/^\//, ""))
+      ? path.resolve(
+          process.cwd(),
+          "public",
+          data.coverImage.replace(/^\//, "")
+        )
       : undefined
 
     let coverDataUrl: string | undefined

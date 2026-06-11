@@ -1,6 +1,8 @@
-import { describe, expect, it } from "vitest"
 import { existsSync, statSync } from "fs"
 import path from "path"
+
+import { describe, expect, it } from "vitest"
+
 import { getAllPageSeoEntries } from "./pages"
 
 describe("OG image files", () => {

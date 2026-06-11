@@ -2,8 +2,6 @@
 
 import * as React from "react"
 
-import { NavLinks } from "@/layouts/shell/nav-links"
-import { NavSecondary } from "@/layouts/shell/nav-secondary"
 import {
   Sidebar,
   SidebarContent,
@@ -11,9 +9,11 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "@/components/ui/react"
-import { sidebarContent } from "@/layouts/shell/sidebar-content"
-import { NavFooter } from "@/layouts/shell/nav-footer"
 import type { Locale } from "@/i18n/config"
+import { NavFooter } from "@/layouts/shell/nav-footer"
+import { NavLinks } from "@/layouts/shell/nav-links"
+import { NavSecondary } from "@/layouts/shell/nav-secondary"
+import { sidebarContent } from "@/layouts/shell/sidebar-content"
 
 export function AppSidebar({
   currentPath,

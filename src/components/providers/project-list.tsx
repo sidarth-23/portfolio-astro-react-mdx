@@ -3,8 +3,8 @@
 import { ProjectCard } from "@/components/features/projects/project-card"
 import { ItemListWithProvider } from "@/components/providers/listing-item-list"
 import type { Locale } from "@/i18n/config"
-import type { ListingSort } from "@/lib/api/listing-query"
 import type { ProjectListingItem, ListingResponse } from "@/lib/api/listing-api"
+import type { ListingSort } from "@/lib/api/listing-query"
 
 interface ProjectListWithProviderProps {
   locale: Locale

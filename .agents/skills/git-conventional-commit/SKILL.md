@@ -24,6 +24,13 @@ Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chor
 - Type must be lowercase, subject must not be empty
 - Use imperative mood ("add" not "added")
 - Scope is optional; derive from changed directory/module if obvious
+- Subject must describe the change, never mention file names
+- If multiple files or changes are present, summarize the overall intent across all of them
+
+## Subject guidelines
+- State what changed functionally (e.g., "add dark mode toggle", "handle null response")
+- Never include file names, paths, or file counts (e.g., avoid "update foo.ts", "fix files in src/")
+- For broad changes, capture the common theme (e.g., "reorder imports across components", "remove resume page and exports")
 
 ## Examples
 
@@ -36,6 +43,7 @@ Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chor
 1. Run `scripts/diff-context.sh` to read staged (or all unstaged) changes
 2. Analyze changes to pick type and scope
 3. Write header: `type(scope): concise description`
-4. Add body if changes need explanation (wrap lines at 100 chars)
-5. Add `BREAKING CHANGE:` footer or `!` after type/scope if applicable
-6. Commit with `git commit -m "type(scope): subject" -m "body"`
+4. Add body if changes need explanation; use clean, precise bullet points — one point per logical change
+5. Wrap body lines at 100 characters
+6. Add `BREAKING CHANGE:` footer or `!` after type/scope if applicable
+7. Commit with `git commit -m "type(scope): subject" -m "body"`

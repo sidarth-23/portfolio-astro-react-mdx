@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+
 import { getBlurBackdropForegroundClass } from "./blur-backdrop-image"
 
 describe("blur backdrop image", () => {

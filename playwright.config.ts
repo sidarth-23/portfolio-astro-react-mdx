@@ -32,7 +32,7 @@ export default defineConfig({
 
   webServer: {
     command:
-      'rm -f .wrangler/deploy/config.json && npx wrangler dev dist/server/entry.mjs --config dist/server/wrangler.json --port 4321' +
+      "rm -f .wrangler/deploy/config.json && npx wrangler dev dist/server/entry.mjs --config dist/server/wrangler.json --port 4321" +
       (process.env.SITE_URL ? ` --var SITE_URL:${process.env.SITE_URL}` : ""),
     url: "http://localhost:4321",
     timeout: 120 * 1000,

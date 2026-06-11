@@ -1,5 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
+
+import { getProfileExperienceByLocale } from "./queries"
+
 import type { CollectionEntry } from "astro:content"
+
 
 // Mock astro:content
 const mockGetCollection = vi.fn()
@@ -7,8 +11,6 @@ vi.mock("astro:content", () => ({
   getCollection: (...args: Parameters<typeof mockGetCollection>) =>
     mockGetCollection(...args),
 }))
-
-import { getProfileExperienceByLocale } from "./queries"
 
 function createMockExperienceEntries(
   locale: string,

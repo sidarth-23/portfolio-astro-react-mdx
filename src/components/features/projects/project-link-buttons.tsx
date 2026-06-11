@@ -1,8 +1,11 @@
-import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
-import type { z } from "astro/zod"
-import type { linkSchema } from "@/lib/schemas"
+import { HugeiconsIcon } from "@hugeicons/react"
+
 import { GitHubIcon } from "@/components/icon"
+import type { linkSchema } from "@/lib/schemas"
+
+import type { z } from "astro/zod"
+
 
 type Link = z.infer<typeof linkSchema>
 

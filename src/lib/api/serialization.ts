@@ -1,4 +1,5 @@
 import { getImage } from "astro:assets"
+
 import type { CollectionEntry } from "astro:content"
 
 export interface SerializedImage {

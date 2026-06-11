@@ -5,6 +5,7 @@ import reactRefresh from "eslint-plugin-react-refresh"
 import tseslint from "typescript-eslint"
 import checkFile from "eslint-plugin-check-file"
 import { defineConfig, globalIgnores } from "eslint/config"
+import importX from "eslint-plugin-import-x"
 
 export default defineConfig([
   globalIgnores(["dist", ".astro"]),
@@ -16,6 +17,37 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    plugins: { "import-x": importX },
+    rules: {
+      "import-x/first": "error",
+      "import-x/no-duplicates": "error",
+      "import-x/newline-after-import": "error",
+      "import-x/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            "parent",
+            "sibling",
+            "index",
+            "type",
+          ],
+          "newlines-between": "always",
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+          pathGroups: [
+            {
+              pattern: "@/**",
+              group: "internal",
+            },
+          ],
+        },
+      ],
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

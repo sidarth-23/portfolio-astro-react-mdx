@@ -3,13 +3,15 @@
 import { ItemListClient } from "@/components/features/listing/listing-item-list-client"
 import { QueryProvider } from "@/components/providers/query-provider"
 import type { Locale } from "@/i18n/config"
-import type { ComponentType } from "react"
-import type { ListingSort } from "@/lib/api/listing-query"
 import type {
   BlogListingItem,
   ProjectListingItem,
   ListingResponse,
 } from "@/lib/api/listing-api"
+import type { ListingSort } from "@/lib/api/listing-query"
+
+import type { ComponentType } from "react"
+
 
 interface ItemListWithProviderProps<
   T extends BlogListingItem | ProjectListingItem,

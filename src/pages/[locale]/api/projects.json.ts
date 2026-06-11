@@ -1,7 +1,8 @@
-import type { APIRoute } from "astro"
+import type { Locale } from "@/i18n/config"
 import { getProjectListing, getProjectFilters } from "@/lib/api/listing-api"
 import { parseListingRequest, toListingFilters } from "@/lib/api/listing-query"
-import type { Locale } from "@/i18n/config"
+
+import type { APIRoute } from "astro"
 
 export const prerender = false
 

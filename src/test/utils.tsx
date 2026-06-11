@@ -1,9 +1,12 @@
-import type { AstroComponentFactory } from "astro/runtime/server/index.js"
-import { experimental_AstroContainer as AstroContainer } from "astro/container"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { render as rtlRender } from "@testing-library/react"
-import type { ReactElement } from "react"
+import { experimental_AstroContainer as AstroContainer } from "astro/container"
+
+
 import { createQueryClient } from "@/lib/query-client"
+
+import type { AstroComponentFactory } from "astro/runtime/server/index.js"
+import type { ReactElement } from "react"
 
 export async function renderAstro(
   Component: AstroComponentFactory,

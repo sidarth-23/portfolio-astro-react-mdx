@@ -15,6 +15,7 @@ const { post, locale = "en" } = Astro.props
 const siteUrl = SITE_URL
 const seo = resolveContentSeo(post, "blog", locale, siteUrl)
 ---
+
 ---
 
 <ContentLayout seo={seo} headerTitle={post.data.title} locale={locale}>

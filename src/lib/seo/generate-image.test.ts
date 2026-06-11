@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+
 import { clampText, hasCoverImage, siteUrlToLabel } from "./generate-image"
 
 describe("clampText", () => {

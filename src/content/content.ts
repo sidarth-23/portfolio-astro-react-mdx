@@ -7,42 +7,51 @@ import type {
   SidebarProfileContent,
 } from "./content.types"
 
+export const RESUME_EXTERNAL_URL =
+  "https://docs.google.com/document/d/1Px7U82adaL04Ylcn3NQvDTSRUqXh3PAxydJPMch0oqU/edit?usp=sharing"
+
 export const globalLinks = [
   {
     id: "archive",
     title: "Archive",
     icon: "archive",
     href: () => "https://archive-portfolio.sidshub.in",
+    isExternal: true,
   },
   {
     id: "resume",
     title: "Resume",
-    icon: "downloadResume",
-    href: () => "/resume",
+    icon: "externalResume",
+    href: () => RESUME_EXTERNAL_URL,
+    isExternal: true,
   },
   {
     id: "github",
     title: "GitHub",
     icon: "github",
     href: () => "https://github.com/sidarth-23",
+    isExternal: true,
   },
   {
     id: "linkedin",
     title: "LinkedIn",
     icon: "linkedin",
     href: () => "https://linkedin.com/in/sidarth-g",
+    isExternal: true,
   },
   {
     id: "rss",
     title: "RSS",
     icon: "rss",
     href: (locale) => `/${locale}/rss.xml`,
+    isExternal: false,
   },
   {
     id: "email",
     title: "Email",
     icon: "email",
     href: () => "mailto:g.sidarth23@gmail.com",
+    isExternal: true,
   },
 ] as const satisfies readonly GlobalLink[]
 

@@ -1,4 +1,3 @@
-import type { ReactNode } from "react"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -6,6 +5,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/react"
+
+import type { ReactNode } from "react"
 
 export function NavSecondary({
   items,
@@ -15,6 +16,7 @@ export function NavSecondary({
     title: string
     url: string
     icon: ReactNode
+    isExternal: boolean
   }[]
   className?: string
 }) {
@@ -27,11 +29,9 @@ export function NavSecondary({
               <SidebarMenuButton asChild size="sm">
                 <a
                   href={item.url}
-                  target={item.url.startsWith("http") ? "_blank" : undefined}
+                  target={item.isExternal ? "_blank" : undefined}
                   rel={
-                    item.url.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
+                    item.isExternal ? "noopener noreferrer" : undefined
                   }
                 >
                   {item.icon}
