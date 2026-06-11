@@ -4,6 +4,7 @@ import { ItemListClient } from "@/components/features/listing/listing-item-list-
 import { QueryProvider } from "@/components/providers/query-provider"
 import type { Locale } from "@/i18n/config"
 import type { ComponentType } from "react"
+import type { ListingSort } from "@/lib/api/listing-query"
 import type {
   BlogListingItem,
   ProjectListingItem,
@@ -20,7 +21,7 @@ interface ItemListWithProviderProps<
   initialSearch: string
   initialTags: string[]
   initialCategories: string[]
-  initialSortBy: string | null
+  initialSortBy: ListingSort | null
   initialData?:
     | ListingResponse<BlogListingItem>
     | ListingResponse<ProjectListingItem>
@@ -29,7 +30,6 @@ interface ItemListWithProviderProps<
   CardComponent: ComponentType<{ item: T; locale: Locale }>
   getItemKey: (item: T) => string
 }
-
 export function ItemListWithProvider<
   T extends BlogListingItem | ProjectListingItem,
 >({

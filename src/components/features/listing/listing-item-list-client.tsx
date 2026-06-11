@@ -4,6 +4,8 @@ import { useCallback, useState, type ComponentType } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { SearchFilterBar } from "@/components/features/listing/listing-search-filter-bar"
 import { useListingQuery } from "@/hooks/use-listing-query"
+import { mergeListingFilters } from "@/lib/api/listing-query"
+import type { ListingSort } from "@/lib/api/listing-query"
 import { Skeleton } from "@/components/ui/react"
 import { Spinner } from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
@@ -22,7 +24,7 @@ interface ItemListClientProps<T extends BlogListingItem | ProjectListingItem> {
   initialSearch: string
   initialTags: string[]
   initialCategories: string[]
-  initialSortBy: string | null
+  initialSortBy: ListingSort | null
   initialData?:
     | ListingResponse<BlogListingItem>
     | ListingResponse<ProjectListingItem>
@@ -57,9 +59,7 @@ export function ItemListClient<T extends BlogListingItem | ProjectListingItem>({
   const [activeTags, setActiveTags] = useState<string[]>(initialTags)
   const [activeCategories, setActiveCategories] =
     useState<string[]>(initialCategories)
-  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title" | null>(
-    initialSortBy as "newest" | "oldest" | "title" | null
-  )
+  const [sortBy, setSortBy] = useState<ListingSort | null>(initialSortBy)
   const isInitialFilterState =
     search === initialSearch &&
     sortBy === initialSortBy &&
@@ -94,35 +94,24 @@ export function ItemListClient<T extends BlogListingItem | ProjectListingItem>({
       newSearch: string,
       newTags: string[],
       newCategories: string[],
-      newSortBy: string | null
+      newSortBy: ListingSort | null
     ) => {
       setSearch(newSearch)
       setActiveTags(newTags)
       setActiveCategories(newCategories)
-      setSortBy(newSortBy as "newest" | "oldest" | "title" | null)
+      setSortBy(newSortBy)
 
-      const url = new URL(window.location.href)
-      if (newSearch) {
-        url.searchParams.set("search", newSearch)
-      } else {
-        url.searchParams.delete("search")
-      }
-      if (newTags.length > 0) {
-        url.searchParams.set("tags", newTags.join(","))
-      } else {
-        url.searchParams.delete("tags")
-      }
-      if (newCategories.length > 0) {
-        url.searchParams.set("categories", newCategories.join(","))
-      } else {
-        url.searchParams.delete("categories")
-      }
-      if (newSortBy) {
-        url.searchParams.set("sort", newSortBy)
-      } else {
-        url.searchParams.delete("sort")
-      }
-      window.history.replaceState({}, "", url)
+      const mergedSearch = mergeListingFilters(window.location.search, {
+        search: newSearch,
+        tags: newTags,
+        categories: newCategories,
+        sort: newSortBy,
+      })
+      window.history.replaceState(
+        {},
+        "",
+        window.location.pathname + mergedSearch
+      )
     },
     []
   )

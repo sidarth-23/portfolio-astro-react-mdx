@@ -68,11 +68,13 @@ export interface ListingResponse<T> {
   page: number
 }
 
+import type { ListingSort } from "./listing-query"
+
 export interface ListingFilters {
   search?: string
   tags?: string[]
   categories?: string[]
-  sort?: "newest" | "oldest" | "title"
+  sort?: ListingSort
   page?: number
   limit?: number
 }
@@ -177,7 +179,7 @@ function applyFilters<
 
 function applySorting<T extends { date: string; title: string }>(
   items: T[],
-  sort?: "newest" | "oldest" | "title"
+  sort?: ListingSort
 ): T[] {
   if (!sort || sort === "newest") {
     return [...items].sort(

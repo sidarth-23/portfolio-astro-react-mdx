@@ -2,6 +2,8 @@
 
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useRef } from "react"
+import { serializeListingRequest } from "@/lib/api/listing-query"
+import type { ListingSort } from "@/lib/api/listing-query"
 import type {
   ListingResponse,
   BlogListingItem,
@@ -14,7 +16,7 @@ interface UseListingQueryOptions {
   search?: string
   tags?: string[]
   categories?: string[]
-  sort?: "newest" | "oldest" | "title" | null
+  sort?: ListingSort | null
   initialData?:
     | ListingResponse<BlogListingItem>
     | ListingResponse<ProjectListingItem>
@@ -45,16 +47,16 @@ export function useListingQuery<
       limit,
     ],
     queryFn: async ({ pageParam = 1 }) => {
-      const url = new URL(endpoint, window.location.origin)
-      url.searchParams.set("page", String(pageParam))
-      url.searchParams.set("limit", String(limit))
-      if (search) url.searchParams.set("search", search)
-      if (tags?.length) url.searchParams.set("tags", tags.join(","))
-      if (categories?.length)
-        url.searchParams.set("categories", categories.join(","))
-      if (sort) url.searchParams.set("sort", sort)
-
-      const response = await fetch(url.toString())
+      const page = typeof pageParam === "number" ? pageParam : 1
+      const queryString = serializeListingRequest({
+        search: search ?? "",
+        tags: tags ?? [],
+        categories: categories ?? [],
+        sort: sort ?? null,
+        page,
+        limit,
+      })
+      const response = await fetch(`${endpoint}?${queryString}`)
       if (!response.ok) {
         throw new Error(`Failed to fetch: ${response.status}`)
       }
@@ -131,16 +133,16 @@ export function usePrefetchListing(options: UseListingQueryOptions) {
         limit,
       ],
       queryFn: async ({ pageParam = 1 }) => {
-        const url = new URL(endpoint, window.location.origin)
-        url.searchParams.set("page", String(pageParam))
-        url.searchParams.set("limit", String(limit))
-        if (search) url.searchParams.set("search", search)
-        if (tags?.length) url.searchParams.set("tags", tags.join(","))
-        if (categories?.length)
-          url.searchParams.set("categories", categories.join(","))
-        if (sort) url.searchParams.set("sort", sort)
-
-        const response = await fetch(url.toString())
+        const page = typeof pageParam === "number" ? pageParam : 1
+        const queryString = serializeListingRequest({
+          search: search ?? "",
+          tags: tags ?? [],
+          categories: categories ?? [],
+          sort: sort ?? null,
+          page,
+          limit,
+        })
+        const response = await fetch(`${endpoint}?${queryString}`)
         if (!response.ok) {
           throw new Error(`Failed to fetch: ${response.status}`)
         }

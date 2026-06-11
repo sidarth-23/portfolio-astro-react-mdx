@@ -1,35 +1,20 @@
 import type { APIRoute } from "astro"
 import { getProjectListing, getProjectFilters } from "@/lib/api/listing-api"
+import { parseListingRequest, toListingFilters } from "@/lib/api/listing-query"
 import type { Locale } from "@/i18n/config"
 
 export const prerender = false
 
 export const GET: APIRoute = async ({ url, params }) => {
   const locale = (params.locale as Locale) || "en"
-
-  const search = url.searchParams.get("search") || undefined
-  const tagsParam = url.searchParams.get("tags")
-  const categoriesParam = url.searchParams.get("categories")
-  const sort = url.searchParams.get("sort") as
-    | "newest"
-    | "oldest"
-    | "title"
-    | undefined
-  const page = parseInt(url.searchParams.get("page") || "1", 10)
-  const limit = parseInt(url.searchParams.get("limit") || "12", 10)
-
-  const tags = tagsParam ? tagsParam.split(",") : undefined
-  const categories = categoriesParam ? categoriesParam.split(",") : undefined
+  const query = parseListingRequest(url.searchParams)
 
   try {
     const [listing, filters] = await Promise.all([
       getProjectListing(locale, {
-        search,
-        tags,
-        categories,
-        sort,
-        page,
-        limit,
+        ...toListingFilters(query),
+        page: query.page,
+        limit: query.limit,
       }),
       getProjectFilters(locale),
     ])

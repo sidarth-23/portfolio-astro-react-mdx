@@ -21,6 +21,7 @@ import {
   SheetFooter,
 } from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
+import type { ListingSort } from "@/lib/api/listing-query"
 import { t } from "@/i18n/ui"
 
 interface SearchFilterBarProps {
@@ -30,12 +31,12 @@ interface SearchFilterBarProps {
   initialSearch: string
   initialTags: string[]
   initialCategories: string[]
-  initialSortBy: string | null
+  initialSortBy: ListingSort | null
   onFiltersChange: (
     search: string,
     tags: string[],
     categories: string[],
-    sortBy: string | null
+    sortBy: ListingSort | null
   ) => void
 }
 
@@ -59,7 +60,7 @@ export function SearchFilterBar({
   const [activeTags, setActiveTags] = useState<string[]>(initialTags)
   const [activeCategories, setActiveCategories] =
     useState<string[]>(initialCategories)
-  const [sortBy, setSortBy] = useState<string | null>(initialSortBy)
+  const [sortBy, setSortBy] = useState<ListingSort | null>(initialSortBy)
   const [sheetOpen, setSheetOpen] = useState(false)
 
   // Debounce search input
@@ -85,8 +86,7 @@ export function SearchFilterBar({
         : [...current, category]
     )
   }, [])
-
-  const handleSortToggle = useCallback((value: string) => {
+  const handleSortToggle = useCallback((value: ListingSort) => {
     setSortBy((current) => (current === value ? null : value))
   }, [])
 

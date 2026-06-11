@@ -4,6 +4,10 @@ export const prerender = false
 import ContentLayout from "@/layouts/content/content-layout.astro"
 import { ProjectListWithProvider } from "@/components/providers/project-list"
 import { getProjectListing, getProjectFilters } from "@/lib/api/listing-api"
+import {
+  parseListingFilters,
+  toListingFilters,
+} from "@/lib/api/listing-query"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import { resolvePageSeo } from "@/lib/seo/resolve"
@@ -11,26 +15,11 @@ import { getPageSeo } from "@/lib/seo/pages"
 import { SITE_URL } from "astro:env/server"
 
 const { locale } = Astro.params as { locale: Locale }
-const url = Astro.url
-
-const search = url.searchParams.get("search") ?? ""
-const tagsParam = url.searchParams.get("tags")
-const categoriesParam = url.searchParams.get("categories")
-const sort = url.searchParams.get("sort")
-
-const tags = tagsParam ? tagsParam.split(",") : []
-const categories = categoriesParam ? categoriesParam.split(",") : []
-const sortMode =
-  sort && ["newest", "oldest", "title"].includes(sort)
-    ? (sort as "newest" | "oldest" | "title")
-    : null
+const filters = parseListingFilters(Astro.url.searchParams)
 
 const [initialData, availableFilters] = await Promise.all([
   getProjectListing(locale, {
-    search: search || undefined,
-    tags: tags.length > 0 ? tags : undefined,
-    categories: categories.length > 0 ? categories : undefined,
-    sort: sortMode || undefined,
+    ...toListingFilters(filters),
     page: 1,
     limit: 12,
   }),
@@ -61,10 +50,10 @@ const seo = resolvePageSeo(
     locale={locale}
     tags={availableFilters.tags}
     categories={availableFilters.categories}
-    initialSearch={search}
-    initialTags={tags}
-    initialCategories={categories}
-    initialSortBy={sortMode}
+    initialSearch={filters.search}
+    initialTags={filters.tags}
+    initialCategories={filters.categories}
+    initialSortBy={filters.sort}
     initialData={initialData}
   />
 </ContentLayout>
