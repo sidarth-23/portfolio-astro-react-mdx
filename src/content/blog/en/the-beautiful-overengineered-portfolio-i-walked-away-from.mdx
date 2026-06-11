@@ -1,0 +1,274 @@
+---
+title: 'The Beautiful, Over-Engineered Portfolio I Walked Away From'
+description: >-
+  I once turned a simple portfolio into a self-hosted Bun + Turbo monorepo with
+  a custom Payload CMS, on-demand icon resolution, sharp image pipelines, gzip
+  at the edge, OG-image generators, and publish-triggered deploys. It was
+  genuinely beautiful engineering. It also didn't suit me. This is the full
+  story - the architecture, the war stories, and why I tore it down to write
+  Markdown in my editor instead.
+date: 2026-06-11T00:00:00.000Z
+draft: false
+coverImage: >-
+  ../../../assets/images/blog/the-beautiful-overengineered-portfolio-i-walked-away-from/cover.png
+tags:
+  - payloadcms
+  - astro
+  - monorepo
+  - self-hosting
+  - solo-dev
+category: Engineering Journeys
+locale: en
+seo:
+  title: 'The Over-Engineered Portfolio I Walked Away From'
+  description: >-
+    Building a self-hosted Payload CMS + Astro monorepo for my portfolio - the
+    architecture, the performance war stories, and why I walked away.
+---
+
+import ImageGallery from '../../../components/mdx/image-gallery.astro'
+import archiveHome from '../../../assets/images/blog/the-beautiful-overengineered-portfolio-i-walked-away-from/archive-home.png'
+import archiveBlog from '../../../assets/images/blog/the-beautiful-overengineered-portfolio-i-walked-away-from/archive-blog-list.png'
+import archiveProjects from '../../../assets/images/blog/the-beautiful-overengineered-portfolio-i-walked-away-from/archive-projects.png'
+import archivePost from '../../../assets/images/blog/the-beautiful-overengineered-portfolio-i-walked-away-from/archive-post.png'
+
+## A confession before we begin
+
+The site you're reading this on is almost embarrassingly simple. I write Markdown in my editor, sprinkle in a JSX component when I want one, and ship. No database, no admin login, no dashboard.
+
+That's not where I started. It's where I _ended up_ - after building something far more ambitious, falling in love with the engineering, and then quietly walking away. This is the story of the previous portfolio, [`portfolio-astro-cms`](https://github.com/sidarth-23/portfolio-astro-cms), still live as a museum piece at [archive-portfolio.sidshub.in](https://archive-portfolio.sidshub.in).
+
+I want to tell it as a project, not a eulogy - so the story and the technical details are braided together. The architecture _is_ the narrative.
+
+<ImageGallery
+  images={[archiveHome, archiveBlog, archiveProjects, archivePost]}
+  title="The archived portfolio - home, blog, projects, and a post with its table of contents"
+/>
+
+---
+
+## Where it started: a deliberate choice of Astro
+
+I wanted a real home to blog from. Not a Notion page, not a dev.to profile - _my_ place, owned end to end. And I had an opinion about how it should be built: **HTML first, JavaScript last.** Ship markup, let the browser do what it's good at, and only reach for client JS when there's no other way.
+
+That philosophy is exactly why I picked **Astro**, and at first I leaned even harder into it with **DaisyUI** - a near-HTML-only way to get styled components without writing much CSS or shipping a component runtime. On paper it was the purist's stack.
+
+In practice, I learned something about myself. I'm a **software architect, not a product or UI/UX architect.** Give me a system to design and I'm happy for days; ask me to design an interface from the bare base - spacing, hierarchy, the hundred small visual decisions - and it took _far_ more time than the engineering ever did. The HTML-first instinct was sound. But the part I'd under-budgeted wasn't the tech; it was the design labour the tech politely handed back to me.
+
+That tension - great engineering, expensive everything-else - turns out to be the whole story in miniature.
+
+## The joyful over-engineering
+
+I forked [Astrofy](https://github.com/manuelernestog/astrofy), dropped in a Payload CMS, and called it a day. That lasted about a week. Because once you can edit content in a CMS, you start wondering what _else_ you can do - and the sensible project quietly became a labour of love: a **Bun + Turbo monorepo** with a frankly indulgent amount of structure.
+
+```
+apps/
+  web/                       # Astro 5 frontend (SSG)
+  cms/                       # Payload CMS on Next.js
+packages/
+  cms-core/                  # collections, fields, hooks, blocks, globals
+  cms-lib-editor/            # shared Lexical editor integration
+  cms-lib-icons/             # icon picker field + on-demand SVG resolution
+  cms-feature-emoji/         # Lexical emoji shortcodes
+  cms-feature-footnotes/     # Lexical footnotes
+  cms-feature-markdown-paste/# paste Markdown straight into the editor
+  cms-plugin-og-image/       # auto-generate social cards
+  cms-plugin-deployment-log-view/ # watch deploys from the dashboard
+  dev-config/                # shared ESLint / tsdown configs
+```
+
+Every one of those exists because I _wanted_ it to. And a lot of it was genuinely lovely engineering.
+
+### Auto-populating content on read
+
+I didn't want to hand-wire author details into every post. A Payload `afterRead` hook hydrated them automatically:
+
+```ts
+export const populateAuthors: CollectionAfterReadHook = async ({ doc, req: { payload } }) => {
+  const authors = Array.isArray(doc?.authors) ? doc.authors : []
+  if (!authors.length) return doc
+
+  const populatedAuthors = []
+  for (const author of authors) {
+    const authorDoc =
+      typeof author === "object" && author !== null
+        ? author
+        : await payload.findByID({ collection: "users", id: author, depth: 1 })
+    if (!authorDoc) continue
+    populatedAuthors.push({ id: String(authorDoc.id), name: authorDoc.name, bio: authorDoc.bio })
+  }
+  return { ...doc, populatedAuthors }
+}
+```
+
+### Social cards that wired themselves in
+
+An OG-image plugin **detected which collections had SEO fields** and attached a generator and a live social-card preview to each - no per-collection config, it inspected the running config:
+
+```ts
+export function ogImagePlugin(options: OgImagePluginOptions): Plugin {
+  return (incomingConfig: Config): Config => {
+    const seoCollections = detectSeoCollections(incomingConfig) // seoPlugin must run first
+    const seoGlobals = detectSeoGlobals(incomingConfig)
+    validateSeoPluginPresence(seoCollections, seoGlobals)
+    // ...inject a "Social Card Preview" UI field + the generate-OG endpoint, automatically.
+  }
+}
+```
+
+### The icon picker that refused to bloat the bundle
+
+This one I'm still proud of. I wanted an icon field in the CMS that could draw from **multiple icon packages**, render a real preview in the admin UI, and surface the chosen icon on the public site - _without_ shipping an entire icon library to the browser. Bundling all of Simple Icons or Phosphor into the client would have been a multi-megabyte own-goal.
+
+The trick: the field stores nothing but a tiny string - `"si:github"`, `"ph:house"` - a `prefix:key` pair. Providers are just entries in an array, so adding a package is adding a line, not a special case. And the SVG is resolved **only when something actually needs it**, then handed over as a data URI - never as a bundled dependency.
+
+```ts
+// The field is just text - the heavy lifting lives in a custom admin component
+export const iconPickerField = ({ name = "icon", label = "Icon" } = {}): Field => ({
+  name,
+  label,
+  type: "text",
+  admin: { components: { Field: "@sidshub/cms-lib-icons/ui#IconPickerField" } },
+})
+
+// Multiple packages behind one picker - add a provider, not a branch
+export const PROVIDERS: IconProvider[] = [simpleIconsProvider, phosphorProvider]
+
+// "si:github" → SVG, resolved on demand and emitted as a data URI
+export function resolveIconSvg(iconValue: string): ResolvedIcon | null {
+  const parsed = parseIconValue(iconValue) // { provider, key } | null
+  if (!parsed) return null
+  const data = parsed.provider.resolve(parsed.key)
+  return data ? { ...data, source: parsed.provider.source } : null
+}
+```
+
+Store the name, resolve the image, keep the package out of the bundle. A small thing that took a surprising amount of care to get right.
+
+## Wrestling the build into shape
+
+Then came the part nobody puts on a portfolio: making it actually fast and actually deployable - on a humble Hetzner **CX23** VPS.
+
+### Bundles were too big → gzip at the edge
+
+The bundles were heavier than I liked. Rather than chase every byte in app code, I put **nginx in front** with compression turned on - and got the transferred size down by roughly **80%** for the text assets, while caching Astro's content-hashed output forever:
+
+```nginx
+gzip on;
+gzip_comp_level 6;
+gzip_min_length 1024;
+gzip_types text/css application/javascript application/json image/svg+xml;
+
+# Astro content-hashes everything under /_astro/ - safe to cache permanently
+location /_astro/ {
+  proxy_pass http://astro-web:4321;
+  add_header Cache-Control "public, max-age=31536000, immutable";
+  expires 1y;
+}
+```
+
+### MinIO for storage, but a CDN was never my cup of tea → sharp
+
+For media I ran **MinIO** (S3-compatible) on the box. A full CDN, though, was never my cup of tea - more vendor, more config, more surface for a one-person blog. So instead of pushing bytes to someone else's edge, I shrank them at the source: Payload runs **sharp** on every upload, and I leaned on it hard, generating a ladder of WebP sizes and capping the original. The output dropped by _massive_ amounts - megabytes per image:
+
+```ts
+export const Media: CollectionConfig = {
+  slug: "media",
+  upload: {
+    imageSizes: [
+      { name: "large",     width: 1200,             formatOptions: { format: "webp", options: { quality: 82 } } },
+      { name: "medium",    width: 768,              formatOptions: { format: "webp", options: { quality: 80 } } },
+      { name: "card",      width: 480, height: 320, fit: "cover", formatOptions: { format: "webp", options: { quality: 78 } } },
+      { name: "thumbnail", width: 200, height: 200, fit: "cover", formatOptions: { format: "webp", options: { quality: 75 } } },
+    ],
+    resizeOptions: { width: 2400, fit: "inside" }, // never store anything enormous
+  },
+}
+```
+
+Compress at upload, serve WebP, cache hard at nginx - that combination did the work a CDN would have, without the CDN.
+
+### Publishing should just deploy → a webhook with guardrails
+
+Content publishing fired an `afterChange` hook that triggered a rebuild - but only for genuinely public changes. It read the draft/publish workflow dynamically rather than hardcoding collection names:
+
+```ts
+export function createCollectionRedeployHook(triggerDeploy, triggerRefresh): CollectionAfterChangeHook {
+  return async ({ doc, previousDoc, collection, req }) => {
+    if (SKIP_COLLECTIONS.has(collection.slug)) return doc
+
+    const hasDrafts = Boolean(collection.versions?.drafts)
+    if (hasDrafts) {
+      if (doc?._status !== "published" && previousDoc?._status !== "published") return doc
+    }
+    await triggerDeploy(req.payload.logger, { collection: collection.slug, id: doc?.id })
+    await triggerRefresh(req.payload.logger, { collection: collection.slug, id: doc?.id })
+    return doc
+  }
+}
+```
+
+…with a cooldown so a burst of edits couldn't hammer the poor VPS:
+
+```ts
+const COOLDOWN_MS = 60_000
+return async (logger, meta) => {
+  if (Date.now() - lastTriggerAt < COOLDOWN_MS) {
+    logger.info({ message: "Skipping deployment trigger - within cooldown window", ...meta })
+    return
+  }
+  // POST to the deploy webhook...
+}
+```
+
+### The CX23 couldn't build everything → a security-shaped compromise
+
+And then reality: **a CX23 cannot comfortably build the whole application.** Compiling the Astro app under load was painful. I needed to move _some_ of the build off the box - but the repo was **public**, and there was an active GitHub Actions exploit doing the rounds at the time. I did not want build secrets anywhere near public CI or a published image.
+
+So I split the build along the line of _who needs secrets_:
+
+| App | How it's built | Why |
+| --- | --- | --- |
+| **CMS** | GitHub Actions → GHCR image | No secrets at build time - safe to publish publicly |
+| **Web** | `docker compose build` _on the server_ | Build needs the CMS read token - so it never leaves the box |
+
+The Astro site is static: it fetches everything from the live CMS API at build time and bakes it into HTML. That step needs a read token - so building the web app **on the deployment server** meant the token was used only there and **never stored in any registry image**. CI built only the secret-free CMS image, and it stayed path-aware so I wasn't rebuilding the world on every push:
+
+```yaml
+- uses: dorny/paths-filter@v3
+  with:
+    filters: |
+      cms:
+        - "apps/cms/**"
+        - "packages/cms-*/**"
+```
+
+The final flow: **CI checks → CMS image to GHCR → web built on the server with live content.** It worked. It was also, in hindsight, a remarkable amount of machinery for one person's blog.
+
+## The honest reckoning
+
+So why tear down something this carefully built? Because for a solo developer, the return on investment simply wasn't there. Plainly:
+
+1. **The machinery cost more than the writing.** Maintaining the system that turned editor JSON into HTML - and extending it with my own elements - took more time than _creating content_. The tool was eating the work it existed to support.
+
+2. **Just developing meant running a DevOps pipeline.** Across multiple machines, _starting_ to write required standing up containers, the CMS, MongoDB, and MinIO first. The barrier to "let me jot something down" kept rising.
+
+3. **My ambition outran my maintenance budget.** The features I wanted to add grew faster than one person could keep alive.
+
+4. **The dream didn't match how I work.** The whole point was to log in from _any device_ and blog. But I think best on a big screen where I can see the whole piece - the "write from anywhere" fantasy was never going to fit me.
+
+5. **I'd mis-cast my own role.** I'm a software architect, not a UI/UX architect. The HTML-first, design-it-from-the-base approach was philosophically right and personally expensive - I spent my scarcest hours on the work I'm slowest at.
+
+6. **The simple thing was just more beautiful.** Opening my editor, writing Markdown, dropping in a JSX component when I need one - the friction vanished and the joy came back.
+
+## Where I landed
+
+So here we are. No CMS, no webhook choreography, no VPS straining under a build - just content files in a repo and a static build. This post is an `.mdx` file I wrote in my editor, and that's the entire pipeline.
+
+I don't regret the old one for a second. I learned monorepo tooling, Payload internals, Lexical, on-demand asset resolution, image pipelines, edge caching, and the real security trade-offs of public CI. The archived site still stands as proof it was real, and that it worked.
+
+But "it works" and "it suits me" are different questions. The over-engineered version answered the first beautifully and the second not at all.
+
+If you're tempted to build the elaborate thing - build it. It's a wonderful way to learn. Just keep asking, honestly, whether the system is serving the work or quietly replacing it.
+
+Oh boi, was it beautiful. But it didn't suit me. And that's the whole point: everyone's requirements are different - the trick is being honest about your own.

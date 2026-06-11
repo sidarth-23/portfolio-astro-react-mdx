@@ -1,38 +1,127 @@
+import { readdirSync } from "node:fs"
+import { join } from "node:path"
+
 import { test, expect } from "./test"
+
+import type { Page } from "@playwright/test"
 
 const siteUrl = process.env.SITE_URL
 if (!siteUrl) throw new Error("SITE_URL is required for SEO e2e tests")
 
+const locales = ["en", "es", "fr"] as const
+
+function collectMdxSlugs(directory: string, prefix = ""): string[] {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const nextPrefix = prefix ? `${prefix}/${entry.name}` : entry.name
+
+    if (entry.isDirectory()) {
+      return collectMdxSlugs(join(directory, entry.name), nextPrefix)
+    }
+
+    if (!entry.isFile() || !entry.name.endsWith(".mdx")) {
+      return []
+    }
+
+    return [nextPrefix.slice(0, -4)]
+  })
+}
+
+async function expectSeoTags(
+  page: Page,
+  pathname: string,
+  locale: string,
+  ogType: "article" | "website"
+) {
+  const canonical = new URL(pathname, siteUrl).toString()
+
+  expect(await page.title()).toBeTruthy()
+  expect(
+    await page.locator('meta[name="description"]').getAttribute("content")
+  ).toBeTruthy()
+  expect(
+    await page.locator('meta[property="og:title"]').getAttribute("content")
+  ).toBeTruthy()
+  expect(
+    await page
+      .locator('meta[property="og:description"]')
+      .getAttribute("content")
+  ).toBeTruthy()
+  expect(
+    await page.locator('meta[property="og:type"]').getAttribute("content")
+  ).toBe(ogType)
+  expect(
+    await page.locator('meta[property="og:url"]').getAttribute("content")
+  ).toBe(canonical)
+  expect(
+    await page.locator('meta[property="og:locale"]').getAttribute("content")
+  ).toBe(locale)
+  expect(
+    await page.locator('meta[property="og:image"]').getAttribute("content")
+  ).toBeTruthy()
+  expect(
+    await page.locator('meta[name="twitter:title"]').getAttribute("content")
+  ).toBeTruthy()
+  expect(
+    await page
+      .locator('meta[name="twitter:description"]')
+      .getAttribute("content")
+  ).toBeTruthy()
+  expect(
+    await page.locator('meta[name="twitter:image"]').getAttribute("content")
+  ).toBeTruthy()
+  expect(await page.locator('link[rel="canonical"]').getAttribute("href")).toBe(
+    canonical
+  )
+}
+
 test.describe("SEO meta tags", () => {
-  test("/en emits canonical, og:url, and og:image with siteUrl", async ({
+  test("root redirects to localized home with SEO tags intact", async ({
     page,
   }) => {
-    await page.goto("/en")
-    const canonical = await page
-      .locator('link[rel="canonical"]')
-      .getAttribute("href")
-    expect(canonical).toBe(`${siteUrl}/en`)
-    const ogUrl = await page
-      .locator('meta[property="og:url"]')
-      .getAttribute("content")
-    expect(ogUrl).toBe(`${siteUrl}/en`)
-    const ogImage = await page
-      .locator('meta[property="og:image"]')
-      .getAttribute("content")
-    expect(ogImage).toBe(`${siteUrl}/og/og-home-en.png`)
+    await page.goto("/")
+    await page.waitForURL("/en")
+    await expectSeoTags(page, "/en", "en", "website")
   })
 
-  test("/en/blog emits canonical and og:url with siteUrl", async ({ page }) => {
-    await page.goto("/en/blog")
-    const canonical = await page
-      .locator('link[rel="canonical"]')
-      .getAttribute("href")
-    expect(canonical).toBe(`${siteUrl}/en/blog`)
-    const ogUrl = await page
-      .locator('meta[property="og:url"]')
-      .getAttribute("content")
-    expect(ogUrl).toBe(`${siteUrl}/en/blog`)
-  })
+  for (const locale of locales) {
+    for (const pathname of ["", "/profile", "/blog", "/projects"] as const) {
+      test(`/${locale}${pathname || ""} emits required SEO tags`, async ({
+        page,
+      }) => {
+        const route = `/${locale}${pathname}`
+        await page.goto(route)
+        await expectSeoTags(page, route, locale, "website")
+      })
+    }
+
+    const blogDir = join(process.cwd(), "src", "content", "blog", locale)
+    for (const slug of collectMdxSlugs(blogDir)) {
+      test(`/${locale}/blog/${slug} emits required SEO tags`, async ({
+        page,
+      }) => {
+        const route = `/${locale}/blog/${slug}`
+        await page.goto(route)
+        await expectSeoTags(page, route, locale, "article")
+      })
+    }
+
+    const projectsDir = join(
+      process.cwd(),
+      "src",
+      "content",
+      "projects",
+      locale
+    )
+    for (const slug of collectMdxSlugs(projectsDir)) {
+      test(`/${locale}/projects/${slug} emits required SEO tags`, async ({
+        page,
+      }) => {
+        const route = `/${locale}/projects/${slug}`
+        await page.goto(route)
+        await expectSeoTags(page, route, locale, "website")
+      })
+    }
+  }
 
   test("/en/rss.xml responds 200 and contains blog post links with siteUrl", async ({
     request,

@@ -101,17 +101,17 @@ export const sidebarNavigationContent = [
 export const pageSeo = {
   home: {
     en: {
-      title: "Sidarth G",
+      title: "Home",
       description:
         "Sid's portfolio — thoughts on engineering, design, and building things.",
     },
     es: {
-      title: "Sidarth G",
+      title: "Home",
       description:
         "Portafolio de Sid — reflexiones sobre ingeniería, diseño y construcción de cosas.",
     },
     fr: {
-      title: "Sidarth G",
+      title: "Home",
       description:
         "Portfolio de Sid — réflexions sur l'ingénierie, le design, et la construction de choses.",
     },
