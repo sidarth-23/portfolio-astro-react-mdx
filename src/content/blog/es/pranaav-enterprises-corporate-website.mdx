@@ -1,10 +1,11 @@
 ---
-title: Shipping a Production Portfolio Site for a 25-Year-Old Civil Business
+title: Lanzar un sitio de portafolio en producción para una empresa civil de 25 años
 description: >-
-  What it takes to build a real client site — not a demo, not a tutorial project
-  — for a business that actually needs it
+  Cómo un brief real se convirtió en un sitio de tres páginas con Next.js — y
+  qué me enseñó el trabajo con un contratista civil sobre entregar software para
+  negocios, no para métricas.
 date: 2026-04-26T07:20:29.000Z
-updatedDate: 2026-05-01T08:04:07.000Z
+updatedDate: 2026-06-11T21:55:00.000Z
 coverImage: >-
   ../../../assets/images/blog/pranaav-enterprises-corporate-website/cover.png
 featured: true
@@ -13,13 +14,15 @@ links:
     url: 'https://pranaavgroups.com/'
 tags:
   - nextjs
+  - vercel
+  - client-work
 category: Website
 locale: es
 seo:
-  title: Shipping a Production Portfolio Site for a 25-Year-Old Civi…
+  title: Sitio en producción para una empresa civil de 25 años
   description: >-
-    What it takes to build a real client site — not a demo, not a tutorial
-    project — for a business that actually needs it
+    Cómo un brief real se convirtió en un sitio de tres páginas con Next.js y
+    qué aprendí trabajando con un contratista civil sobre entregar para negocios.
 ---
 import ImageGallery from "@/components/mdx/image-gallery.astro"
 import gallery1 from "@/assets/images/blog/pranaav-enterprises-corporate-website/gallery-1.png"
@@ -28,66 +31,63 @@ import gallery3 from "@/assets/images/blog/pranaav-enterprises-corporate-website
 import gallery4 from "@/assets/images/blog/pranaav-enterprises-corporate-website/gallery-4.png"
 import gallery5 from "@/assets/images/blog/pranaav-enterprises-corporate-website/gallery-5.png"
 
-Most side projects live on GitHub and never get used. This one is different.  
-   
-**Pranaav Enterprises** is a civil construction services company based in Bangalore, operating since 2000 — 25 years in the industry, with clients like Larsen & Toubro, Prestige Group, and Shapoorji Pallonji on their roster. They needed a web presence that matched that credibility. Something that could be handed to a potential enterprise client as a first impression, with a link and a WhatsApp message.  
-   
-That was the brief. Here’s how I built it.
+La mayoría de los proyectos personales viven en GitHub y nunca se usan. Este es diferente.
+
+**Pranaav Enterprises** es una empresa de servicios de construcción civil en Bangalore, operando desde el año 2000 — 25 años en la industria, con clientes como Larsen & Toubro, Prestige Group y Shapoorji Pallonji. Tenían la trayectoria, pero no una presencia web a la altura. El brief era simple: darle a la empresa una cara creíble en línea, algo que un gerente de proyecto pudiera abrir en el teléfono y reenviar por WhatsApp.
+
+Este post cuenta cómo ese brief se convirtió en un sitio en producción — y qué me enseñó el flujo con el cliente sobre entregar software para personas a las que no les importa tu stack.
 
 ---
 
-## The Real-World Brief
+## La primera conversación
 
-Civil contractors live and die by trust. When a project manager at a tier-1 firm gets a call from a subcontractor, the first thing they do is Google the name. What they find — or don’t find — shapes the conversation.  
-   
-Pranaav Enterprises had 25 years of work and a portfolio of serious clients, but no web presence to show for it. The goal was simple: **give the business a face online** that communicates scale, reliability, and the range of services they offer — fast.  
-   
-This wasn’t a UI experiment or a tech exploration. It was a production deliverable. That changes how you make decisions.
+El dueño no pidió un “sitio web”. Pidió algo que pudiera enviar a prospectos sin dar vergüenza. Esa es una necesidad muy distinta.
 
----
+En el mercado de contratación civil en India, la confianza se mueve rápido e informalmente. Un oficial de compras recibe una referencia, busca el nombre en Google y forma una primera impresión en segundos. Si el resultado es un perfil vacío de LinkedIn o un listado a medio hacer, la conversación se frena. Si es un sitio limpio y apto para móviles que explique servicios y muestre clientes serios, la conversación sigue.
 
-## The Stack
-
-- **Framework:** Next.js (App Router)
-- **Styling:** Tailwind CSS
-- **Deployment:** Vercel
-- **Language:** TypeScript
-- **Images:** Next.js `<Image />` with Vercel’s image CDN
-
-Next.js was the right call here for a few reasons. The client needed something that could be handed off and maintained without me being in the loop for every content update. Next.js is well-documented, widely understood, and the Vercel deploy pipeline is genuinely zero-config. The `next/image` component handled all the heavy lifting for image optimisation — critical for a site loaded with service photos and client logos.
+Ese se convirtió en el objetivo real: **reducir la fricción en una conversación por referido.** No un manifesto de marca. No una plataforma con CMS. Solo un enlace que cierre la brecha de credibilidad antes de la primera llamada.
 
 ---
 
-## Pages & Structure
+## Elegir el stack para la entrega
 
-The site is three pages, deliberately lean:  
-   
-**Home (****`/`****)** — The full story in one scroll. Hero with the 25-year milestone headline, a services image carousel, the client logo wall, and a detailed tabbed services section. Ends with a WhatsApp CTA.  
-   
-**Our Clients (****`/customers`****)** — A dedicated page for the client portfolio. When you’re pitching to enterprise procurement teams, having L&T and Shapoorji Pallonji logos on their own page — not buried in a scroll — matters.  
-   
-**Contact Us (****`/contact-us`****)** — Three phone numbers, a Gmail address, a Bangalore office address with a Google Maps link, and the WhatsApp button again. Every contact path a site visitor might want.
+Elegí **Next.js App Router**, **Tailwind CSS**, **TypeScript** y **Vercel**. Esto es lo que cada uno aportó para este proyecto:
 
----
+- **Next.js** es lo suficientemente común como para que cualquier desarrollador futuro lo entienda sin aprender una configuración extraña.
+- **App Router** mantiene las páginas como archivos con rutas claras — `/`, `/customers`, `/contact-us` — lo que hace que la entrega y el mantenimiento sean obvios.
+- **Tailwind** me permitió avanzar rápido sin pelear con estilos de componentes, algo importante cuando el cliente iteraba copia y diseño por notas de voz de WhatsApp.
+- **`next/image` + la CDN de Vercel** se encargaron de la optimización de fotos de servicios y logos de clientes, así que no tuve que construir un pipeline de imágenes aparte.
+- **Vercel** significó deploys simples con git push. Cuando el cliente dijo “el número de teléfono está mal”, el cambio estuvo en línea en menos de un minuto.
 
-## The Services
-
-Pranaav Enterprises covers a wide range of civil work — more than most people expect from a single contractor. Getting all of this legibly onto a homepage without it feeling like a laundry list was one of the main design challenges:
-
-- **Water Supply** — 24/7 water delivery for residences, high-rises, and commercial sites
-- **Excavation** — Full-service precision excavation for construction projects
-- **Demolition** — Site clearance for new builds and condemned structures
-- **Debris Cleaning** — Track-mounted excavator work, urgent cleanups, site restoration
-- **JCB and Machines** — Equipment hire with skilled operators for excavation and heavy lifting
-- **Ambulance Service** — Fleet supply to hospitals and organisations
-- **Asphalting** — Road construction, resurfacing, base work
-- **Layout Development** — End-to-end site development including planning, asphalting, and electrification The solution was a tabbed interface on the homepage — each service gets its own tab with an image and a proper description. Users can explore what’s relevant to them without the page becoming a wall of text.
+¿Se podría haber hecho en Astro, SvelteKit o HTML plano? Sí. La elección del stack fue por mantenibilidad y velocidad de iteración, no por novedad.
 
 ---
 
-## The Client Wall
+## La estructura del sitio
 
-This was non-negotiable as a feature. The roster Pranaav Enterprises has built over 25 years speaks for itself:
+Lo mantuve en tres páginas a propósito. Menos páginas significan menos decisiones para el visitante y menos cosas que mantener para el cliente.
+
+**Inicio (`/`)** — La historia completa en un scroll: el hito de 25 años, una sección de servicios con pestañas, el muro de logos de clientes y un CTA de WhatsApp. La página de inicio responde “¿qué hacen?” y “¿quién confía en ustedes?” antes de que el usuario tenga que pensar en hacer clic.
+
+**Nuestros clientes (`/customers`)** — Una página dedicada a la cartera de clientes. En B2B empresarial, los logos pesan. Tener a L&T, Shapoorji Pallonji y Embassy en su propia página, no enterrados a mitad de scroll, marca diferencia cuando el sitio se muestra a un equipo de compras.
+
+**Contáctenos (`/contact-us`)** — Todos los canales de contacto en un solo lugar: números de teléfono, Gmail, dirección de la oficina en Bangalore con Google Maps, y el botón de WhatsApp de nuevo. Sin formularios. Sin sistemas de tickets. Solo los canales que la empresa realmente usa.
+
+---
+
+## La sección de servicios
+
+Pranaav Enterprises hace más de lo que la mayoría espera de un solo contratista: suministro de agua, excavación, demolición, limpieza de escombros, alquiler de JCB y maquinaria, servicio de ambulancias, asfaltado y desarrollo de layouts.
+
+El reto era presentar todo eso sin convertir la página de inicio en un muro de texto. Usé una interfaz con pestañas: cada servicio tiene su propia pestaña con una imagen y una breve descripción. Los usuarios pueden explorar lo que les interesa sin sentirse abrumados por la lista completa.
+
+<ImageGallery images={[gallery2]} />
+
+---
+
+## El muro de clientes como prueba
+
+Esta funcionalidad no era negociable. La lista de clientes habla por sí sola:
 
 - Prestige Group
 - Larsen & Toubro
@@ -97,46 +97,50 @@ This was non-negotiable as a feature. The roster Pranaav Enterprises has built o
 - JMC Projects
 - Simplex Infrastructures
 - Navayuga Engineering
-- Vidhya Infrastructure A scrolling logo wall on the homepage with a “Trusted by teams of all sizes” headline does a lot of heavy lifting. When a new prospect lands on the page and sees L&T in the first scroll, the credibility conversation is already won.
+- Vidhya Infrastructure
+
+Un muro de logos con scroll bajo el titular “Trusted by teams of all sizes” hace mucho trabajo. Cuando un nuevo prospecto aterriza en la página y ve a L&T en el primer scroll, la conversación de credibilidad ya va por buen camino.
+
+<ImageGallery images={[gallery3]} />
 
 ---
 
-## Design Decisions for a B2B Audience
+## Decisiones de diseño para una audiencia B2B
 
-Building for a civil contractor’s audience is different from building a consumer product. The people visiting this site are project managers, procurement officers, and site engineers — not general consumers. A few things I kept in mind:  
-   
-**Information density over aesthetics.** The site needs to answer “what do you do?” and “who have you worked with?” in the first scroll. Whitespace is nice, but not at the cost of burying the answer.  
-   
-**WhatsApp as the primary CTA.** In the Indian B2B construction space, WhatsApp is how business actually gets done. Every page has a floating WhatsApp button that opens a pre-filled message. That’s not a workaround — it’s the right UX for this audience.  
-   
-**Mobile-first, because site visits happen on phones.** A contractor forwarding the link to a colleague is sending it to a mobile user. The layout is fully responsive with a hamburger nav on mobile.  
-   
-**Real photography, not stock.** The service images are actual photos of the work — excavation sites, demolition jobs, water tankers. Stock photos of construction would have undermined the credibility the site is trying to build.
+Construir para la audiencia de un contratista civil es distinto a construir un producto de consumo. Los visitantes son gerentes de proyecto, oficiales de compras e ingenieros de obra — no consumidores generales.
 
----
+**Densidad de información sobre estética.** El sitio debe responder las preguntas importantes en el primer scroll. El espacio en blanco está bien, pero no cuando entierra la respuesta a “¿qué hacen?”.
 
-## Image Gallery
+**WhatsApp como CTA principal.** En el B2B de construcción en India, WhatsApp es cómo realmente se hacen los negocios. Cada página tiene un botón flotante de WhatsApp con un mensaje prellenado. No es un parche — es la UX correcta para esta audiencia.
 
-<ImageGallery images={[gallery1, gallery2, gallery3, gallery4, gallery5]} />
+**Mobile-first.** Un contratista que reenvía el enlace casi seguro lo envía a alguien desde el móvil. El diseño es completamente responsivo, con navegación tipo hamburguesa en pantallas pequeñas.
+
+**Fotografía real.** Las imágenes de servicios son fotos reales del trabajo. Fotos de stock de construcción habrían socavado la misma credibilidad que el sitio intenta construir.
 
 ---
 
-## What Made This Different from a Side Project
+## Galería de imágenes
 
-A few things shift when you’re shipping for a real business:  
-   
-**Content is your responsibility too.** You don’t get placeholder text. You need to extract service descriptions, gather the client logos, confirm the contact details, and make sure everything is accurate before it goes live. That’s a different kind of work from writing components.  
-   
-**The client doesn’t care about your stack.** Choosing Next.js or Astro or anything else is invisible to Pranaav Enterprises. What they care about is: does it look professional, does it load fast, and can they send the link to L&T’s procurement team without embarrassment. Every technical decision has to serve that outcome.  
-   
-**Iteration happens fast.** Once the site is live and the client is showing it to people, feedback comes back quickly. “Can we add this service?” “Can we make the phone number bigger?” Being on Next.js + Vercel meant changes were a git push away from being live.  
-   
-**The WhatsApp button has already driven real leads.** That’s the metric that matters for this project — not Lighthouse scores.
+<ImageGallery images={[gallery1, gallery4, gallery5]} />
 
 ---
 
-## Final Thoughts
+## Qué hizo esto diferente de un proyecto personal
 
-There’s a version of this project that could have been more technically interesting — a headless CMS, an admin dashboard, a booking system. But the right call was to keep it simple, ship it fast, and make sure the 25 years of work Pranaav Enterprises has done is represented online with the credibility it deserves.  
-   
-Sometimes the best engineering decision is knowing what not to build.
+Algunas cosas cambian cuando entregas para un negocio real:
+
+**El contenido también es tu responsabilidad.** No recibes texto de relleno. Tienes que extraer descripciones de servicios, reunir logos de clientes, confirmar datos de contacto y asegurarte de que todo sea exacto antes de publicar. Es un trabajo distinto a escribir componentes.
+
+**Al cliente no le importa tu stack.** Ya sea Next.js, Astro o cualquier otra cosa, es invisible para Pranaav Enterprises. Lo que les importa es: ¿se ve profesional?, ¿carga rápido? y ¿pueden enviar el enlace al equipo de compras de L&T sin dudar? Cada decisión técnica debe servir a ese resultado.
+
+**La iteración es rápida.** Una vez que el sitio está en línea y el cliente empieza a mostrarlo, la retroalimentación llega rápido. “¿Podemos agregar este servicio?” “¿Podemos hacer el número de teléfono más grande?” Estar en Next.js + Vercel significó que los cambios estaban en línea con solo un git push.
+
+**El botón de WhatsApp ya generó leads reales.** Esa es la métrica que importa — no los puntajes de Lighthouse.
+
+---
+
+## Reflexiones finales
+
+Hay una versión de este proyecto que podría haber sido más interesante técnicamente: un CMS headless, un panel de administración, un sistema de reservas. Pero la decisión correcta fue mantenerlo simple, lanzarlo rápido y asegurar que los 25 años de trabajo de Pranaav Enterprises estén representados en línea con la credibilidad que merecen.
+
+A veces la mejor decisión de ingeniería es saber qué no construir.
