@@ -1,10 +1,11 @@
 ---
 import type { HTMLAttributes } from "astro/types"
+import type { IconName } from "./icon-registry"
 import { resolveIcon } from "./icon-registry"
 
 type Props = Omit<HTMLAttributes<"svg">, "name" | "href"> & {
   href?: HTMLAttributes<"a">["href"]
-  name?: string | number | null
+  name?: IconName
 }
 
 const {

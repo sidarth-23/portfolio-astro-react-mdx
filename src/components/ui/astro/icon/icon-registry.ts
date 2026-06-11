@@ -76,7 +76,7 @@ export const iconRegistry = {
   twitch: TwitchBrandIcon,
 } as const satisfies Record<string, IconComponent>
 
-type IconKey = keyof typeof iconRegistry
+export type IconName = keyof typeof iconRegistry
 
 const hrefMap = {
   "x.com": "xBrand",
@@ -107,27 +107,18 @@ const hrefMap = {
   linkedin: "linkedin",
 } as const
 
-const iconSources = iconRegistry satisfies Record<IconKey, IconComponent>
+const iconSources = iconRegistry satisfies Record<IconName, IconComponent>
 
-function isIconKey(value: string): value is IconKey {
+function isIconKey(value: string): value is IconName {
   return value in iconSources
 }
 
 export function resolveIcon(
-  name?: string | number | null,
+  name?: IconName,
   href?: string
 ): IconComponent | undefined {
-  if (name === "x.com") {
-    return iconRegistry.xBrand as IconComponent
-  }
-
   if (typeof name === "string" && isIconKey(name)) {
     return iconSources[name]
-  }
-
-  if (typeof name === "number") {
-    const icon = iconSources[String(name) as IconKey]
-    return icon
   }
 
   if (!href) return undefined
