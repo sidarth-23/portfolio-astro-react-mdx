@@ -16,8 +16,6 @@ const siteUrl = SITE_URL
 const seo = resolveContentSeo(post, "blog", locale, siteUrl)
 ---
 
----
-
 <ContentLayout seo={seo} headerTitle={post.data.title} locale={locale}>
   <slot />
   <slot name="toc" slot="toc" />
