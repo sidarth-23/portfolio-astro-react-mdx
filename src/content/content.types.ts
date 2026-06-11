@@ -24,13 +24,9 @@ export interface GlobalLink {
   isExternal: boolean
 }
 
-export type SidebarNavigationTitleKey =
-  | "nav.home"
-  | "nav.projects"
-  | "nav.blog"
-  | "nav.profile"
+export type SidebarNavigationTitleKey = "nav.home" | "nav.blog" | "nav.profile"
 
-export type SidebarNavigationIcon = "home" | "projects" | "blog" | "profile"
+export type SidebarNavigationIcon = "home" | "blog" | "profile"
 
 export interface SidebarNavigationContentItem {
   titleKey: SidebarNavigationTitleKey
@@ -45,7 +41,7 @@ export interface SidebarProfileContent {
   fallback: string
 }
 
-export type PageSeoKey = "home" | "blog" | "projects" | "profile"
+export type PageSeoKey = "home" | "blog" | "profile"
 
 export interface PageSeoEntry {
   title: string

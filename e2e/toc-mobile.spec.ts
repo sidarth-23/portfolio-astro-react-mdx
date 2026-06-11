@@ -6,7 +6,7 @@ test.describe("Mobile TOC scrollspy", () => {
   test("updates active state reliably and only autoscrolls list when panel is open", async ({
     page,
   }) => {
-    await page.goto("/en/projects/elecsavers-ecommerce-platform")
+    await page.goto("/en/blog/elecsavers-ecommerce-platform")
 
     const summary = page.locator("[data-toc-summary]")
     await expect(summary).toBeVisible()

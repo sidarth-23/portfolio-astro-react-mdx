@@ -18,16 +18,6 @@ export type BlogCardView = {
   readMoreLabel: string
 }
 
-export type ProjectCardView = {
-  href: string
-  title: string
-  category?: string
-  formattedDate: string
-  summary: string
-  tags: string[]
-  coverImage: ImageLike
-}
-
 export function createBlogCardView(input: {
   locale: Locale
   slug: string
@@ -47,26 +37,5 @@ export function createBlogCardView(input: {
     tags: input.tags,
     coverImage: input.coverImage,
     readMoreLabel: t(input.locale, "blog.readMore"),
-  }
-}
-
-export function createProjectCardView(input: {
-  locale: Locale
-  slug: string
-  title: string
-  category?: string
-  formattedDate: string
-  summary: string
-  tags: string[]
-  coverImage: ImageLike
-}): ProjectCardView {
-  return {
-    href: `/${input.locale}/projects/${input.slug}`,
-    title: input.title,
-    category: input.category,
-    formattedDate: input.formattedDate,
-    summary: input.summary,
-    tags: input.tags,
-    coverImage: input.coverImage,
   }
 }

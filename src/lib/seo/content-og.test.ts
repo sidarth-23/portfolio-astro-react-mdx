@@ -12,10 +12,10 @@ describe("buildContentOgFilename", () => {
   it("normalizes non-alphanumeric characters", () => {
     expect(
       buildContentOgFilename(
-        "projects",
+        "blog",
         "fr",
         "bonjour-le-monde/with spaces & symbols"
       )
-    ).toBe("og-projects-fr-bonjour-le-monde-with-spaces-symbols.png")
+    ).toBe("og-blog-fr-bonjour-le-monde-with-spaces-symbols.png")
   })
 })

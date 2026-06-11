@@ -38,32 +38,6 @@ interface BlogListingItemBase {
   coverImageSource: ImageMetadata
 }
 
-export interface ProjectListingItem {
-  slug: string
-  title: string
-  summary: string
-  date: string
-  updatedDate?: string
-  featured: boolean
-  status: string
-  category?: string
-  tags: string[]
-  coverImage: ListingImage
-}
-
-interface ProjectListingItemBase {
-  slug: string
-  title: string
-  summary: string
-  date: string
-  updatedDate?: string
-  featured: boolean
-  status: string
-  category?: string
-  tags: string[]
-  coverImageSource: ImageMetadata
-}
-
 export interface ListingResponse<T> {
   items: T[]
   hasMore: boolean
@@ -156,9 +130,6 @@ function applyFilters<
         ("description" in item &&
           typeof item.description === "string" &&
           item.description.toLowerCase().includes(query)) ||
-        ("summary" in item &&
-          typeof item.summary === "string" &&
-          item.summary.toLowerCase().includes(query)) ||
         item.tags.some((tag) => tag.toLowerCase().includes(query))
     )
   }
@@ -260,59 +231,6 @@ export async function getBlogListing(
   }
 }
 
-export async function getProjectListing(
-  locale: Locale,
-  filters: ListingFilters = {}
-): Promise<ListingResponse<ProjectListingItem>> {
-  const projects = await getCollection("projects")
-  const filteredByLocale = filterByLocale(projects, locale)
-
-  const items: ProjectListingItemBase[] = filteredByLocale.map((project) => ({
-    slug: getContentSlug(project.id),
-    title: project.data.title,
-    summary: project.data.summary,
-    date: project.data.date.toISOString(),
-    updatedDate: project.data.updatedDate?.toISOString(),
-    featured: project.data.featured,
-    status: project.data.status,
-    category: project.data.category,
-    tags: project.data.tags,
-    coverImageSource: project.data.coverImage,
-  }))
-
-  let filtered = applyFilters(items, filters)
-  filtered = applySorting(filtered, filters.sort)
-
-  const page = filters.page ?? 1
-  const limit = filters.limit ?? DEFAULT_LIMIT
-  const paginated = applyPagination(filtered, page, limit)
-  const paginatedItems = await Promise.all(
-    paginated.items.map(
-      async (project): Promise<ProjectListingItem> => ({
-        slug: project.slug,
-        title: project.title,
-        summary: project.summary,
-        date: project.date,
-        updatedDate: project.updatedDate,
-        featured: project.featured,
-        status: project.status,
-        category: project.category,
-        tags: project.tags,
-        coverImage: await createListingImage(
-          project.coverImageSource,
-          project.title
-        ),
-      })
-    )
-  )
-
-  return {
-    ...paginated,
-    items: paginatedItems,
-    page,
-  }
-}
-
 export async function getBlogFilters(locale: Locale): Promise<{
   tags: string[]
   categories: string[]
@@ -327,29 +245,6 @@ export async function getBlogFilters(locale: Locale): Promise<{
     post.data.tags.forEach((tag) => tags.add(tag))
     if (post.data.category) {
       categories.add(post.data.category)
-    }
-  }
-
-  return {
-    tags: Array.from(tags).sort(),
-    categories: Array.from(categories).sort(),
-  }
-}
-
-export async function getProjectFilters(locale: Locale): Promise<{
-  tags: string[]
-  categories: string[]
-}> {
-  const projects = await getCollection("projects")
-  const filtered = filterByLocale(projects, locale)
-
-  const tags = new Set<string>()
-  const categories = new Set<string>()
-
-  for (const project of filtered) {
-    project.data.tags.forEach((tag) => tags.add(tag))
-    if (project.data.category) {
-      categories.add(project.data.category)
     }
   }
 

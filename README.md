@@ -27,7 +27,6 @@ The project has moved away from CMS-driven content and now uses **MDX + Astro co
 Astro content collections are defined in `src/content.config.ts`:
 
 - `blog` (MDX)
-- `projects` (MDX)
 - `profile` (JSON data)
 - `profileExperience` (Markdown)
 
@@ -85,7 +84,7 @@ Open Graph images are generated automatically and written to `public/og`.
 
 - Build hook: `astro.config.mjs` runs `bun scripts/generate-og-images.ts` at `astro:build:start`.
 - Generated page OGs: from `src/content/page-seo.json` as `og-{page}-{locale}.png` (for `en`, `es`, `fr`).
-- Generated content OGs: for `blog` and `projects` MDX entries, including localized slugs.
+- Generated content OGs: for `blog` MDX entries, including localized slugs.
 - Content requirements: frontmatter needs `locale`, title/description (`seo` or fallback fields), and `coverImage`.
 
 To regenerate manually:
@@ -98,14 +97,14 @@ bun scripts/generate-og-images.ts
 
 - **Multi-language support** — Content available in English, Spanish, and French with locale-prefixed routing and automatic redirection.
 - **Content-driven blog** — MDX-based blog posts with search, tag filtering, and infinite scroll pagination.
-- **Project showcase** — Filterable project listings with search, tags, and pagination; each project has its own detailed MDX page.
+- **Project write-ups** — Selected project stories live in the blog with GitHub/live link buttons on each post.
 - **Interactive Profile** — Profile page with work experience, skills, and certifications.
 - **Collapsible sidebar navigation** — Profile info, primary navigation, social links (GitHub, LinkedIn, RSS, Email), and quick actions (archive, resume).
 - **Responsive design** — Mobile-friendly layout built with Tailwind CSS.
 - **SEO optimized** — Metadata helpers and structured content for search engines.
 - **Automated OG images** — Build-time Open Graph image generation for pages and MDX content.
 - **RSS feeds** — Per-locale RSS feed generation.
-- **API endpoints** — JSON API for blog and project data with pagination, search, and tag filtering.
+- **API endpoints** — JSON API for blog data with pagination, search, and tag filtering.
 
 ## Notes
 

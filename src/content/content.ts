@@ -82,11 +82,6 @@ export const sidebarNavigationContent = [
     icon: "home",
   },
   {
-    titleKey: "nav.projects",
-    path: (locale) => `/${locale}/projects`,
-    icon: "projects",
-  },
-  {
     titleKey: "nav.blog",
     path: (locale) => `/${locale}/blog`,
     icon: "blog",
@@ -130,23 +125,6 @@ export const pageSeo = {
       title: "Blog",
       description:
         "Réflexions sur l'ingénierie, le design, et la construction de choses.",
-    },
-  },
-  projects: {
-    en: {
-      title: "Projects",
-      description:
-        "A selection of things I have built, shipped, and learned from.",
-    },
-    es: {
-      title: "Proyectos",
-      description:
-        "Una selección de cosas que he construido, enviado y aprendido.",
-    },
-    fr: {
-      title: "Projets",
-      description:
-        "Une sélection de choses que j'ai construites, livrées et apprises.",
     },
   },
   profile: {

@@ -1,11 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
 
-import {
-  getBlogListing,
-  getProjectListing,
-  getBlogFilters,
-  getProjectFilters,
-} from "./listing-api"
+import { getBlogListing, getBlogFilters } from "./listing-api"
 
 import type { CollectionEntry } from "astro:content"
 
@@ -45,35 +40,6 @@ function createMockBlogEntries(count: number): CollectionEntry<"blog">[] {
     rendered: undefined,
     filePath: `src/content/blog/en/post-${i + 1}.mdx`,
   })) as CollectionEntry<"blog">[]
-}
-
-// Helper to create mock project entries
-function createMockProjectEntries(
-  count: number
-): CollectionEntry<"projects">[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `en/project-${i + 1}`,
-    collection: "projects" as const,
-    data: {
-      title: `Project ${i + 1}`,
-      summary: `Summary for project ${i + 1}`,
-      date: new Date(2024, 0, count - i),
-      coverImage: {
-        src: `../../../assets/images/projects/project-${i + 1}/cover.png`,
-        width: 800,
-        height: 600,
-        format: "png" as const,
-      },
-      featured: i < 3,
-      status: "active" as const,
-      tags: i % 2 === 0 ? ["react", "typescript"] : ["vue", "nuxt"],
-      category: i % 2 === 0 ? "Web App" : "Mobile",
-      locale: "en" as const,
-    },
-    body: "",
-    rendered: undefined,
-    filePath: `src/content/projects/en/project-${i + 1}.mdx`,
-  })) as CollectionEntry<"projects">[]
 }
 
 describe("listing-api", () => {
@@ -201,69 +167,6 @@ describe("listing-api", () => {
     })
   })
 
-  describe("getProjectListing", () => {
-    beforeEach(() => {
-      mockGetCollection.mockImplementation(
-        async (
-          _collection: string,
-          filter?: (entry: CollectionEntry<"projects">) => boolean
-        ) => {
-          const entries = createMockProjectEntries(24)
-          if (filter) {
-            return entries.filter(filter)
-          }
-          return entries
-        }
-      )
-    })
-
-    it("returns paginated results with default limit", async () => {
-      const result = await getProjectListing("en")
-      expect(result.items).toHaveLength(Math.min(12, result.total))
-      expect(result.page).toBe(1)
-    })
-
-    it("filters by search term in title or summary", async () => {
-      const result = await getProjectListing("en", { search: "active" })
-      expect(
-        result.items.every(
-          (item) =>
-            item.title.toLowerCase().includes("active") ||
-            item.summary.toLowerCase().includes("active")
-        ) || result.items.length === 0
-      ).toBe(true)
-    })
-
-    it("filters by search term matching tags", async () => {
-      const result = await getProjectListing("en", { search: "react" })
-      expect(
-        result.items.every(
-          (item) =>
-            item.title.toLowerCase().includes("react") ||
-            item.summary.toLowerCase().includes("react") ||
-            item.tags.some((tag) => tag.toLowerCase().includes("react"))
-        )
-      ).toBe(true)
-      expect(result.items.length).toBeGreaterThan(0)
-    })
-
-    it("filters by multiple tags", async () => {
-      const result = await getProjectListing("en", { tags: ["react", "vue"] })
-      expect(
-        result.items.every(
-          (item) => item.tags.includes("react") || item.tags.includes("vue")
-        )
-      ).toBe(true)
-    })
-
-    it("filters by categories", async () => {
-      const result = await getProjectListing("en", { categories: ["Web App"] })
-      expect(result.items.every((item) => item.category === "Web App")).toBe(
-        true
-      )
-    })
-  })
-
   describe("getBlogFilters", () => {
     beforeEach(() => {
       mockGetCollection.mockImplementation(
@@ -290,39 +193,6 @@ describe("listing-api", () => {
 
     it("returns unique sorted categories", async () => {
       const result = await getBlogFilters("en")
-      expect(Array.isArray(result.categories)).toBe(true)
-      expect(result.categories.length).toBeGreaterThan(0)
-      expect(result.categories).toEqual([...result.categories].sort())
-      expect(new Set(result.categories).size).toBe(result.categories.length)
-    })
-  })
-
-  describe("getProjectFilters", () => {
-    beforeEach(() => {
-      mockGetCollection.mockImplementation(
-        async (
-          _collection: string,
-          filter?: (entry: CollectionEntry<"projects">) => boolean
-        ) => {
-          const entries = createMockProjectEntries(24)
-          if (filter) {
-            return entries.filter(filter)
-          }
-          return entries
-        }
-      )
-    })
-
-    it("returns unique sorted tags", async () => {
-      const result = await getProjectFilters("en")
-      expect(Array.isArray(result.tags)).toBe(true)
-      expect(result.tags.length).toBeGreaterThan(0)
-      expect(result.tags).toEqual([...result.tags].sort())
-      expect(new Set(result.tags).size).toBe(result.tags.length)
-    })
-
-    it("returns unique sorted categories", async () => {
-      const result = await getProjectFilters("en")
       expect(Array.isArray(result.categories)).toBe(true)
       expect(result.categories.length).toBeGreaterThan(0)
       expect(result.categories).toEqual([...result.categories].sort())

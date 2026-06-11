@@ -23,7 +23,7 @@ describe("OG image files", () => {
   })
 
   it("has OG images for all core pages across all locales", () => {
-    const corePages = ["home", "blog", "projects", "profile"]
+    const corePages = ["home", "blog", "profile"]
     const locales = ["en", "es", "fr"]
 
     for (const page of corePages) {

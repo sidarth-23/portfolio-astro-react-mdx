@@ -17,7 +17,7 @@ if (!siteUrl)
   )
 const siteLabel = siteUrlToLabel(siteUrl)
 
-type ContentType = "blog" | "projects"
+type ContentType = "blog"
 
 function ensureOutputDir() {
   if (!existsSync(OUTPUT_DIR)) {
@@ -66,7 +66,7 @@ async function generateContentOgImages(type: ContentType) {
     const { data } = matter(raw)
     const locale: string = data.locale || "en"
     const slug = path.basename(file, ".mdx")
-    const filename = buildContentOgFilename(type, slug, locale)
+    const filename = buildContentOgFilename(type, locale, slug)
     const outPath = path.join(OUTPUT_DIR, filename)
 
     const coverImagePath = data.coverImage
@@ -121,7 +121,6 @@ async function main() {
   ensureOutputDir()
   await generatePageOgImages()
   await generateContentOgImages("blog")
-  await generateContentOgImages("projects")
 }
 
 main().catch((error) => {

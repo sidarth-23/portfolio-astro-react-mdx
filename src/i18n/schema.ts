@@ -3,7 +3,6 @@ import { z } from "astro/zod"
 export const TranslationSchema = z.object({
   nav: z.object({
     home: z.string(),
-    projects: z.string(),
     blog: z.string(),
     profile: z.string(),
     archive: z.string(),
@@ -18,16 +17,6 @@ export const TranslationSchema = z.object({
     latest: z.string(),
     viewAll: z.string(),
     readMore: z.string(),
-    published: z.string(),
-    updated: z.string(),
-    minRead: z.string(),
-  }),
-  projects: z.object({
-    title: z.string(),
-    description: z.string(),
-    featured: z.string(),
-    viewAll: z.string(),
-    featuredLabel: z.string(),
     published: z.string(),
     updated: z.string(),
     minRead: z.string(),

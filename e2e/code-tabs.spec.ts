@@ -2,7 +2,7 @@ import { expect, test } from "./test"
 
 test.describe("Code tabs", () => {
   test("renders tab menu and switches panels", async ({ page }) => {
-    await page.goto("/en/projects/elecsavers-ecommerce-platform")
+    await page.goto("/en/blog/elecsavers-ecommerce-platform")
 
     const group = page.locator("[data-code-group]").first()
     await expect(group).toBeVisible()

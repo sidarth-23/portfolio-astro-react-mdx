@@ -84,7 +84,7 @@ test.describe("SEO meta tags", () => {
   })
 
   for (const locale of locales) {
-    for (const pathname of ["", "/profile", "/blog", "/projects"] as const) {
+    for (const pathname of ["", "/profile", "/blog"] as const) {
       test(`/${locale}${pathname || ""} emits required SEO tags`, async ({
         page,
       }) => {
@@ -104,24 +104,30 @@ test.describe("SEO meta tags", () => {
         await expectSeoTags(page, route, locale, "article")
       })
     }
-
-    const projectsDir = join(
-      process.cwd(),
-      "src",
-      "content",
-      "projects",
-      locale
-    )
-    for (const slug of collectMdxSlugs(projectsDir)) {
-      test(`/${locale}/projects/${slug} emits required SEO tags`, async ({
-        page,
-      }) => {
-        const route = `/${locale}/projects/${slug}`
-        await page.goto(route)
-        await expectSeoTags(page, route, locale, "website")
-      })
-    }
   }
+
+  test("legacy /projects URLs redirect 301 to the blog", async ({
+    request,
+  }) => {
+    const converted = await request.get(
+      "/en/projects/elecsavers-ecommerce-platform",
+      { maxRedirects: 0 }
+    )
+    expect(converted.status()).toBe(301)
+    expect(converted.headers()["location"]).toContain(
+      "/en/blog/elecsavers-ecommerce-platform"
+    )
+
+    const removed = await request.get("/fr/projects/weather-app", {
+      maxRedirects: 0,
+    })
+    expect(removed.status()).toBe(301)
+    expect(removed.headers()["location"]).toContain("/fr/blog")
+
+    const index = await request.get("/en/projects", { maxRedirects: 0 })
+    expect(index.status()).toBe(301)
+    expect(index.headers()["location"]).toContain("/en/blog")
+  })
 
   test("/en/rss.xml responds 200 and contains blog post links with siteUrl", async ({
     request,

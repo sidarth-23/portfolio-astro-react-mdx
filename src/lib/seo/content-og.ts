@@ -7,7 +7,7 @@ export function slugToOgToken(slug: string): string {
 }
 
 export function buildContentOgFilename(
-  type: "blog" | "projects",
+  type: "blog",
   locale: string,
   slug: string
 ): string {

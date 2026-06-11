@@ -3,18 +3,12 @@
 import { ItemListClient } from "@/components/features/listing/listing-item-list-client"
 import { QueryProvider } from "@/components/providers/query-provider"
 import type { Locale } from "@/i18n/config"
-import type {
-  BlogListingItem,
-  ProjectListingItem,
-  ListingResponse,
-} from "@/lib/api/listing-api"
+import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
 import type { ListingSort } from "@/lib/api/listing-query"
 
 import type { ComponentType } from "react"
 
-interface ItemListWithProviderProps<
-  T extends BlogListingItem | ProjectListingItem,
-> {
+interface ItemListWithProviderProps<T extends BlogListingItem> {
   endpoint: string
   locale: Locale
   tags: string[]
@@ -23,17 +17,13 @@ interface ItemListWithProviderProps<
   initialTags: string[]
   initialCategories: string[]
   initialSortBy: ListingSort | null
-  initialData?:
-    | ListingResponse<BlogListingItem>
-    | ListingResponse<ProjectListingItem>
+  initialData?: ListingResponse<BlogListingItem>
   gridClassName: string
   skeletonCount: number
   CardComponent: ComponentType<{ item: T; locale: Locale }>
   getItemKey: (item: T) => string
 }
-export function ItemListWithProvider<
-  T extends BlogListingItem | ProjectListingItem,
->({
+export function ItemListWithProvider<T extends BlogListingItem>({
   endpoint,
   locale,
   tags,
