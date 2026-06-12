@@ -47,6 +47,7 @@ bun install
 # copy env example and set SITE_URL
 cp .env.example .env
 # edit .env to set SITE_URL to the canonical origin for your environment
+# set ASTRO_USE_POLLING=true only if your system hits file watcher limits
 
 # start dev server (requires SITE_URL in .env or process environment)
 bun run dev
@@ -60,6 +61,8 @@ bun run dev
 2. Navigate to **Settings > Environment variables**.
 3. Add `SITE_URL` with the value `https://sidshub.in` (or your canonical origin).
 4. Save and trigger a new deployment.
+
+If your local machine hits file watcher limits, set `ASTRO_USE_POLLING=true` in your local `.env` file.
 
 Runtime access is provided by `wrangler.jsonc` — no additional dashboard binding is needed for serving.
 

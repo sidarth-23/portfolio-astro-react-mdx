@@ -19,6 +19,8 @@ if (!siteUrl) {
   throw new Error("SITE_URL is required. Set it in .env or the process environment.")
 }
 
+const usePolling = process.env.ASTRO_USE_POLLING === "true"
+
 function generateSearchIndex() {
   execFileSync("bun", ["scripts/generate-search-index.ts"], {
     stdio: "inherit",
@@ -69,6 +71,16 @@ export default defineConfig({
     },
   }),
   vite: {
+    ...(usePolling
+      ? {
+          server: {
+            watch: {
+              usePolling: true,
+              interval: 500,
+            },
+          },
+        }
+      : {}),
     plugins: [tailwindcss()],
   },
   integrations: [
