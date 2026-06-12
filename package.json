@@ -52,7 +52,6 @@
     "react": "^19.2.4",
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.2.4",
-    "shadcn": "^4.7.0",
     "simple-icons": "^16.20.0",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.2.1",
@@ -97,7 +96,12 @@
     "wrangler": "^4.99.0"
   },
   "lint-staged": {
-    "*.{ts,tsx}": ["prettier --write", "eslint --fix"],
-    "*.astro": ["prettier --write"]
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.astro": [
+      "prettier --write"
+    ]
   }
 }

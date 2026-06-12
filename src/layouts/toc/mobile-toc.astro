@@ -1,7 +1,6 @@
 ---
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
-import { CircularProgress } from "@/components/ui/react/circular-progress"
 
 export interface TocItem {
   depth: number
@@ -17,22 +16,51 @@ type Props = {
 const { items } = Astro.props
 const tocItems = items.filter((item) => item.depth === 2 || item.depth === 3)
 const firstItem = tocItems[0]
+const progressSize = 18
+const progressStrokeWidth = 1.5
+const progressRadius = progressSize / 2 - progressStrokeWidth
+const progressCircumference = 2 * Math.PI * progressRadius
+const progressDashOffset = progressCircumference
 ---
 
 {
   tocItems.length > 0 && (
-    <details data-toc="mobile" class="group xl:hidden sticky top-0 z-50 bg-background border-b border-border">
+    <details
+      data-toc="mobile"
+      class="group sticky top-0 z-50 border-b border-border bg-background xl:hidden"
+    >
       <summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-6 py-3 text-sm font-semibold text-muted-foreground">
         <div class="flex min-w-0 flex-1 items-center gap-2.5">
-          <CircularProgress
-            value={0}
-            min={0}
-            max={1}
-            size={18}
-            strokeWidth={1.5}
-            indicatorDataAttribute="data-toc-progress-value"
+          <svg
+            viewBox={`0 0 ${progressSize} ${progressSize}`}
+            class="shrink-0"
+            style={`width:${progressSize}px;height:${progressSize}px`}
             aria-hidden="true"
-          />
+          >
+            <circle
+              cx={progressSize / 2}
+              cy={progressSize / 2}
+              r={progressRadius}
+              fill="none"
+              stroke-width={progressStrokeWidth}
+              class="stroke-current/25"
+            />
+            <circle
+              data-toc-progress-value
+              data-circumference={progressCircumference}
+              cx={progressSize / 2}
+              cy={progressSize / 2}
+              r={progressRadius}
+              fill="none"
+              stroke-width={progressStrokeWidth}
+              stroke="currentColor"
+              stroke-dasharray={progressCircumference}
+              stroke-dashoffset={progressDashOffset}
+              stroke-linecap="round"
+              transform={`rotate(-90 ${progressSize / 2} ${progressSize / 2})`}
+              class="transition-all"
+            />
+          </svg>
           <span data-toc-summary class="truncate">
             {firstItem?.text ?? ""}
           </span>
@@ -45,7 +73,10 @@ const firstItem = tocItems[0]
           aria-hidden="true"
         />
       </summary>
-      <nav aria-label="Table of contents" class="absolute left-0 right-0 bg-background border-b border-border shadow-lg px-6 pb-3">
+      <nav
+        aria-label="Table of contents"
+        class="absolute right-0 left-0 border-b border-border bg-background px-6 pb-3 shadow-lg"
+      >
         <div data-toc-scroll-container class="max-h-[60vh] overflow-y-auto">
           <ul class="flex flex-col">
             {tocItems.map((item) => {
@@ -66,11 +97,11 @@ const firstItem = tocItems[0]
         </div>
       </nav>
     </details>
-
-    <style>
-      summary::-webkit-details-marker {
-        display: none;
-      }
-    </style>
   )
 }
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

@@ -29,7 +29,6 @@ export function BlogCard({ item, locale }: BlogCardProps) {
     category: item.category,
     formattedDate: formatShortDate(new Date(item.date), locale),
     description: item.description,
-    tags: item.tags,
     coverImage: {
       src: item.coverImage.src,
       width: item.coverImage.width,

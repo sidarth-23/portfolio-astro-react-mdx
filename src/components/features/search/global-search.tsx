@@ -4,7 +4,6 @@ import { Search01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
 
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import {
   Badge,
   Button,
@@ -17,6 +16,8 @@ import {
   CommandList,
   CommandSeparator,
   Spinner,
+  Kbd,
+  KbdGroup,
 } from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"

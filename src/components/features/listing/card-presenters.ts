@@ -1,5 +1,4 @@
 import type { Locale } from "@/i18n/config"
-import { t } from "@/i18n/ui"
 
 export type ImageLike = {
   src: string
@@ -13,9 +12,7 @@ export type BlogCardView = {
   category?: string
   formattedDate: string
   description: string
-  tags: string[]
   coverImage: ImageLike
-  readMoreLabel: string
 }
 
 export function createBlogCardView(input: {
@@ -25,7 +22,6 @@ export function createBlogCardView(input: {
   category?: string
   formattedDate: string
   description: string
-  tags: string[]
   coverImage: ImageLike
 }): BlogCardView {
   return {
@@ -34,8 +30,6 @@ export function createBlogCardView(input: {
     category: input.category,
     formattedDate: input.formattedDate,
     description: input.description,
-    tags: input.tags,
     coverImage: input.coverImage,
-    readMoreLabel: t(input.locale, "blog.readMore"),
   }
 }
