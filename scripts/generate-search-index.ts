@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, writeFile } from "fs/promises"
+import { mkdir, readdir, readFile, rm, writeFile } from "fs/promises"
 import path from "path"
 
 import matter from "gray-matter"
@@ -14,7 +14,10 @@ import type {
 } from "../src/lib/search/search"
 
 const OUTPUT_DIR = path.resolve(process.cwd(), "src/generated")
-const OUTPUT_FILE = path.join(OUTPUT_DIR, "search.json")
+const LEGACY_OUTPUT_FILE = path.join(OUTPUT_DIR, "search.json")
+// A locale export at rest should stay well under 1 MB; a jump past this
+// threshold means an indexing regression (e.g. tokenize "full" sneaking back).
+const MAX_LOCALE_BYTES = 2 * 1024 * 1024
 
 async function walkFiles(dir: string, extension: string): Promise<string[]> {
   const entries = await readdir(dir, { withFileTypes: true })
@@ -166,12 +169,46 @@ async function buildCorpus(): Promise<Record<Locale, SearchCorpusInput>> {
   return corpus
 }
 
+function formatBytes(bytes: number): string {
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  return `${(bytes / 1024).toFixed(1)} KB`
+}
+
+async function writeLocaleExport(
+  locale: Locale,
+  serialized: string
+): Promise<"written" | "unchanged"> {
+  const outputFile = path.join(OUTPUT_DIR, `search.${locale}.json`)
+
+  const existing = await readFile(outputFile, "utf-8").catch(() => null)
+  if (existing === serialized) return "unchanged"
+
+  await writeFile(outputFile, serialized)
+  return "written"
+}
+
 async function main() {
   const corpus = await buildCorpus()
   const exportsByLocale = buildSearchExports(corpus)
 
   await mkdir(OUTPUT_DIR, { recursive: true })
-  await writeFile(OUTPUT_FILE, `${JSON.stringify(exportsByLocale, null, 2)}\n`)
+  await rm(LEGACY_OUTPUT_FILE, { force: true })
+
+  for (const locale of locales) {
+    const serialized = JSON.stringify(exportsByLocale[locale])
+    const bytes = Buffer.byteLength(serialized)
+
+    if (bytes > MAX_LOCALE_BYTES) {
+      console.error(
+        `[search-index] ${locale}: ${formatBytes(bytes)} exceeds the ` +
+          `${formatBytes(MAX_LOCALE_BYTES)} limit — indexing regression?`
+      )
+      process.exit(1)
+    }
+
+    const outcome = await writeLocaleExport(locale, serialized)
+    console.log(`[search-index] ${locale}: ${formatBytes(bytes)} (${outcome})`)
+  }
 }
 
 await main()

@@ -1,9 +1,9 @@
 import { type Locale } from "@/i18n/config"
 
-import { buildSearchIndexExport, type SearchIndexExport } from "./flexsearch"
+import { buildSearchIndexExport, type SearchExportPayload } from "./flexsearch"
 import { buildSearchDocuments, type SearchCorpusInput } from "./search"
 
-export type SearchExportsByLocale = Record<Locale, SearchIndexExport>
+export type SearchExportsByLocale = Record<Locale, SearchExportPayload>
 
 export function buildSearchExports(
   corpusByLocale: Record<Locale, SearchCorpusInput>

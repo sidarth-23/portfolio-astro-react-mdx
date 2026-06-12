@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
 
 import { getBlogListing, getBlogFilters } from "./listing-api"
+import { resetListingCache } from "./listing-data"
 
 import type { CollectionEntry } from "astro:content"
 
@@ -14,6 +15,12 @@ vi.mock("astro:content", () => ({
 const mockGetImage = vi.fn()
 vi.mock("astro:assets", () => ({
   getImage: (...args: Parameters<typeof mockGetImage>) => mockGetImage(...args),
+}))
+
+const mockSearchBlogSlugs = vi.fn()
+vi.mock("@/lib/search/listing-search", () => ({
+  searchBlogSlugs: (...args: Parameters<typeof mockSearchBlogSlugs>) =>
+    mockSearchBlogSlugs(...args),
 }))
 
 // Helper to create mock blog entries
@@ -42,9 +49,12 @@ function createMockBlogEntries(count: number): CollectionEntry<"blog">[] {
   })) as CollectionEntry<"blog">[]
 }
 
+const ENTRY_COUNT = 24
+
 describe("listing-api", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    resetListingCache()
     mockGetImage.mockImplementation(async (input: { width: number }) => ({
       src: `/_optimized/test-${input.width}.webp`,
       attributes: {
@@ -52,24 +62,22 @@ describe("listing-api", () => {
         height: Math.round(input.width * 0.5667),
       },
     }))
+    mockGetCollection.mockImplementation(
+      async (
+        _collection: string,
+        filter?: (entry: CollectionEntry<"blog">) => boolean
+      ) => {
+        const entries = createMockBlogEntries(ENTRY_COUNT)
+        if (filter) {
+          return entries.filter(filter)
+        }
+        return entries
+      }
+    )
+    mockSearchBlogSlugs.mockResolvedValue([])
   })
 
   describe("getBlogListing", () => {
-    beforeEach(() => {
-      mockGetCollection.mockImplementation(
-        async (
-          _collection: string,
-          filter?: (entry: CollectionEntry<"blog">) => boolean
-        ) => {
-          const entries = createMockBlogEntries(24)
-          if (filter) {
-            return entries.filter(filter)
-          }
-          return entries
-        }
-      )
-    })
-
     it("returns paginated results with default limit", async () => {
       const result = await getBlogListing("en")
       expect(result.items).toHaveLength(Math.min(12, result.total))
@@ -78,29 +86,60 @@ describe("listing-api", () => {
       expect(typeof result.total).toBe("number")
     })
 
-    it("filters by search term in title, description, or tags", async () => {
+    it("resolves search terms through the search engine in relevance order", async () => {
+      mockSearchBlogSlugs.mockResolvedValue(["post-3", "post-1", "post-7"])
+
       const result = await getBlogListing("en", { search: "astro" })
-      expect(
-        result.items.every(
-          (item) =>
-            item.title.toLowerCase().includes("astro") ||
-            item.description.toLowerCase().includes("astro") ||
-            item.tags.some((tag) => tag.toLowerCase().includes("astro"))
-        )
-      ).toBe(true)
+
+      expect(mockSearchBlogSlugs).toHaveBeenCalledWith("en", "astro")
+      expect(result.items.map((item) => item.slug)).toEqual([
+        "post-3",
+        "post-1",
+        "post-7",
+      ])
+      expect(result.total).toBe(3)
     })
 
-    it("filters by search term matching tags", async () => {
+    it("ignores searches shorter than two characters", async () => {
+      const result = await getBlogListing("en", { search: "a" })
+
+      expect(mockSearchBlogSlugs).not.toHaveBeenCalled()
+      expect(result.total).toBe(ENTRY_COUNT)
+    })
+
+    it("drops search hits for slugs not in the listing", async () => {
+      mockSearchBlogSlugs.mockResolvedValue(["post-2", "nonexistent-slug"])
+
       const result = await getBlogListing("en", { search: "react" })
-      expect(
-        result.items.every(
-          (item) =>
-            item.title.toLowerCase().includes("react") ||
-            item.description.toLowerCase().includes("react") ||
-            item.tags.some((tag) => tag.toLowerCase().includes("react"))
-        )
-      ).toBe(true)
-      expect(result.items.length).toBeGreaterThan(0)
+
+      expect(result.items.map((item) => item.slug)).toEqual(["post-2"])
+    })
+
+    it("applies explicit sort over search relevance order", async () => {
+      mockSearchBlogSlugs.mockResolvedValue(["post-3", "post-1", "post-2"])
+
+      const result = await getBlogListing("en", {
+        search: "astro",
+        sort: "title",
+      })
+
+      expect(result.items.map((item) => item.slug)).toEqual([
+        "post-1",
+        "post-2",
+        "post-3",
+      ])
+    })
+
+    it("combines search with tag filters", async () => {
+      // post-1 (index 0) has astro/tutorial tags; post-2 (index 1) has react/advanced
+      mockSearchBlogSlugs.mockResolvedValue(["post-1", "post-2"])
+
+      const result = await getBlogListing("en", {
+        search: "post",
+        tags: ["react"],
+      })
+
+      expect(result.items.map((item) => item.slug)).toEqual(["post-2"])
     })
 
     it("filters by tags", async () => {
@@ -153,36 +192,32 @@ describe("listing-api", () => {
     })
 
     it("includes optimized image data", async () => {
-      mockGetImage.mockClear()
       const result = await getBlogListing("en", { limit: 1 })
       expect(result.items[0]).toHaveProperty("coverImage")
       expect(result.items[0].coverImage).toHaveProperty("src")
       expect(result.items[0].coverImage).toHaveProperty("srcSet")
       expect(result.items[0].coverImage).toHaveProperty("sizes")
-      expect(mockGetImage).toHaveBeenCalledTimes(3)
-      const widths = mockGetImage.mock.calls.map(
-        (call) => (call[0] as { width: number }).width
-      )
+      const widths = mockGetImage.mock.calls
+        .slice(0, 3)
+        .map((call) => (call[0] as { width: number }).width)
       expect(widths).toEqual([400, 600, 1200])
+    })
+
+    it("memoizes listing data across calls", async () => {
+      await getBlogListing("en")
+      const collectionCalls = mockGetCollection.mock.calls.length
+      const imageCalls = mockGetImage.mock.calls.length
+      expect(imageCalls).toBe(ENTRY_COUNT * 3)
+
+      await getBlogListing("en", { page: 2 })
+      await getBlogFilters("en")
+
+      expect(mockGetCollection.mock.calls.length).toBe(collectionCalls)
+      expect(mockGetImage.mock.calls.length).toBe(imageCalls)
     })
   })
 
   describe("getBlogFilters", () => {
-    beforeEach(() => {
-      mockGetCollection.mockImplementation(
-        async (
-          _collection: string,
-          filter?: (entry: CollectionEntry<"blog">) => boolean
-        ) => {
-          const entries = createMockBlogEntries(24)
-          if (filter) {
-            return entries.filter(filter)
-          }
-          return entries
-        }
-      )
-    })
-
     it("returns unique sorted tags", async () => {
       const result = await getBlogFilters("en")
       expect(Array.isArray(result.tags)).toBe(true)

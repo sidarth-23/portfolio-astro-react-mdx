@@ -2,22 +2,23 @@ import { describe, expect, it } from "vitest"
 
 import {
   buildSearchIndexExport,
-  importSearchIndex,
-  searchFlexSearchIndex,
+  importSearchEngine,
+  searchSearchEngine,
 } from "./flexsearch"
 import { buildSearchDocuments } from "./search"
 
-describe("flexsearch index", () => {
-  const docs = buildSearchDocuments({
-    locale: "en",
-    blogPosts: [
-      {
-        slug: "hello-world",
-        title: "Hello World",
-        description: "A post about deployment details",
-        tags: ["astro", "deploy"],
-        category: "Engineering",
-        body: `## Intro
+import type { SearchCorpusInput } from "./search"
+
+const corpus: SearchCorpusInput = {
+  locale: "en",
+  blogPosts: [
+    {
+      slug: "hello-world",
+      title: "Hello World",
+      description: "A post about deployment details",
+      tags: ["astro", "deploy"],
+      category: "Engineering",
+      body: `## Intro
 
 This is an introduction.
 
@@ -28,64 +29,143 @@ We watch metrics and logs during deployment.
 ## Closing
 
 Thanks for reading.`,
-      },
-    ],
-    profileTitle: "Profile",
-    profile: {
-      locale: "en",
-      profile: {
-        name: "Sidarth G",
-        role: "Software Developer",
-        summary: "I build web apps.",
-        focus: ["Frontend", "Backend"],
-      },
-      skills: [
-        {
-          title: "Frontend & DX",
-          items: [
-            { label: "Astro", icon: { source: "simple", name: "astro" } },
-            { label: "React", icon: { source: "simple", name: "react" } },
-          ],
-        },
-      ],
-      certifications: [{ title: "Learn Go", url: "https://example.com/cert" }],
     },
-    experiences: [
+    {
+      slug: "metricas-post",
+      title: "Métricas avanzadas",
+      description: "Observabilidad y métricas",
+      tags: ["observability"],
+      category: "Engineering",
+      body: `## Métricas
+
+Las métricas importan.`,
+    },
+  ],
+  profileTitle: "Profile",
+  profile: {
+    locale: "en",
+    profile: {
+      name: "Sidarth G",
+      role: "Software Developer",
+      summary: "I build web apps.",
+      focus: ["Frontend", "Backend"],
+    },
+    skills: [
       {
-        id: 1,
-        company: "Truvanta",
-        location: "Remote",
-        roles: [
-          {
-            id: "experience-1-0",
-            title: "Full Stack Developer",
-            location: "Remote",
-            details: "Built deployment tooling and observability dashboards.",
-          },
+        title: "Frontend & DX",
+        items: [
+          { label: "Astro", icon: { source: "simple", name: "astro" } },
+          { label: "React", icon: { source: "simple", name: "react" } },
         ],
       },
     ],
-  })
+    certifications: [{ title: "Learn Go", url: "https://example.com/cert" }],
+  },
+  experiences: [
+    {
+      id: 1,
+      company: "Truvanta",
+      location: "Remote",
+      roles: [
+        {
+          id: "experience-1-0",
+          title: "Full Stack Developer",
+          location: "Remote",
+          details: "Built deployment tooling and observability dashboards.",
+        },
+      ],
+    },
+  ],
+}
 
-  it("exports and imports the corpus", async () => {
-    const exported = buildSearchIndexExport(docs)
-    const index = importSearchIndex(exported)
-    const results = await searchFlexSearchIndex(index, "deployment")
+const docs = buildSearchDocuments(corpus)
+
+function createEngine() {
+  return importSearchEngine(buildSearchIndexExport(docs))
+}
+
+describe("flexsearch engine", () => {
+  it("round-trips export and import", async () => {
+    const payload = buildSearchIndexExport(docs)
+
+    expect(payload.docs).toHaveLength(docs.length)
+    expect(Object.keys(payload.index).length).toBeGreaterThan(0)
+
+    const engine = importSearchEngine(payload)
+    const results = await searchSearchEngine(engine, "deployment")
 
     expect(results[0]).toMatchObject({
       url: "/en/blog/hello-world#deployment",
       kind: "section",
+      scope: "blog",
     })
   })
 
   it("returns profile section hits for skill queries", async () => {
-    const exported = buildSearchIndexExport(docs)
-    const index = importSearchIndex(exported)
-    const results = await searchFlexSearchIndex(index, "frontend dx")
+    const results = await searchSearchEngine(createEngine(), "frontend dx")
 
     expect(results[0]).toMatchObject({
       url: "/en/profile#skills-frontend-dx",
       kind: "item",
+      scope: "profile",
     })
+  })
+
+  it("matches diacritics both ways", async () => {
+    const engine = createEngine()
+
+    const accented = await searchSearchEngine(engine, "métricas")
+    const plain = await searchSearchEngine(engine, "metricas")
+
+    expect(accented.length).toBeGreaterThan(0)
+    expect(plain.length).toBeGreaterThan(0)
+    expect(accented[0].url).toBe(plain[0].url)
+  })
+
+  it("ranks title matches above body-only matches", async () => {
+    const results = await searchSearchEngine(createEngine(), "hello world")
+
+    expect(results[0]).toMatchObject({
+      id: "blog-hello-world",
+      kind: "page",
+    })
+  })
+
+  it("filters results by scope", async () => {
+    const engine = createEngine()
+
+    // "deployment" appears in blog content and a profile experience role
+    const all = await searchSearchEngine(engine, "deployment")
+    const blogOnly = await searchSearchEngine(engine, "deployment", {
+      scope: "blog",
+    })
+
+    expect(all.some((result) => result.scope === "profile")).toBe(true)
+    expect(blogOnly.length).toBeGreaterThan(0)
+    expect(blogOnly.every((result) => result.scope === "blog")).toBe(true)
+  })
+
+  it("returns match ranges for highlighting", async () => {
+    const results = await searchSearchEngine(createEngine(), "deployment")
+    const section = results.find(
+      (result) => result.url === "/en/blog/hello-world#deployment"
+    )
+
+    expect(section).toBeDefined()
+    expect(section!.snippetMatches.length).toBeGreaterThan(0)
+    expect(section!.sectionTitleMatches.length).toBeGreaterThan(0)
+
+    const [range] = section!.sectionTitleMatches
+    expect(
+      section!.sectionTitle!.slice(range.start, range.end).toLowerCase()
+    ).toBe("deployment")
+  })
+
+  it("respects the result limit", async () => {
+    const results = await searchSearchEngine(createEngine(), "the", {
+      limit: 2,
+    })
+
+    expect(results.length).toBeLessThanOrEqual(2)
   })
 })

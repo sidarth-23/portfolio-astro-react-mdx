@@ -4,9 +4,13 @@ import type {
   ProfileCertification,
 } from "@/content/content.types"
 import type { Locale } from "@/i18n/config"
-import { stripMarkdownToText, normalizeWhitespace } from "@/lib/content/text"
+import { stripMarkdownToText } from "@/lib/content/text"
 
 import { slugify } from "./slugify"
+
+import type { MatchRange } from "./snippet"
+
+export type SearchScope = "blog" | "profile"
 
 export interface SearchBlogPostInput {
   slug: string
@@ -40,6 +44,8 @@ export interface SearchDocument {
   kind: "page" | "section" | "item"
   weight: number
   tags: string[]
+  scope: SearchScope
+  slug: string | null
 }
 
 export interface SearchResult {
@@ -47,8 +53,12 @@ export interface SearchResult {
   title: string
   sectionTitle?: string
   url: string
-  snippet: string
   kind: "page" | "section" | "item"
+  scope: SearchScope
+  snippet: string
+  snippetMatches: MatchRange[]
+  titleMatches: MatchRange[]
+  sectionTitleMatches: MatchRange[]
 }
 
 export interface SearchCorpusInput {
@@ -59,98 +69,6 @@ export interface SearchCorpusInput {
   experiences: SearchExperienceInput[]
 }
 
-function tokenize(value: string): string[] {
-  return Array.from(
-    new Set(
-      normalize(value)
-        .split(" ")
-        .filter((token) => token.length > 0)
-    )
-  )
-}
-
-function normalize(value: string): string {
-  return normalizeWhitespace(
-    value
-      .normalize("NFKD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, " ")
-  )
-}
-
-function countOccurrences(haystack: string, needle: string): number {
-  if (!needle) return 0
-
-  let count = 0
-  let index = 0
-
-  while (index !== -1) {
-    index = haystack.indexOf(needle, index)
-    if (index !== -1) {
-      count += 1
-      index += needle.length
-    }
-  }
-
-  return count
-}
-
-function createSnippet(content: string, query: string): string {
-  const text = normalizeWhitespace(content)
-  if (!text) return ""
-
-  if (text.length <= 180) return text
-
-  const lowerText = text.toLowerCase()
-  const lowerQuery = query.toLowerCase().trim()
-  const index = lowerQuery ? lowerText.indexOf(lowerQuery) : -1
-
-  if (index === -1) {
-    return `${text.slice(0, 177).trim()}...`
-  }
-
-  const start = Math.max(0, index - 60)
-  const end = Math.min(text.length, index + 120)
-  return `${start > 0 ? "..." : ""}${text.slice(start, end).trim()}${
-    end < text.length ? "..." : ""
-  }`
-}
-
-function scoreDocument(doc: SearchDocument, query: string): number {
-  const normalizedQuery = normalize(query)
-  const tokens = tokenize(query)
-  const searchable = normalize(
-    [doc.title, doc.sectionTitle ?? "", doc.content, doc.tags.join(" ")].join(
-      " "
-    )
-  )
-
-  if (!normalizedQuery || tokens.length === 0) return 0
-  if (!tokens.every((token) => searchable.includes(token))) return 0
-
-  let score = doc.weight
-
-  if (searchable.startsWith(normalizedQuery)) score += 25
-  if (normalize(doc.title).includes(normalizedQuery)) score += 40
-  if (doc.sectionTitle && normalize(doc.sectionTitle).includes(normalizedQuery))
-    score += 20
-
-  for (const token of tokens) {
-    score += countOccurrences(searchable, token) * 4
-    score += countOccurrences(normalize(doc.title), token) * 10
-    score +=
-      doc.sectionTitle && normalize(doc.sectionTitle).includes(token) ? 8 : 0
-    score += countOccurrences(normalize(doc.tags.join(" ")), token) * 2
-  }
-
-  return score
-}
-
-function addDocument(docs: SearchDocument[], doc: SearchDocument): void {
-  docs.push(doc)
-}
-
 function buildBlogSectionDocuments(
   locale: Locale,
   post: SearchBlogPostInput
@@ -158,23 +76,19 @@ function buildBlogSectionDocuments(
   const pageUrl = `/${locale}/blog/${post.slug}`
   const docs: SearchDocument[] = []
 
-  addDocument(docs, {
+  docs.push({
     id: `blog-${post.slug}`,
     title: post.title,
     sectionTitle: "",
     url: pageUrl,
     content: stripMarkdownToText(
-      [
-        post.title,
-        post.description,
-        post.tags.join(" "),
-        post.category ?? "",
-        post.body,
-      ].join("\n\n")
+      [post.description, post.tags.join(" "), post.category ?? ""].join("\n\n")
     ),
     kind: "page",
     weight: 100,
     tags: post.tags,
+    scope: "blog",
+    slug: post.slug,
   })
 
   const lines = post.body.split(/\r?\n/)
@@ -213,7 +127,7 @@ function buildBlogSectionDocuments(
   flushSection()
 
   for (const section of sections) {
-    addDocument(docs, {
+    docs.push({
       id: `blog-${post.slug}-${slugify(section.title)}`,
       title: post.title,
       sectionTitle: section.title,
@@ -222,6 +136,8 @@ function buildBlogSectionDocuments(
       kind: "section",
       weight: 80,
       tags: post.tags,
+      scope: "blog",
+      slug: post.slug,
     })
   }
 
@@ -249,7 +165,7 @@ function buildProfileDocuments(
   const pageUrl = `/${locale}/profile`
   const docs: SearchDocument[] = []
 
-  addDocument(docs, {
+  docs.push({
     id: "profile-overview",
     title: profileTitle,
     sectionTitle: "Overview",
@@ -265,9 +181,11 @@ function buildProfileDocuments(
     kind: "section",
     weight: 95,
     tags: [profile.profile.role],
+    scope: "profile",
+    slug: null,
   })
 
-  addDocument(docs, {
+  docs.push({
     id: "profile-experience",
     title: profileTitle,
     sectionTitle: "Experience",
@@ -288,11 +206,13 @@ function buildProfileDocuments(
     kind: "section",
     weight: 40,
     tags: [],
+    scope: "profile",
+    slug: null,
   })
 
   for (const experience of experiences) {
     for (const [roleIndex, role] of experience.roles.entries()) {
-      addDocument(docs, {
+      docs.push({
         id: role.id,
         title: profileTitle,
         sectionTitle: `${experience.company} · ${role.title}`,
@@ -309,11 +229,13 @@ function buildProfileDocuments(
         kind: "item",
         weight: 85 - roleIndex,
         tags: [experience.company],
+        scope: "profile",
+        slug: null,
       })
     }
   }
 
-  addDocument(docs, {
+  docs.push({
     id: "profile-skills",
     title: profileTitle,
     sectionTitle: "Technologies & Skills",
@@ -322,10 +244,12 @@ function buildProfileDocuments(
     kind: "section",
     weight: 90,
     tags: [],
+    scope: "profile",
+    slug: null,
   })
 
   for (const group of profile.skills) {
-    addDocument(docs, {
+    docs.push({
       id: `skills-${slugify(group.title)}`,
       title: profileTitle,
       sectionTitle: group.title,
@@ -336,10 +260,12 @@ function buildProfileDocuments(
       kind: "item",
       weight: 88,
       tags: group.items.map((item) => item.label),
+      scope: "profile",
+      slug: null,
     })
   }
 
-  addDocument(docs, {
+  docs.push({
     id: "profile-certifications",
     title: profileTitle,
     sectionTitle: "Certifications",
@@ -350,10 +276,12 @@ function buildProfileDocuments(
     kind: "section",
     weight: 88,
     tags: [],
+    scope: "profile",
+    slug: null,
   })
 
   for (const cert of profile.certifications) {
-    addDocument(docs, {
+    docs.push({
       id: `cert-${slugify(cert.title)}`,
       title: profileTitle,
       sectionTitle: cert.title,
@@ -362,6 +290,8 @@ function buildProfileDocuments(
       kind: "item",
       weight: 86,
       tags: [cert.title],
+      scope: "profile",
+      slug: null,
     })
   }
 
@@ -371,7 +301,7 @@ function buildProfileDocuments(
 export function buildSearchDocuments(
   input: SearchCorpusInput
 ): SearchDocument[] {
-  const docs = [
+  return [
     ...input.blogPosts.flatMap((post) =>
       buildBlogSectionDocuments(input.locale, post)
     ),
@@ -382,27 +312,4 @@ export function buildSearchDocuments(
       input.experiences
     ),
   ]
-
-  return docs
-}
-
-export function searchDocuments(
-  docs: SearchDocument[],
-  query: string,
-  limit = 8
-): SearchResult[] {
-  const scored = docs
-    .map((doc) => ({ ...doc, score: scoreDocument(doc, query) }))
-    .filter((doc) => doc.score > 0)
-    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
-    .slice(0, limit)
-
-  return scored.map((doc) => ({
-    id: doc.id,
-    title: doc.title,
-    sectionTitle: doc.sectionTitle,
-    url: doc.url,
-    snippet: createSnippet(doc.content, query),
-    kind: doc.kind,
-  }))
 }
