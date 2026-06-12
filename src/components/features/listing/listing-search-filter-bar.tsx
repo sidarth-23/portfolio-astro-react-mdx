@@ -1,273 +1,419 @@
 "use client"
 
 import {
-  Search01Icon,
+  ArrowUpDownIcon,
+  Calendar03Icon,
   Cancel01Icon,
-  SlidersHorizontalIcon,
+  Tag01Icon,
+  Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { useState, useEffect, useCallback } from "react"
+import { AnimatePresence, motion } from "motion/react"
+import { useCallback, useState } from "react"
 
 import {
-  Input,
   Badge,
   Button,
-  ScrollArea,
-  ScrollBar,
-  Separator,
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
+  Calendar,
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
-import type { ListingSort } from "@/lib/api/listing-query"
+import type { ListingFilterState, ListingSort } from "@/lib/api/listing-query"
+
+import type { DateRange } from "react-day-picker"
 
 interface SearchFilterBarProps {
   locale: Locale
   tags: string[]
   categories: string[]
-  initialSearch: string
-  initialTags: string[]
-  initialCategories: string[]
-  initialSortBy: ListingSort | null
-  onFiltersChange: (
-    search: string,
-    tags: string[],
-    categories: string[],
-    sortBy: ListingSort | null
-  ) => void
+  initialFilters: ListingFilterState
+  onFiltersChange: (filters: ListingFilterState) => void
 }
 
 const SORT_OPTIONS = [
-  { value: "newest", labelKey: "filters.newest" },
-  { value: "oldest", labelKey: "filters.oldest" },
-  { value: "title", labelKey: "filters.titleAZ" },
+  { value: "date-desc", labelKey: "filters.sortNewest" },
+  { value: "date-asc", labelKey: "filters.sortOldest" },
+  { value: "title-asc", labelKey: "filters.sortTitleAz" },
+  { value: "title-desc", labelKey: "filters.sortTitleZa" },
 ] as const
+
+const chipVariants = {
+  initial: { opacity: 0, scale: 0.85 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.85 },
+}
+
+// Local date parts, not toISOString(), so the selected day survives timezones.
+function toDateParam(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
+
+function fromDateParam(value: string | null): Date | undefined {
+  if (!value) return undefined
+  const [year, month, day] = value.split("-").map(Number)
+  return new Date(year, month - 1, day)
+}
+
+function formatDateRange(
+  locale: Locale,
+  from: string | null,
+  to: string | null
+): string {
+  const formatter = new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  })
+  const fromDate = fromDateParam(from)
+  const toDate = fromDateParam(to)
+  if (fromDate && toDate) return formatter.formatRange(fromDate, toDate)
+  if (fromDate) return `${formatter.format(fromDate)} –`
+  if (toDate) return `– ${formatter.format(toDate)}`
+  return ""
+}
 
 export function SearchFilterBar({
   locale,
   tags,
   categories,
-  initialSearch,
-  initialTags,
-  initialCategories,
-  initialSortBy,
+  initialFilters,
   onFiltersChange,
 }: SearchFilterBarProps) {
-  const [search, setSearch] = useState(initialSearch)
-  const [activeTags, setActiveTags] = useState<string[]>(initialTags)
-  const [activeCategories, setActiveCategories] =
-    useState<string[]>(initialCategories)
-  const [sortBy, setSortBy] = useState<ListingSort | null>(initialSortBy)
-  const [sheetOpen, setSheetOpen] = useState(false)
+  const [filters, setFilters] = useState<ListingFilterState>(initialFilters)
+  const [datePickerOpen, setDatePickerOpen] = useState(false)
 
-  // Debounce search input
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onFiltersChange(search, activeTags, activeCategories, sortBy)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [search, activeTags, activeCategories, sortBy, onFiltersChange])
+  const applyFilters = useCallback(
+    (update: Partial<ListingFilterState>) => {
+      setFilters((current) => {
+        const next = { ...current, ...update }
+        onFiltersChange(next)
+        return next
+      })
+    },
+    [onFiltersChange]
+  )
 
-  const handleTagToggle = useCallback((tag: string) => {
-    setActiveTags((current) =>
-      current.includes(tag)
-        ? current.filter((t) => t !== tag)
-        : [...current, tag]
-    )
-  }, [])
+  const handleTagToggle = useCallback(
+    (tag: string) => {
+      applyFilters({
+        tags: filters.tags.includes(tag)
+          ? filters.tags.filter((current) => current !== tag)
+          : [...filters.tags, tag],
+      })
+    },
+    [filters.tags, applyFilters]
+  )
 
-  const handleCategoryToggle = useCallback((category: string) => {
-    setActiveCategories((current) =>
-      current.includes(category)
-        ? current.filter((c) => c !== category)
-        : [...current, category]
-    )
-  }, [])
-  const handleSortToggle = useCallback((value: ListingSort) => {
-    setSortBy((current) => (current === value ? null : value))
-  }, [])
+  const handleCategoryToggle = useCallback(
+    (category: string) => {
+      applyFilters({
+        categories: filters.categories.includes(category)
+          ? filters.categories.filter((current) => current !== category)
+          : [...filters.categories, category],
+      })
+    },
+    [filters.categories, applyFilters]
+  )
+
+  const handleSortChange = useCallback(
+    (value: string) => {
+      applyFilters({
+        sort: value === "date-desc" ? null : (value as ListingSort),
+      })
+    },
+    [applyFilters]
+  )
+
+  const handleDateRangeSelect = useCallback(
+    (range: DateRange | undefined) => {
+      applyFilters({
+        from: range?.from ? toDateParam(range.from) : null,
+        to: range?.to ? toDateParam(range.to) : null,
+      })
+    },
+    [applyFilters]
+  )
+
+  const handleDatePreset = useCallback(
+    (from: Date | null, to: Date | null) => {
+      applyFilters({
+        from: from ? toDateParam(from) : null,
+        to: to ? toDateParam(to) : null,
+      })
+      setDatePickerOpen(false)
+    },
+    [applyFilters]
+  )
+
+  const handleClearDates = useCallback(() => {
+    applyFilters({ from: null, to: null })
+  }, [applyFilters])
 
   const handleClear = useCallback(() => {
-    setSearch("")
-    setActiveTags([])
-    setActiveCategories([])
-    setSortBy(null)
-  }, [])
+    applyFilters({ tags: [], categories: [], sort: null, from: null, to: null })
+  }, [applyFilters])
 
-  const hasFilters =
-    search || activeTags.length > 0 || activeCategories.length > 0 || sortBy
+  const hasDateRange = Boolean(filters.from || filters.to)
+  const dateRangeLabel = formatDateRange(locale, filters.from, filters.to)
 
-  const activeFiltersCount =
-    activeTags.length + activeCategories.length + (sortBy ? 1 : 0)
+  const activeChips = [
+    ...filters.categories.map((value) => ({
+      kind: "category" as const,
+      value,
+    })),
+    ...filters.tags.map((value) => ({ kind: "tag" as const, value })),
+    ...(hasDateRange ? [{ kind: "date" as const, value: dateRangeLabel }] : []),
+  ]
+
+  const now = new Date()
+  const datePresets = [
+    {
+      labelKey: "filters.datePresetLast6Months" as const,
+      from: new Date(now.getFullYear(), now.getMonth() - 6, now.getDate()),
+      to: now,
+    },
+    {
+      labelKey: "filters.datePresetThisYear" as const,
+      from: new Date(now.getFullYear(), 0, 1),
+      to: now,
+    },
+    {
+      labelKey: "filters.datePresetLastYear" as const,
+      from: new Date(now.getFullYear() - 1, 0, 1),
+      to: new Date(now.getFullYear() - 1, 11, 31),
+    },
+    {
+      labelKey: "filters.datePresetAllTime" as const,
+      from: null,
+      to: null,
+    },
+  ]
 
   return (
-    <div className="mb-8 space-y-4">
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <HugeiconsIcon
-            icon={Search01Icon}
-            size={16}
-            strokeWidth={2}
-            className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
-          />
-          <Input
-            data-testid="search-input"
-            type="text"
-            placeholder={t(locale, "filters.searchPlaceholder")}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10"
-          />
-          {search && (
-            <button
-              onClick={() => setSearch("")}
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <HugeiconsIcon icon={Cancel01Icon} size={16} strokeWidth={2} />
-            </button>
-          )}
-        </div>
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="relative shrink-0">
-              <HugeiconsIcon
-                icon={SlidersHorizontalIcon}
-                size={18}
-                strokeWidth={2}
-              />
-              {activeFiltersCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                  {activeFiltersCount}
-                </span>
-              )}
-              <span className="sr-only">{t(locale, "filters.title")}</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-full sm:max-w-sm">
-            <SheetHeader>
-              <SheetTitle>{t(locale, "filters.title")}</SheetTitle>
-            </SheetHeader>
-            <div className="flex-1 space-y-6 overflow-auto px-4 py-2">
-              {/* Sort */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium">
-                  {t(locale, "filters.sortBy")}
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {SORT_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleSortToggle(option.value)}
-                      className="cursor-pointer"
-                    >
-                      <Badge
-                        variant={
-                          sortBy === option.value ? "default" : "outline"
-                        }
-                      >
-                        {t(locale, option.labelKey)}
-                      </Badge>
-                    </button>
-                  ))}
-                </div>
-              </div>
+    <div className="mb-8 space-y-3">
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Category badges */}
+        {categories.length > 0 && (
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+            {categories.map((category) => (
+              <button
+                key={category}
+                data-testid="category-filter"
+                onClick={() => handleCategoryToggle(category)}
+                className="shrink-0 cursor-pointer"
+              >
+                <Badge
+                  variant={
+                    filters.categories.includes(category)
+                      ? "default"
+                      : "outline"
+                  }
+                  className="capitalize"
+                >
+                  {category}
+                </Badge>
+              </button>
+            ))}
+          </div>
+        )}
 
-              {/* Tags */}
-              {tags.length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium">
-                    {t(locale, "filters.tags")}
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                      <button
-                        key={tag}
-                        data-testid="tag-filter"
-                        onClick={() => handleTagToggle(tag)}
-                        className="cursor-pointer"
-                      >
-                        <Badge
-                          variant={
-                            activeTags.includes(tag) ? "default" : "outline"
-                          }
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {/* Tags combobox */}
+          {tags.length > 0 && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  data-testid="tag-filter-trigger"
+                  aria-label={t(locale, "filters.tags")}
+                >
+                  <HugeiconsIcon icon={Tag01Icon} size={14} strokeWidth={2} />
+                  {t(locale, "filters.tags")}
+                  {filters.tags.length > 0 && (
+                    <Badge variant="secondary" className="px-1.5">
+                      {filters.tags.length}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-0" align="end">
+                <Command>
+                  <CommandInput
+                    placeholder={t(locale, "filters.tagsSearchPlaceholder")}
+                  />
+                  <CommandList>
+                    <CommandEmpty>
+                      {t(locale, "filters.tagsEmpty")}
+                    </CommandEmpty>
+                    {tags.map((tag) => {
+                      const isActive = filters.tags.includes(tag)
+                      return (
+                        <CommandItem
+                          key={tag}
+                          value={tag}
+                          data-testid="tag-filter-option"
+                          onSelect={() => handleTagToggle(tag)}
                         >
+                          <HugeiconsIcon
+                            icon={Tick02Icon}
+                            size={14}
+                            strokeWidth={2}
+                            className={isActive ? "opacity-100" : "opacity-0"}
+                          />
                           #{tag}
-                        </Badge>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            <SheetFooter className="px-4 pt-2 pb-4">
+                        </CommandItem>
+                      )
+                    })}
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          )}
+
+          {/* Date range picker */}
+          <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+            <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full"
-                onClick={() => {
-                  setActiveTags([])
-                  setActiveCategories([])
-                  setSortBy(null)
-                  setSheetOpen(false)
-                }}
-                disabled={
-                  activeTags.length === 0 &&
-                  activeCategories.length === 0 &&
-                  !sortBy
-                }
+                size="sm"
+                data-testid="date-filter-trigger"
+                aria-label={t(locale, "filters.dateRange")}
               >
-                {t(locale, "filters.clearFilters")}
+                <HugeiconsIcon
+                  icon={Calendar03Icon}
+                  size={14}
+                  strokeWidth={2}
+                />
+                {hasDateRange ? dateRangeLabel : t(locale, "filters.dateRange")}
               </Button>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <div className="flex flex-wrap gap-1 border-b p-2">
+                {datePresets.map((preset) => (
+                  <Button
+                    key={preset.labelKey}
+                    variant="ghost"
+                    size="xs"
+                    data-testid="date-preset"
+                    onClick={() => handleDatePreset(preset.from, preset.to)}
+                  >
+                    {t(locale, preset.labelKey)}
+                  </Button>
+                ))}
+              </div>
+              <Calendar
+                mode="range"
+                numberOfMonths={1}
+                defaultMonth={fromDateParam(filters.from)}
+                selected={{
+                  from: fromDateParam(filters.from),
+                  to: fromDateParam(filters.to),
+                }}
+                onSelect={handleDateRangeSelect}
+              />
+            </PopoverContent>
+          </Popover>
+
+          {/* Sort */}
+          <Select
+            value={filters.sort ?? "date-desc"}
+            onValueChange={handleSortChange}
+          >
+            <SelectTrigger
+              size="sm"
+              data-testid="sort-select"
+              aria-label={t(locale, "filters.sortBy")}
+            >
+              <HugeiconsIcon icon={ArrowUpDownIcon} size={14} strokeWidth={2} />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {SORT_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {t(locale, option.labelKey)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      {/* Category pills below search */}
-      {categories.length > 0 && (
-        <div className="flex items-center gap-3">
-          <span className="shrink-0 text-sm font-medium text-muted-foreground">
-            {t(locale, "filters.categories")}
-          </span>
-          <Separator orientation="vertical" />
-          <ScrollArea className="flex-1 whitespace-nowrap">
-            <div className="flex items-center gap-1.5 py-1">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  data-testid="category-filter"
-                  onClick={() => handleCategoryToggle(category)}
-                  className="shrink-0 cursor-pointer"
-                >
-                  <Badge
-                    variant={
-                      activeCategories.includes(category)
-                        ? "default"
-                        : "outline"
-                    }
-                    className="capitalize"
+      {/* Active filter chips */}
+      <AnimatePresence initial={false}>
+        {activeChips.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="overflow-hidden"
+          >
+            <div className="flex flex-wrap items-center gap-1.5 py-1">
+              <AnimatePresence mode="popLayout" initial={false}>
+                {activeChips.map((chip) => (
+                  <motion.div
+                    key={`${chip.kind}:${chip.value}`}
+                    layout
+                    variants={chipVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{ duration: 0.15, ease: "easeOut" }}
                   >
-                    {category}
-                  </Badge>
-                </button>
-              ))}
+                    <Badge
+                      variant="secondary"
+                      className={`gap-1 pr-1 ${chip.kind === "category" ? "capitalize" : ""}`}
+                      data-testid="active-filter-chip"
+                    >
+                      {chip.kind === "tag" ? `#${chip.value}` : chip.value}
+                      <button
+                        onClick={() => {
+                          if (chip.kind === "tag") handleTagToggle(chip.value)
+                          else if (chip.kind === "category")
+                            handleCategoryToggle(chip.value)
+                          else handleClearDates()
+                        }}
+                        aria-label={`${t(locale, "filters.removeFilter")}: ${chip.value}`}
+                        className="cursor-pointer rounded-full p-0.5 hover:bg-foreground/10"
+                      >
+                        <HugeiconsIcon
+                          icon={Cancel01Icon}
+                          size={12}
+                          strokeWidth={2}
+                        />
+                      </button>
+                    </Badge>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              <button
+                onClick={handleClear}
+                className="ml-1 shrink-0 cursor-pointer text-sm text-muted-foreground underline-offset-4 hover:underline"
+              >
+                {t(locale, "filters.clearFilters")}
+              </button>
             </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-          {hasFilters && (
-            <button
-              onClick={handleClear}
-              className="shrink-0 text-sm text-muted-foreground underline-offset-4 hover:underline"
-            >
-              {t(locale, "filters.clearFilters")}
-            </button>
-          )}
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -1,27 +1,45 @@
-import { screen } from "@testing-library/react"
+import { screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { describe, expect, it, vi } from "vitest"
+import { beforeAll, describe, expect, it, vi } from "vitest"
 
 import { renderReact } from "@/test/utils"
 
 import { SearchFilterBar } from "./listing-search-filter-bar"
+
+// The test DOM lacks the pointer/scroll/observer APIs Radix and cmdk rely on.
+beforeAll(() => {
+  Element.prototype.hasPointerCapture = () => false
+  Element.prototype.releasePointerCapture = () => {}
+  Element.prototype.scrollIntoView = () => {}
+  if (typeof globalThis.ResizeObserver === "undefined") {
+    globalThis.ResizeObserver = class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    }
+  }
+})
+
+function setupUser() {
+  return userEvent.setup({ pointerEventsCheck: 0 })
+}
+
+const emptyFilters = {
+  tags: [],
+  categories: [],
+  sort: null,
+  from: null,
+  to: null,
+}
 
 describe("SearchFilterBar", () => {
   const defaultProps = {
     locale: "en" as const,
     tags: ["react", "astro"],
     categories: ["Web Application", "Website", "Experiment"],
-    initialSearch: "",
-    initialTags: [],
-    initialCategories: [],
-    initialSortBy: null,
+    initialFilters: emptyFilters,
     onFiltersChange: vi.fn(),
   }
-
-  it("renders category label", () => {
-    renderReact(<SearchFilterBar {...defaultProps} />)
-    expect(screen.getByText("Categories")).toBeInTheDocument()
-  })
 
   it("renders all category badges", () => {
     renderReact(<SearchFilterBar {...defaultProps} />)
@@ -36,6 +54,7 @@ describe("SearchFilterBar", () => {
 
   it("toggles category on click", async () => {
     const handleFiltersChange = vi.fn()
+    const user = setupUser()
     renderReact(
       <SearchFilterBar
         {...defaultProps}
@@ -43,128 +62,287 @@ describe("SearchFilterBar", () => {
       />
     )
 
-    const categoryButton = screen.getByRole("button", {
-      name: "Web Application",
+    await user.click(screen.getByRole("button", { name: "Web Application" }))
+
+    expect(handleFiltersChange).toHaveBeenCalledWith({
+      ...emptyFilters,
+      categories: ["Web Application"],
     })
-    await userEvent.click(categoryButton)
-
-    // Wait for debounce
-    await new Promise((resolve) => setTimeout(resolve, 400))
-
-    expect(handleFiltersChange).toHaveBeenCalledWith(
-      "",
-      [],
-      ["Web Application"],
-      null
-    )
   })
 
-  it("shows clear filters when category is active", async () => {
+  describe("tags combobox", () => {
+    it("lists tags in the popover and toggles them", async () => {
+      const handleFiltersChange = vi.fn()
+      const user = setupUser()
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          onFiltersChange={handleFiltersChange}
+        />
+      )
+
+      await user.click(screen.getByTestId("tag-filter-trigger"))
+
+      const options = screen.getAllByTestId("tag-filter-option")
+      expect(options.map((option) => option.textContent)).toEqual([
+        "#react",
+        "#astro",
+      ])
+
+      await user.click(screen.getByRole("option", { name: "#react" }))
+
+      expect(handleFiltersChange).toHaveBeenCalledWith({
+        ...emptyFilters,
+        tags: ["react"],
+      })
+    })
+
+    it("filters tags by search input", async () => {
+      const user = setupUser()
+      renderReact(<SearchFilterBar {...defaultProps} />)
+
+      await user.click(screen.getByTestId("tag-filter-trigger"))
+      await user.type(screen.getByPlaceholderText("Search tags..."), "ast")
+
+      const options = screen.getAllByTestId("tag-filter-option")
+      expect(options.map((option) => option.textContent)).toEqual(["#astro"])
+    })
+
+    it("shows a count badge for selected tags", () => {
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          initialFilters={{ ...emptyFilters, tags: ["react", "astro"] }}
+        />
+      )
+
+      expect(screen.getByTestId("tag-filter-trigger")).toHaveTextContent(
+        "Tags2"
+      )
+    })
+  })
+
+  describe("sort select", () => {
+    it("emits the chosen sort value", async () => {
+      const handleFiltersChange = vi.fn()
+      const user = setupUser()
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          onFiltersChange={handleFiltersChange}
+        />
+      )
+
+      await user.click(screen.getByTestId("sort-select"))
+      await user.click(screen.getByRole("option", { name: "Oldest first" }))
+
+      expect(handleFiltersChange).toHaveBeenCalledWith({
+        ...emptyFilters,
+        sort: "date-asc",
+      })
+    })
+
+    it("emits null when the default sort is chosen", async () => {
+      const handleFiltersChange = vi.fn()
+      const user = setupUser()
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          initialFilters={{ ...emptyFilters, sort: "title-asc" }}
+          onFiltersChange={handleFiltersChange}
+        />
+      )
+
+      await user.click(screen.getByTestId("sort-select"))
+      await user.click(screen.getByRole("option", { name: "Newest first" }))
+
+      expect(handleFiltersChange).toHaveBeenCalledWith({
+        ...emptyFilters,
+        sort: null,
+      })
+    })
+
+    it("shows the current sort option on the trigger", () => {
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          initialFilters={{ ...emptyFilters, sort: "title-asc" }}
+        />
+      )
+
+      expect(screen.getByTestId("sort-select")).toHaveTextContent("Title A–Z")
+    })
+  })
+
+  describe("date range", () => {
+    it("applies a preset range", async () => {
+      const handleFiltersChange = vi.fn()
+      const user = setupUser()
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          onFiltersChange={handleFiltersChange}
+        />
+      )
+
+      await user.click(screen.getByTestId("date-filter-trigger"))
+      await user.click(screen.getByRole("button", { name: "Last year" }))
+
+      const lastYear = new Date().getFullYear() - 1
+      expect(handleFiltersChange).toHaveBeenCalledWith({
+        ...emptyFilters,
+        from: `${lastYear}-01-01`,
+        to: `${lastYear}-12-31`,
+      })
+    })
+
+    it("clears the range via the All time preset", async () => {
+      const handleFiltersChange = vi.fn()
+      const user = setupUser()
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          initialFilters={{
+            ...emptyFilters,
+            from: "2024-01-01",
+            to: "2024-12-31",
+          }}
+          onFiltersChange={handleFiltersChange}
+        />
+      )
+
+      await user.click(screen.getByTestId("date-filter-trigger"))
+      await user.click(screen.getByRole("button", { name: "All time" }))
+
+      expect(handleFiltersChange).toHaveBeenCalledWith(emptyFilters)
+    })
+
+    it("shows the active range on the trigger and as a chip", () => {
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          initialFilters={{
+            ...emptyFilters,
+            from: "2024-01-01",
+            to: "2024-12-31",
+          }}
+        />
+      )
+
+      expect(screen.getByTestId("date-filter-trigger")).not.toHaveTextContent(
+        "Date range"
+      )
+      const chips = screen.getAllByTestId("active-filter-chip")
+      expect(chips).toHaveLength(1)
+    })
+
+    it("removes the date chip and clears both bounds", async () => {
+      const handleFiltersChange = vi.fn()
+      const user = setupUser()
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          initialFilters={{
+            ...emptyFilters,
+            from: "2024-01-01",
+            to: "2024-12-31",
+          }}
+          onFiltersChange={handleFiltersChange}
+        />
+      )
+
+      const chip = screen.getByTestId("active-filter-chip")
+      await user.click(
+        within(chip).getByRole("button", { name: /Remove filter/ })
+      )
+
+      expect(handleFiltersChange).toHaveBeenCalledWith(emptyFilters)
+    })
+  })
+
+  it("shows active filter chips for selected tags and categories", () => {
     renderReact(
       <SearchFilterBar
         {...defaultProps}
-        initialCategories={["Web Application"]}
+        initialFilters={{
+          ...emptyFilters,
+          tags: ["react"],
+          categories: ["Web Application"],
+        }}
       />
     )
 
-    expect(screen.getByText("Clear filters")).toBeInTheDocument()
+    const chips = screen.getAllByTestId("active-filter-chip")
+    expect(chips).toHaveLength(2)
+    expect(chips[0]).toHaveTextContent("Web Application")
+    expect(chips[1]).toHaveTextContent("#react")
   })
 
-  it("hides clear filters when no filters active", () => {
+  it("hides the active filter row when nothing is selected", () => {
     renderReact(<SearchFilterBar {...defaultProps} />)
 
-    expect(screen.queryByText("Clear filters")).not.toBeInTheDocument()
+    expect(screen.queryByTestId("active-filter-chip")).not.toBeInTheDocument()
+    expect(screen.queryByText("Clear all")).not.toBeInTheDocument()
+  })
+
+  it("removes a filter via its chip's remove button", async () => {
+    const handleFiltersChange = vi.fn()
+    const user = setupUser()
+    renderReact(
+      <SearchFilterBar
+        {...defaultProps}
+        initialFilters={{
+          ...emptyFilters,
+          tags: ["react"],
+          categories: ["Web Application"],
+        }}
+        onFiltersChange={handleFiltersChange}
+      />
+    )
+
+    const chips = screen.getAllByTestId("active-filter-chip")
+    const tagChip = chips.find((chip) => chip.textContent?.includes("#react"))!
+    await user.click(
+      within(tagChip).getByRole("button", { name: /Remove filter/ })
+    )
+
+    expect(handleFiltersChange).toHaveBeenCalledWith({
+      ...emptyFilters,
+      categories: ["Web Application"],
+    })
   })
 
   it("clears all filters when clear button clicked", async () => {
     const handleFiltersChange = vi.fn()
+    const user = setupUser()
     renderReact(
       <SearchFilterBar
         {...defaultProps}
-        initialCategories={["Web Application"]}
+        initialFilters={{
+          tags: ["react"],
+          categories: ["Web Application"],
+          sort: "title-desc",
+          from: "2024-01-01",
+          to: "2024-12-31",
+        }}
         onFiltersChange={handleFiltersChange}
       />
     )
 
-    const clearButton = screen.getByText("Clear filters")
-    await userEvent.click(clearButton)
+    await user.click(screen.getByText("Clear all"))
 
-    // Wait for debounce
-    await new Promise((resolve) => setTimeout(resolve, 400))
-
-    expect(handleFiltersChange).toHaveBeenCalledWith("", [], [], null)
+    expect(handleFiltersChange).toHaveBeenCalledWith(emptyFilters)
   })
 
-  it("does not render category section when no categories provided", () => {
+  it("does not render category badges when no categories provided", () => {
     renderReact(<SearchFilterBar {...defaultProps} categories={[]} />)
 
-    expect(screen.queryByText("Categories")).not.toBeInTheDocument()
+    expect(screen.queryByTestId("category-filter")).not.toBeInTheDocument()
   })
 
-  it("sheet clear button clears categories, tags, and sort", async () => {
-    const handleFiltersChange = vi.fn()
-    renderReact(
-      <SearchFilterBar
-        {...defaultProps}
-        initialCategories={["Web Application"]}
-        initialTags={["react"]}
-        initialSortBy="newest"
-        onFiltersChange={handleFiltersChange}
-      />
-    )
+  it("does not render the tag combobox when no tags provided", () => {
+    renderReact(<SearchFilterBar {...defaultProps} tags={[]} />)
 
-    // Open the filter sheet using the sheet trigger button (identified by data-slot)
-    const sheetTrigger = document.querySelector('[data-slot="sheet-trigger"]')
-    expect(sheetTrigger).toBeTruthy()
-    if (sheetTrigger) {
-      await userEvent.click(sheetTrigger)
-    }
-
-    // Find the clear button inside the sheet footer (inside the dialog)
-    const dialogs = document.querySelectorAll('[role="dialog"]')
-    const dialog = dialogs.length > 0 ? dialogs[dialogs.length - 1] : null
-    const sheetClearButton = dialog
-      ? Array.from(dialog.querySelectorAll("button")).find((btn) =>
-          btn.textContent?.includes("Clear filters")
-        )
-      : null
-
-    if (sheetClearButton) {
-      await userEvent.click(sheetClearButton)
-    }
-
-    // Wait for debounce
-    await new Promise((resolve) => setTimeout(resolve, 400))
-
-    expect(handleFiltersChange).toHaveBeenCalledWith("", [], [], null)
-  })
-
-  it("sheet clear button is disabled when only categories are active", async () => {
-    renderReact(
-      <SearchFilterBar
-        {...defaultProps}
-        initialCategories={["Web Application"]}
-      />
-    )
-
-    // Open the filter sheet using the sheet trigger button (identified by data-slot)
-    const sheetTrigger = document.querySelector('[data-slot="sheet-trigger"]')
-    expect(sheetTrigger).toBeTruthy()
-    if (sheetTrigger) {
-      await userEvent.click(sheetTrigger)
-    }
-
-    // Find the clear button inside the sheet footer
-    const dialogs = document.querySelectorAll('[role="dialog"]')
-    const dialog = dialogs.length > 0 ? dialogs[dialogs.length - 1] : null
-    const sheetClearButton = dialog
-      ? Array.from(dialog.querySelectorAll("button")).find((btn) =>
-          btn.textContent?.includes("Clear filters")
-        )
-      : null
-
-    if (sheetClearButton) {
-      expect(sheetClearButton).not.toBeDisabled()
-    }
+    expect(screen.queryByTestId("tag-filter-trigger")).not.toBeInTheDocument()
   })
 })

@@ -64,4 +64,5 @@ function Button({
   )
 }
 
-export { Button }
+// eslint-disable-next-line react-refresh/only-export-components -- shadcn convention: calendar composes buttonVariants
+export { Button, buttonVariants }

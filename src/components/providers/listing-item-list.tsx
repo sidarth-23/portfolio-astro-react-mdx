@@ -4,7 +4,7 @@ import { ItemListClient } from "@/components/features/listing/listing-item-list-
 import { QueryProvider } from "@/components/providers/query-provider"
 import type { Locale } from "@/i18n/config"
 import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
-import type { ListingSort } from "@/lib/api/listing-query"
+import type { ListingFilterState } from "@/lib/api/listing-query"
 
 import type { ComponentType } from "react"
 
@@ -13,10 +13,7 @@ interface ItemListWithProviderProps<T extends BlogListingItem> {
   locale: Locale
   tags: string[]
   categories: string[]
-  initialSearch: string
-  initialTags: string[]
-  initialCategories: string[]
-  initialSortBy: ListingSort | null
+  initialFilters: ListingFilterState
   initialData?: ListingResponse<BlogListingItem>
   gridClassName: string
   skeletonCount: number
@@ -28,10 +25,7 @@ export function ItemListWithProvider<T extends BlogListingItem>({
   locale,
   tags,
   categories,
-  initialSearch,
-  initialTags,
-  initialCategories,
-  initialSortBy,
+  initialFilters,
   initialData,
   gridClassName,
   skeletonCount,
@@ -45,10 +39,7 @@ export function ItemListWithProvider<T extends BlogListingItem>({
         locale={locale}
         tags={tags}
         categories={categories}
-        initialSearch={initialSearch}
-        initialTags={initialTags}
-        initialCategories={initialCategories}
-        initialSortBy={initialSortBy}
+        initialFilters={initialFilters}
         initialData={initialData}
         gridClassName={gridClassName}
         skeletonCount={skeletonCount}

@@ -37,6 +37,8 @@ export interface ListingFilters {
   tags?: string[]
   categories?: string[]
   sort?: ListingSort
+  from?: string
+  to?: string
   page?: number
   limit?: number
 }
@@ -44,10 +46,9 @@ export interface ListingFilters {
 const DEFAULT_LIMIT = 12
 const MIN_SEARCH_LENGTH = 2
 
-function applyFilters<T extends { tags: string[]; category?: string }>(
-  items: T[],
-  filters: ListingFilters
-): T[] {
+function applyFilters<
+  T extends { tags: string[]; category?: string; date: string },
+>(items: T[], filters: ListingFilters): T[] {
   let filtered = items
 
   if (filters.tags && filters.tags.length > 0) {
@@ -62,6 +63,16 @@ function applyFilters<T extends { tags: string[]; category?: string }>(
     )
   }
 
+  if (filters.from) {
+    const fromTime = Date.parse(`${filters.from}T00:00:00.000Z`)
+    filtered = filtered.filter((item) => Date.parse(item.date) >= fromTime)
+  }
+
+  if (filters.to) {
+    const toTime = Date.parse(`${filters.to}T23:59:59.999Z`)
+    filtered = filtered.filter((item) => Date.parse(item.date) <= toTime)
+  }
+
   return filtered
 }
 
@@ -69,18 +80,21 @@ function applySorting<T extends { date: string; title: string }>(
   items: T[],
   sort?: ListingSort
 ): T[] {
-  if (!sort || sort === "newest") {
+  if (!sort || sort === "date-desc") {
     return [...items].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     )
   }
-  if (sort === "oldest") {
+  if (sort === "date-asc") {
     return [...items].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     )
   }
-  if (sort === "title") {
+  if (sort === "title-asc") {
     return [...items].sort((a, b) => a.title.localeCompare(b.title))
+  }
+  if (sort === "title-desc") {
+    return [...items].sort((a, b) => b.title.localeCompare(a.title))
   }
   return items
 }

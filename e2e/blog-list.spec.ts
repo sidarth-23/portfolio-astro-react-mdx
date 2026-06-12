@@ -44,19 +44,98 @@ test.describe("Blog List Page", () => {
     }
   })
 
-  test("filters by search and updates URL", async ({ page }) => {
-    const searchInput = page.locator("[data-testid='search-input']")
+  test("changes sort order and updates URL", async ({ page }) => {
+    const firstCardTitle = page
+      .locator("[data-testid='blog-card']")
+      .first()
+      .locator("[data-slot='card-title']")
+    const newestTitle = await firstCardTitle.textContent()
 
-    await searchInput.fill("zzzznotfound")
+    await page.locator("[data-testid='sort-select']").click()
+    await page.getByRole("option", { name: "Oldest first" }).click()
     await page.waitForLoadState("networkidle")
 
-    await expect(page).toHaveURL(/search=zzzznotfound/)
-    await expect(page.locator("[data-testid='blog-card']")).toHaveCount(0)
+    await expect(page).toHaveURL(/sort=date-asc/)
+    await expect(firstCardTitle).not.toHaveText(newestTitle ?? "")
+  })
 
-    await searchInput.fill("authentication")
+  test("sorts by title via the sort select", async ({ page }) => {
+    await page.locator("[data-testid='sort-select']").click()
+    await page.getByRole("option", { name: "Title A–Z" }).click()
     await page.waitForLoadState("networkidle")
-    await expect(page).toHaveURL(/search=authentication/)
-    await expect(page.locator("[data-testid='blog-card']")).toHaveCount(1)
+
+    await expect(page).toHaveURL(/sort=title-asc/)
+  })
+
+  test("maps legacy sort URL values", async ({ page }) => {
+    await page.goto("/en/blog?sort=oldest")
+    await page.waitForLoadState("networkidle")
+
+    await expect(page.locator("[data-testid='sort-select']")).toContainText(
+      "Oldest first"
+    )
+  })
+
+  test("filters by tag via the combobox", async ({ page }) => {
+    await page.locator("[data-testid='tag-filter-trigger']").click()
+    const firstOption = page
+      .locator("[data-testid='tag-filter-option']")
+      .first()
+    const tagLabel = (await firstOption.textContent())?.replace(/^#/, "") ?? ""
+    await firstOption.click()
+    await page.waitForLoadState("networkidle")
+
+    await expect(page).toHaveURL(new RegExp(`tags=${tagLabel}`))
+    await page.keyboard.press("Escape")
+    await expect(
+      page.locator("[data-testid='active-filter-chip']")
+    ).toContainText(`#${tagLabel}`)
+  })
+
+  test("filters by date range preset and clears via chip", async ({ page }) => {
+    await page.locator("[data-testid='date-filter-trigger']").click()
+    await page.getByRole("button", { name: "This year" }).click()
+    await page.waitForLoadState("networkidle")
+
+    await expect(page).toHaveURL(/from=\d{4}-\d{2}-\d{2}/)
+    await expect(page).toHaveURL(/to=\d{4}-\d{2}-\d{2}/)
+
+    const chip = page.locator("[data-testid='active-filter-chip']")
+    await expect(chip).toHaveCount(1)
+    await chip.getByRole("button", { name: /Remove filter/ }).click()
+    await page.waitForLoadState("networkidle")
+
+    await expect(page).not.toHaveURL(/from=/)
+    await expect(page).not.toHaveURL(/to=/)
+  })
+
+  test("hydrates date range filter from deep link", async ({ page }) => {
+    await page.goto("/en/blog?from=2020-01-01&to=2020-12-31")
+    await page.waitForLoadState("networkidle")
+
+    await expect(
+      page.locator("[data-testid='date-filter-trigger']")
+    ).not.toContainText("Date range")
+    await expect(
+      page.locator("[data-testid='active-filter-chip']")
+    ).toHaveCount(1)
+  })
+
+  test("shows removable active filter chips", async ({ page }) => {
+    await page.getByRole("button", { name: "Backend Systems" }).click()
+    await page.waitForLoadState("networkidle")
+
+    const chip = page.locator("[data-testid='active-filter-chip']")
+    await expect(chip).toHaveCount(1)
+    await expect(chip).toContainText("Backend Systems")
+
+    await chip.getByRole("button", { name: /Remove filter/ }).click()
+    await page.waitForLoadState("networkidle")
+
+    await expect(
+      page.locator("[data-testid='active-filter-chip']")
+    ).toHaveCount(0)
+    await expect(page).not.toHaveURL(/categories=/)
   })
 
   test("filters by categories and updates URL", async ({ page }) => {

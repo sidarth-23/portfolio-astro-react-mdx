@@ -120,7 +120,7 @@ describe("listing-api", () => {
 
       const result = await getBlogListing("en", {
         search: "astro",
-        sort: "title",
+        sort: "title-asc",
       })
 
       expect(result.items.map((item) => item.slug)).toEqual([
@@ -156,8 +156,57 @@ describe("listing-api", () => {
       )
     })
 
-    it("sorts by newest", async () => {
-      const result = await getBlogListing("en", { sort: "newest" })
+    it("filters by date range inclusively", async () => {
+      const from = "2024-01-05"
+      const to = "2024-01-10"
+      const result = await getBlogListing("en", { from, to, limit: 24 })
+
+      const fromTime = Date.parse(`${from}T00:00:00.000Z`)
+      const toTime = Date.parse(`${to}T23:59:59.999Z`)
+      expect(result.total).toBeGreaterThan(0)
+      expect(result.total).toBeLessThan(ENTRY_COUNT)
+      expect(
+        result.items.every((item) => {
+          const time = Date.parse(item.date)
+          return time >= fromTime && time <= toTime
+        })
+      ).toBe(true)
+    })
+
+    it("supports open-ended date ranges", async () => {
+      const fromOnly = await getBlogListing("en", {
+        from: "2024-01-10",
+        limit: 24,
+      })
+      const fromTime = Date.parse("2024-01-10T00:00:00.000Z")
+      expect(fromOnly.total).toBeGreaterThan(0)
+      expect(
+        fromOnly.items.every((item) => Date.parse(item.date) >= fromTime)
+      ).toBe(true)
+
+      const toOnly = await getBlogListing("en", { to: "2024-01-10", limit: 24 })
+      const toTime = Date.parse("2024-01-10T23:59:59.999Z")
+      expect(toOnly.total).toBeGreaterThan(0)
+      expect(
+        toOnly.items.every((item) => Date.parse(item.date) <= toTime)
+      ).toBe(true)
+      expect(fromOnly.total + toOnly.total).toBeGreaterThanOrEqual(ENTRY_COUNT)
+    })
+
+    it("combines search with date range filters", async () => {
+      mockSearchBlogSlugs.mockResolvedValue(["post-1", "post-24"])
+
+      const result = await getBlogListing("en", {
+        search: "post",
+        from: "2024-01-02",
+      })
+
+      // post-24 has the oldest date (Jan 1) and falls outside the range.
+      expect(result.items.map((item) => item.slug)).toEqual(["post-1"])
+    })
+
+    it("sorts by date descending", async () => {
+      const result = await getBlogListing("en", { sort: "date-desc" })
       for (let i = 1; i < result.items.length; i++) {
         expect(
           new Date(result.items[i - 1].date).getTime()
@@ -165,8 +214,17 @@ describe("listing-api", () => {
       }
     })
 
-    it("sorts by oldest", async () => {
-      const result = await getBlogListing("en", { sort: "oldest" })
+    it("defaults to date descending without explicit sort", async () => {
+      const result = await getBlogListing("en")
+      for (let i = 1; i < result.items.length; i++) {
+        expect(
+          new Date(result.items[i - 1].date).getTime()
+        ).toBeGreaterThanOrEqual(new Date(result.items[i].date).getTime())
+      }
+    })
+
+    it("sorts by date ascending", async () => {
+      const result = await getBlogListing("en", { sort: "date-asc" })
       for (let i = 1; i < result.items.length; i++) {
         expect(
           new Date(result.items[i - 1].date).getTime()
@@ -174,12 +232,21 @@ describe("listing-api", () => {
       }
     })
 
-    it("sorts by title", async () => {
-      const result = await getBlogListing("en", { sort: "title" })
+    it("sorts by title ascending", async () => {
+      const result = await getBlogListing("en", { sort: "title-asc" })
       for (let i = 1; i < result.items.length; i++) {
         expect(
           result.items[i - 1].title.localeCompare(result.items[i].title)
         ).toBeLessThanOrEqual(0)
+      }
+    })
+
+    it("sorts by title descending", async () => {
+      const result = await getBlogListing("en", { sort: "title-desc" })
+      for (let i = 1; i < result.items.length; i++) {
+        expect(
+          result.items[i - 1].title.localeCompare(result.items[i].title)
+        ).toBeGreaterThanOrEqual(0)
       }
     })
 

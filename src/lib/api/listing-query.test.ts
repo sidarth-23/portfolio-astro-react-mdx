@@ -18,6 +18,8 @@ describe("listing-query codec", () => {
         tags: [],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
       })
     })
 
@@ -26,14 +28,18 @@ describe("listing-query codec", () => {
         search: "astro",
         tags: "react,typescript",
         categories: "Frontend",
-        sort: "newest",
+        sort: "date-desc",
+        from: "2024-01-01",
+        to: "2024-12-31",
       })
       const result = parseListingFilters(params)
       expect(result).toEqual({
         search: "astro",
         tags: ["react", "typescript"],
         categories: ["Frontend"],
-        sort: "newest",
+        sort: "date-desc",
+        from: "2024-01-01",
+        to: "2024-12-31",
       })
     })
 
@@ -41,6 +47,49 @@ describe("listing-query codec", () => {
       const params = new URLSearchParams({ sort: "invalid" })
       const result = parseListingFilters(params)
       expect(result.sort).toBeNull()
+    })
+
+    it.each([
+      ["newest", "date-desc"],
+      ["oldest", "date-asc"],
+      ["title", "title-asc"],
+    ])("maps legacy sort value %s to %s", (legacy, expected) => {
+      const params = new URLSearchParams({ sort: legacy })
+      const result = parseListingFilters(params)
+      expect(result.sort).toBe(expected)
+    })
+
+    it.each(["date-desc", "date-asc", "title-asc", "title-desc"])(
+      "accepts sort value %s",
+      (sort) => {
+        const params = new URLSearchParams({ sort })
+        const result = parseListingFilters(params)
+        expect(result.sort).toBe(sort)
+      }
+    )
+
+    it.each(["not-a-date", "2024-13-99", "2024-1-1", "20240101"])(
+      "ignores invalid date param %s",
+      (value) => {
+        const params = new URLSearchParams({ from: value, to: value })
+        const result = parseListingFilters(params)
+        expect(result.from).toBeNull()
+        expect(result.to).toBeNull()
+      }
+    )
+
+    it("accepts open-ended date ranges", () => {
+      const fromOnly = parseListingFilters(
+        new URLSearchParams({ from: "2024-06-01" })
+      )
+      expect(fromOnly.from).toBe("2024-06-01")
+      expect(fromOnly.to).toBeNull()
+
+      const toOnly = parseListingFilters(
+        new URLSearchParams({ to: "2024-06-01" })
+      )
+      expect(toOnly.from).toBeNull()
+      expect(toOnly.to).toBe("2024-06-01")
     })
 
     it("trims empty strings from comma-separated arrays", () => {
@@ -95,6 +144,8 @@ describe("listing-query codec", () => {
         tags: [],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
       })
       expect(result).toBe("")
     })
@@ -104,11 +155,28 @@ describe("listing-query codec", () => {
         search: "astro",
         tags: ["react"],
         categories: ["Frontend"],
-        sort: "title",
+        sort: "title-asc",
+        from: "2024-01-01",
+        to: "2024-12-31",
       })
       expect(result).toBe(
-        "search=astro&tags=react&categories=Frontend&sort=title"
+        "search=astro&tags=react&categories=Frontend&sort=title-asc&from=2024-01-01&to=2024-12-31"
       )
+    })
+
+    it("round-trips through parseListingFilters", () => {
+      const filters = {
+        search: "astro",
+        tags: ["react"],
+        categories: ["Frontend"],
+        sort: "title-asc" as const,
+        from: "2024-01-01",
+        to: "2024-12-31",
+      }
+      const result = parseListingFilters(
+        new URLSearchParams(serializeListingFilters(filters))
+      )
+      expect(result).toEqual(filters)
     })
   })
 
@@ -119,10 +187,26 @@ describe("listing-query codec", () => {
         tags: ["react"],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
         page: 2,
         limit: 6,
       })
       expect(result).toBe("page=2&limit=6&search=astro&tags=react")
+    })
+
+    it("includes date range params when set", () => {
+      const result = serializeListingRequest({
+        search: "",
+        tags: [],
+        categories: [],
+        sort: null,
+        from: "2024-01-01",
+        to: "2024-12-31",
+        page: 1,
+        limit: 12,
+      })
+      expect(result).toBe("page=1&limit=12&from=2024-01-01&to=2024-12-31")
     })
   })
 
@@ -133,6 +217,8 @@ describe("listing-query codec", () => {
         tags: [],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
       })
       expect(result).toBe("")
     })
@@ -143,6 +229,8 @@ describe("listing-query codec", () => {
         tags: [],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
       })
       expect(result).toBe("?search=astro")
     })
@@ -153,6 +241,8 @@ describe("listing-query codec", () => {
         tags: [],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
       })
       expect(result).toBe("?utm_source=email&search=astro")
     })
@@ -163,8 +253,32 @@ describe("listing-query codec", () => {
         tags: ["b"],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
       })
       expect(result).toBe("?search=new&tags=b")
+    })
+
+    it("sets and removes date range params", () => {
+      const withDates = mergeListingFilters("", {
+        search: "",
+        tags: [],
+        categories: [],
+        sort: null,
+        from: "2024-01-01",
+        to: "2024-12-31",
+      })
+      expect(withDates).toBe("?from=2024-01-01&to=2024-12-31")
+
+      const cleared = mergeListingFilters(withDates, {
+        search: "",
+        tags: [],
+        categories: [],
+        sort: null,
+        from: null,
+        to: null,
+      })
+      expect(cleared).toBe("")
     })
 
     it("removes cleared listing params while preserving unrelated ones", () => {
@@ -173,6 +287,8 @@ describe("listing-query codec", () => {
         tags: [],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
       })
       expect(result).toBe("?utm_source=email")
     })
@@ -185,6 +301,8 @@ describe("listing-query codec", () => {
         tags: [],
         categories: [],
         sort: null,
+        from: null,
+        to: null,
       })
       expect(result).toEqual({})
     })
@@ -194,13 +312,17 @@ describe("listing-query codec", () => {
         search: "astro",
         tags: ["react"],
         categories: ["Frontend"],
-        sort: "newest",
+        sort: "date-desc",
+        from: "2024-01-01",
+        to: "2024-12-31",
       })
       expect(result).toEqual({
         search: "astro",
         tags: ["react"],
         categories: ["Frontend"],
-        sort: "newest",
+        sort: "date-desc",
+        from: "2024-01-01",
+        to: "2024-12-31",
       })
     })
   })

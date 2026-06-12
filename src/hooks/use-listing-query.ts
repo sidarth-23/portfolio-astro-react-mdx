@@ -14,6 +14,8 @@ interface UseListingQueryOptions {
   tags?: string[]
   categories?: string[]
   sort?: ListingSort | null
+  from?: string | null
+  to?: string | null
   initialData?: ListingResponse<BlogListingItem>
   limit?: number
 }
@@ -25,6 +27,8 @@ export function useListingQuery<T extends BlogListingItem>({
   tags,
   categories,
   sort,
+  from,
+  to,
   initialData,
   limit = 12,
 }: UseListingQueryOptions) {
@@ -37,6 +41,8 @@ export function useListingQuery<T extends BlogListingItem>({
       tags,
       categories,
       sort,
+      from,
+      to,
       limit,
     ],
     queryFn: async ({ pageParam = 1 }) => {
@@ -46,6 +52,8 @@ export function useListingQuery<T extends BlogListingItem>({
         tags: tags ?? [],
         categories: categories ?? [],
         sort: sort ?? null,
+        from: from ?? null,
+        to: to ?? null,
         page,
         limit,
       })
@@ -111,6 +119,8 @@ export function usePrefetchListing(options: UseListingQueryOptions) {
       tags,
       categories,
       sort,
+      from,
+      to,
       limit = 12,
     } = options
 
@@ -123,6 +133,8 @@ export function usePrefetchListing(options: UseListingQueryOptions) {
         tags,
         categories,
         sort,
+        from,
+        to,
         limit,
       ],
       queryFn: async ({ pageParam = 1 }) => {
@@ -132,6 +144,8 @@ export function usePrefetchListing(options: UseListingQueryOptions) {
           tags: tags ?? [],
           categories: categories ?? [],
           sort: sort ?? null,
+          from: from ?? null,
+          to: to ?? null,
           page,
           limit,
         })

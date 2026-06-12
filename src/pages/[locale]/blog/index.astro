@@ -14,9 +14,11 @@ import { SITE_URL } from "astro:env/server"
 const { locale } = Astro.params as { locale: Locale }
 const filters = parseListingFilters(Astro.url.searchParams)
 
+// Search has no listing UI anymore (global header search replaced it) —
+// ignore any ?search= deep link so SSR data matches the client query.
 const [initialData, availableFilters] = await Promise.all([
   getBlogListing(locale, {
-    ...toListingFilters(filters),
+    ...toListingFilters({ ...filters, search: "" }),
     page: 1,
     limit: 12,
   }),
@@ -47,10 +49,13 @@ const seo = resolvePageSeo(
     locale={locale}
     tags={availableFilters.tags}
     categories={availableFilters.categories}
-    initialSearch={filters.search}
-    initialTags={filters.tags}
-    initialCategories={filters.categories}
-    initialSortBy={filters.sort}
+    initialFilters={{
+      tags: filters.tags,
+      categories: filters.categories,
+      sort: filters.sort,
+      from: filters.from,
+      to: filters.to,
+    }}
     initialData={initialData}
   />
 </ContentLayout>

@@ -126,7 +126,9 @@ describe("useListingQuery", () => {
           search: "astro",
           tags: ["react", "typescript"],
           categories: ["Frontend"],
-          sort: "newest",
+          sort: "date-desc",
+          from: "2024-01-01",
+          to: "2024-12-31",
         }),
       { wrapper: createWrapper() }
     )
@@ -139,7 +141,9 @@ describe("useListingQuery", () => {
     expect(callUrl).toContain("search=astro")
     expect(callUrl).toContain("tags=react%2Ctypescript")
     expect(callUrl).toContain("categories=Frontend")
-    expect(callUrl).toContain("sort=newest")
+    expect(callUrl).toContain("sort=date-desc")
+    expect(callUrl).toContain("from=2024-01-01")
+    expect(callUrl).toContain("to=2024-12-31")
   })
 
   it("fetches next page on scroll", async () => {

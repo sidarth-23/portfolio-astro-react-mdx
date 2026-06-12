@@ -9,7 +9,7 @@ import { useListingQuery } from "@/hooks/use-listing-query"
 import type { Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import type { BlogListingItem, ListingResponse } from "@/lib/api/listing-api"
-import type { ListingSort } from "@/lib/api/listing-query"
+import type { ListingFilterState } from "@/lib/api/listing-query"
 import { mergeListingFilters } from "@/lib/api/listing-query"
 
 interface ItemListClientProps<T extends BlogListingItem> {
@@ -17,10 +17,7 @@ interface ItemListClientProps<T extends BlogListingItem> {
   locale: Locale
   tags: string[]
   categories: string[]
-  initialSearch: string
-  initialTags: string[]
-  initialCategories: string[]
-  initialSortBy: ListingSort | null
+  initialFilters: ListingFilterState
   initialData?: ListingResponse<BlogListingItem>
   gridClassName: string
   skeletonCount: number
@@ -39,28 +36,24 @@ export function ItemListClient<T extends BlogListingItem>({
   locale,
   tags,
   categories,
-  initialSearch,
-  initialTags,
-  initialCategories,
-  initialSortBy,
+  initialFilters,
   initialData,
   gridClassName,
   skeletonCount,
   CardComponent,
   getItemKey,
 }: ItemListClientProps<T>) {
-  const [search, setSearch] = useState(initialSearch)
-  const [activeTags, setActiveTags] = useState<string[]>(initialTags)
-  const [activeCategories, setActiveCategories] =
-    useState<string[]>(initialCategories)
-  const [sortBy, setSortBy] = useState<ListingSort | null>(initialSortBy)
+  const [filters, setFilters] = useState<ListingFilterState>(initialFilters)
   const isInitialFilterState =
-    search === initialSearch &&
-    sortBy === initialSortBy &&
-    activeTags.length === initialTags.length &&
-    activeCategories.length === initialCategories.length &&
-    activeTags.every((tag) => initialTags.includes(tag)) &&
-    activeCategories.every((category) => initialCategories.includes(category))
+    filters.sort === initialFilters.sort &&
+    filters.from === initialFilters.from &&
+    filters.to === initialFilters.to &&
+    filters.tags.length === initialFilters.tags.length &&
+    filters.categories.length === initialFilters.categories.length &&
+    filters.tags.every((tag) => initialFilters.tags.includes(tag)) &&
+    filters.categories.every((category) =>
+      initialFilters.categories.includes(category)
+    )
 
   const {
     allItems,
@@ -72,10 +65,11 @@ export function ItemListClient<T extends BlogListingItem>({
   } = useListingQuery<T>({
     endpoint,
     locale,
-    search,
-    tags: activeTags,
-    categories: activeCategories,
-    sort: sortBy,
+    tags: filters.tags,
+    categories: filters.categories,
+    sort: filters.sort,
+    from: filters.from,
+    to: filters.to,
     initialData: isInitialFilterState ? initialData : undefined,
     limit: 12,
   })
@@ -83,32 +77,15 @@ export function ItemListClient<T extends BlogListingItem>({
   const isLoadingFilters =
     isFetching && !isFetchingNextPage && allItems.length > 0
 
-  const handleFiltersChange = useCallback(
-    (
-      newSearch: string,
-      newTags: string[],
-      newCategories: string[],
-      newSortBy: ListingSort | null
-    ) => {
-      setSearch(newSearch)
-      setActiveTags(newTags)
-      setActiveCategories(newCategories)
-      setSortBy(newSortBy)
+  const handleFiltersChange = useCallback((newFilters: ListingFilterState) => {
+    setFilters(newFilters)
 
-      const mergedSearch = mergeListingFilters(window.location.search, {
-        search: newSearch,
-        tags: newTags,
-        categories: newCategories,
-        sort: newSortBy,
-      })
-      window.history.replaceState(
-        {},
-        "",
-        window.location.pathname + mergedSearch
-      )
-    },
-    []
-  )
+    const mergedSearch = mergeListingFilters(window.location.search, {
+      search: "",
+      ...newFilters,
+    })
+    window.history.replaceState({}, "", window.location.pathname + mergedSearch)
+  }, [])
 
   return (
     <div>
@@ -116,10 +93,7 @@ export function ItemListClient<T extends BlogListingItem>({
         locale={locale}
         tags={tags}
         categories={categories}
-        initialSearch={initialSearch}
-        initialTags={initialTags}
-        initialCategories={initialCategories}
-        initialSortBy={initialSortBy}
+        initialFilters={initialFilters}
         onFiltersChange={handleFiltersChange}
       />
 
@@ -156,7 +130,11 @@ export function ItemListClient<T extends BlogListingItem>({
                   initial="initial"
                   animate="animate"
                   exit="exit"
-                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  transition={{
+                    duration: 0.2,
+                    ease: "easeOut",
+                    layout: { duration: 0.25 },
+                  }}
                 >
                   <CardComponent item={item as T} locale={locale} />
                 </motion.div>
