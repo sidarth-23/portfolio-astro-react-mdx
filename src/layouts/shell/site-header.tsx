@@ -4,6 +4,7 @@ import { PanelLeft } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import * as React from "react"
 
+import { GlobalSearch } from "@/components/features/search/global-search"
 import {
   useSidebar,
   Separator,
@@ -221,6 +222,7 @@ export function SiteHeader({
           <Breadcrumbs currentPath={currentPath} pageTitle={pageTitle} />
         </div>
         <div className="flex shrink-0 items-center gap-1 bg-background">
+          <GlobalSearch locale={locale} />
           <LanguageSelector currentPath={currentPath} locale={locale} />
           <ThemeToggle />
         </div>

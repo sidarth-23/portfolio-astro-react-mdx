@@ -1,5 +1,7 @@
 import type { Locale } from "@/i18n/config"
 
+import { normalizeWhitespace, stripMarkdownToText } from "./text"
+
 export function formatDate(date: Date, locale: Locale = "en"): string {
   const localeMap: Record<Locale, string> = {
     en: "en-US",
@@ -27,24 +29,7 @@ export function formatShortDate(date: Date, locale: Locale = "en"): string {
 }
 
 export function estimateReadingTime(body: string): number {
-  // Strip fenced code blocks
-  const withoutCodeBlocks = body.replace(/```[\s\S]*?```/g, "")
-  // Strip inline code
-  const withoutInlineCode = withoutCodeBlocks.replace(/`[^`]*`/g, "")
-  // Strip HTML tags
-  const withoutHtml = withoutInlineCode.replace(/<[^>]*>/g, "")
-  // Strip markdown headings, bold, italic, links, images
-  const withoutMarkdown = withoutHtml
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/[*_]{1,2}/g, "")
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/\[([^\]]*)\]\[[^\]]*\]/g, "$1")
-    .replace(/^\s*[-*+]\s+/gm, "")
-    .replace(/^\s*\d+\.\s+/gm, "")
-    .replace(/\|/g, " ")
-  // Count words
-  const words = withoutMarkdown
-    .trim()
+  const words = normalizeWhitespace(stripMarkdownToText(body))
     .split(/\s+/)
     .filter((w) => w.length > 0)
   const minutes = Math.ceil(words.length / 200)

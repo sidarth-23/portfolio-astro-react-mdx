@@ -29,6 +29,7 @@ import avatarImage from "@/assets/images/avatar.jpg"
 import { Image } from "astro:assets"
 import { createMarkdownProcessor } from "@astrojs/markdown-remark"
 import type { ProfileLocaleContent } from "@/content/content.types"
+import { slugify } from "@/lib/search/slugify"
 
 type ExperienceRole = {
   title: string
@@ -115,45 +116,49 @@ const experiencesWithRoleDetails = await Promise.all(
 ---
 
 <div class="space-y-14">
-  <Card
-    class="border-primary/20 bg-linear-to-br from-card via-card to-primary/5"
-  >
-    <CardHeader>
-      <div class="flex items-center gap-4">
-        <Image
-          src={avatarImage}
-          alt={data.profile.name}
-          width={64}
-          height={64}
-          format="webp"
-          quality={80}
-          class="size-14 rounded-full object-cover ring-1 ring-border md:size-16"
-          loading="eager"
-          decoding="async"
-        />
-        <div>
-          <CardTitle class="text-xl md:text-2xl">{data.profile.name}</CardTitle>
-          <CardDescription class="text-base"
-            >{data.profile.role}</CardDescription
-          >
+  <section id="overview" class="space-y-6">
+    <Card
+      class="border-primary/20 bg-linear-to-br from-card via-card to-primary/5"
+    >
+      <CardHeader>
+        <div class="flex items-center gap-4">
+          <Image
+            src={avatarImage}
+            alt={data.profile.name}
+            width={64}
+            height={64}
+            format="webp"
+            quality={80}
+            class="size-14 rounded-full object-cover ring-1 ring-border md:size-16"
+            loading="eager"
+            decoding="async"
+          />
+          <div>
+            <CardTitle class="text-xl md:text-2xl"
+              >{data.profile.name}</CardTitle
+            >
+            <CardDescription class="text-base"
+              >{data.profile.role}</CardDescription
+            >
+          </div>
         </div>
-      </div>
-    </CardHeader>
-    <CardContent class="space-y-4">
-      <CardDescription class="max-w-3xl text-base leading-6">
-        {data.profile.summary}
-      </CardDescription>
-      <div class="flex flex-wrap gap-2">
-        {
-          data.profile.focus.map((item) => (
-            <Badge variant="secondary">{item}</Badge>
-          ))
-        }
-      </div>
-    </CardContent>
-  </Card>
+      </CardHeader>
+      <CardContent class="space-y-4">
+        <CardDescription class="max-w-3xl text-base leading-6">
+          {data.profile.summary}
+        </CardDescription>
+        <div class="flex flex-wrap gap-2">
+          {
+            data.profile.focus.map((item) => (
+              <Badge variant="secondary">{item}</Badge>
+            ))
+          }
+        </div>
+      </CardContent>
+    </Card>
+  </section>
 
-  <section class="space-y-6">
+  <section id="experience" class="space-y-6">
     <div class="flex items-center gap-3">
       <HugeiconsIcon icon={Briefcase01Icon} size={20} strokeWidth={2} />
       <h2 class="text-xl font-semibold tracking-tight md:text-2xl">
@@ -195,6 +200,7 @@ const experiencesWithRoleDetails = await Promise.all(
               <div class="space-y-6">
                 {item.roles.map((role, index) => (
                   <div
+                    id={`experience-${item.id}-${index}`}
                     class={index > 0 ? "border-t border-border/40 pt-6" : ""}
                   >
                     <h4 class="text-base font-semibold text-foreground">
@@ -225,7 +231,7 @@ const experiencesWithRoleDetails = await Promise.all(
     </Timeline>
   </section>
 
-  <section class="space-y-6">
+  <section id="technologies-skills" class="space-y-6">
     <div class="flex items-center gap-3">
       <HugeiconsIcon icon={Layers01Icon} size={20} strokeWidth={2} />
       <h2 class="text-xl font-semibold tracking-tight md:text-2xl">
@@ -237,7 +243,10 @@ const experiencesWithRoleDetails = await Promise.all(
       <CardContent class="divide-y divide-border/40">
         {
           data.skills.map((group) => (
-            <div class="py-4 first:pt-3 last:pb-3">
+            <div
+              id={`skills-${slugify(group.title)}`}
+              class="py-4 first:pt-3 last:pb-3"
+            >
               <h3 class="mb-3 text-base font-semibold">{group.title}</h3>
               <div class="flex flex-wrap gap-2">
                 {group.items.map((skill) => (
@@ -254,7 +263,7 @@ const experiencesWithRoleDetails = await Promise.all(
     </Card>
   </section>
 
-  <section class="space-y-6">
+  <section id="certifications" class="space-y-6">
     <div class="flex items-center gap-3">
       <HugeiconsIcon icon={Award03Icon} size={20} strokeWidth={2} />
       <h2 class="text-xl font-semibold tracking-tight md:text-2xl">
