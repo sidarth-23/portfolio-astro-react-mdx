@@ -59,6 +59,11 @@ export interface OgTemplateProps {
   description: string
   coverImageDataUrl?: string
   siteLabel: string
+  ctaLabel: string
+}
+
+export function resolveOgCtaLabel(kind: "page" | "content"): string {
+  return kind === "content" ? "Read the post" : "Explore the site"
 }
 
 export function hasCoverImage(coverImageDataUrl?: string): boolean {
@@ -74,9 +79,11 @@ function OgTemplate({
   description,
   coverImageDataUrl,
   siteLabel,
+  ctaLabel,
 }: OgTemplateProps) {
   const displayTitle = clampText(title, 60)
   const displayDescription = clampText(description, 132)
+  const displayCta = clampText(ctaLabel, 24)
 
   return createElement(
     "div",
@@ -218,6 +225,37 @@ function OgTemplate({
           },
         },
         siteLabel
+      ),
+      createElement(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: "14px 20px",
+            borderRadius: 999,
+            background:
+              "linear-gradient(90deg, rgba(99,102,241,0.26), rgba(139,92,246,0.26))",
+            border: "1px solid rgba(148,163,184,0.22)",
+            color: "#f8fafc",
+            fontSize: 20,
+            fontWeight: 700,
+            lineHeight: 1,
+          },
+        },
+        createElement("span", null, displayCta),
+        createElement(
+          "span",
+          {
+            style: {
+              fontSize: 22,
+              transform: "translateY(-1px)",
+              display: "flex",
+            },
+          },
+          "→"
+        )
       )
     )
   )

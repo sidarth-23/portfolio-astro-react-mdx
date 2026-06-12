@@ -125,7 +125,7 @@ describe("resolvePageSeo", () => {
 
   it("resolves listing page SEO", () => {
     const result = resolvePageSeo(
-      "Blog",
+      "Engineering blog, notes, and project deep dives",
       "Thoughts on engineering.",
       "https://sidshub.in/og/og-blog-en.png",
       "website",
@@ -134,7 +134,9 @@ describe("resolvePageSeo", () => {
       "/en/blog"
     )
 
-    expect(result.title).toBe("Blog | Sidarth G")
+    expect(result.title).toBe(
+      "Engineering blog, notes, and project deep dives | Sidarth G"
+    )
     expect(result.description).toBe("Thoughts on engineering.")
     expect(result.ogImage).toBe("https://sidshub.in/og/og-blog-en.png")
     expect(result.ogType).toBe("website")
@@ -145,7 +147,7 @@ describe("resolvePageSeo", () => {
 
   it("resolves page SEO for different locales", () => {
     const esResult = resolvePageSeo(
-      "Blog",
+      "Engineering blog, notes, and project deep dives",
       "Reflexiones sobre ingeniería.",
       "https://sidshub.in/og/og-blog-es.png",
       "website",
@@ -154,14 +156,16 @@ describe("resolvePageSeo", () => {
       "/es/blog"
     )
 
-    expect(esResult.title).toBe("Blog | Sidarth G")
+    expect(esResult.title).toBe(
+      "Engineering blog, notes, and project deep dives | Sidarth G"
+    )
     expect(esResult.ogLocale).toBe("es")
     expect(esResult.canonicalUrl).toBe("https://sidshub.in/es/blog")
   })
 
   it("handles home page path", () => {
     const result = resolvePageSeo(
-      "Sidarth G",
+      "Sidarth G | Software Developer Portfolio, Blog & Projects",
       "Portfolio description.",
       "https://sidshub.in/og/og-home-en.png",
       "website",
@@ -190,7 +194,7 @@ describe("resolvePageSeo", () => {
 
   it("handles profile page path", () => {
     const result = resolvePageSeo(
-      "Profile",
+      "Profile, skills, experience, and certifications",
       "Profile description.",
       "https://sidshub.in/og/og-profile-en.png",
       "website",
@@ -204,7 +208,7 @@ describe("resolvePageSeo", () => {
 
   it("normalizes trailing slash in site URL and OG image path", () => {
     const result = resolvePageSeo(
-      "Blog",
+      "Engineering blog, notes, and project deep dives",
       "Thoughts on engineering.",
       "https://sidshub.in//og/og-blog-en.png",
       "website",

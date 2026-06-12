@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { clampText, hasCoverImage, siteUrlToLabel } from "./generate-image"
+import {
+  clampText,
+  hasCoverImage,
+  resolveOgCtaLabel,
+  siteUrlToLabel,
+} from "./generate-image"
 
 describe("clampText", () => {
   it("returns text unchanged when under max length", () => {
@@ -65,5 +70,15 @@ describe("hasCoverImage", () => {
 describe("siteUrlToLabel", () => {
   it("extracts hostname from a URL with path", () => {
     expect(siteUrlToLabel("https://example.test/path")).toBe("example.test")
+  })
+})
+
+describe("resolveOgCtaLabel", () => {
+  it("returns a page CTA for page images", () => {
+    expect(resolveOgCtaLabel("page")).toBe("Explore the site")
+  })
+
+  it("returns a content CTA for blog images", () => {
+    expect(resolveOgCtaLabel("content")).toBe("Read the post")
   })
 })

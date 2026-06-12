@@ -6,16 +6,12 @@ import matter from "gray-matter"
 
 import { pageSeo } from "../src/content/content"
 import { buildContentOgFilename } from "../src/lib/seo/content-og"
-import { renderOgImage, siteUrlToLabel } from "../src/lib/seo/generate-image"
+import { renderOgImage, resolveOgCtaLabel } from "../src/lib/seo/generate-image"
+import { SITE_NAME } from "../src/lib/seo/resolve"
 
 const OUTPUT_DIR = path.resolve(process.cwd(), "public/og")
 
-const siteUrl = process.env.SITE_URL
-if (!siteUrl)
-  throw new Error(
-    "SITE_URL is required. Set it in .env or the process environment."
-  )
-const siteLabel = siteUrlToLabel(siteUrl)
+const siteLabel = SITE_NAME
 
 type ContentType = "blog"
 
@@ -92,6 +88,7 @@ async function generateContentOgImages(type: ContentType) {
       description,
       coverImageDataUrl: coverDataUrl,
       siteLabel,
+      ctaLabel: resolveOgCtaLabel("content"),
     })
 
     await writeFile(outPath, pngBuffer)
@@ -109,6 +106,7 @@ async function generatePageOgImages() {
         title,
         description,
         siteLabel,
+        ctaLabel: resolveOgCtaLabel("page"),
       })
 
       await writeFile(outPath, pngBuffer)

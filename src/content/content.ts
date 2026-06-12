@@ -96,51 +96,53 @@ export const sidebarNavigationContent = [
 export const pageSeo = {
   home: {
     en: {
-      title: "Home",
+      title: "Sidarth G | Software Developer Portfolio, Blog & Projects",
       description:
-        "Sid's portfolio — thoughts on engineering, design, and building things.",
+        "Explore Sidarth G's portfolio, blog, projects, and experiments across software engineering, product thinking, and the occasional side quest.",
     },
     es: {
-      title: "Home",
+      title: "Sidarth G | Portafolio de desarrollo, blog y proyectos",
       description:
-        "Portafolio de Sid — reflexiones sobre ingeniería, diseño y construcción de cosas.",
+        "Explora el portafolio, blog, proyectos y experimentos de Sidarth G sobre ingeniería de software, producto y alguna que otra aventura extra.",
     },
     fr: {
-      title: "Home",
+      title: "Sidarth G | Portfolio développeur, blog et projets",
       description:
-        "Portfolio de Sid — réflexions sur l'ingénierie, le design, et la construction de choses.",
+        "Découvrez le portfolio, le blog, les projets et les expériences de Sidarth G autour du développement, du produit et de quelques détours.",
     },
   },
   blog: {
     en: {
-      title: "Blog",
-      description: "Thoughts on engineering, design, and building things.",
+      title: "Engineering blog, notes, and project deep dives",
+      description:
+        "Read concise notes and deeper posts on software engineering, shipping products, and working with React, Astro, Go, and modern tooling.",
     },
     es: {
-      title: "Blog",
+      title: "Blog de ingeniería, notas y análisis de proyectos",
       description:
-        "Reflexiones sobre ingeniería, diseño y construcción de cosas.",
+        "Lee notas breves y artículos sobre ingeniería de software, lanzamiento de productos y trabajo con React, Astro, Go y herramientas modernas.",
     },
     fr: {
-      title: "Blog",
+      title: "Blog d'ingénierie, notes et analyses de projets",
       description:
-        "Réflexions sur l'ingénierie, le design, et la construction de choses.",
+        "Lisez des notes courtes et des articles sur le développement logiciel, la mise en ligne de produits et l'usage de React, Astro, Go et d'outils modernes.",
     },
   },
   profile: {
     en: {
-      title: "Profile",
-      description: "Professional bug writer and occasional feature shipper.",
+      title: "Profile, skills, experience, and certifications",
+      description:
+        "See Sidarth G's profile, skills, experience, certifications, and a compact summary of how he builds software and keeps learning.",
     },
     es: {
-      title: "Perfil",
+      title: "Perfil, habilidades, experiencia y certificaciones",
       description:
-        "Escritor profesional de bugs y enviador ocasional de features.",
+        "Consulta el perfil, habilidades, experiencia, certificaciones y un resumen breve de cómo Sidarth G construye software y sigue aprendiendo.",
     },
     fr: {
-      title: "Profil",
+      title: "Profil, compétences, expérience et certifications",
       description:
-        "Rédacteur professionnel de bugs et expéditeur occasionnel de features.",
+        "Découvrez le profil, les compétences, l'expérience, les certifications et un résumé concis de la façon dont Sidarth G construit du logiciel.",
     },
   },
 } as const satisfies PageSeoConfig

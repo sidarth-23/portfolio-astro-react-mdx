@@ -4,6 +4,8 @@ import { buildContentOgFilename } from "./content-og"
 
 import type { CollectionEntry } from "astro:content"
 
+export const SITE_NAME = "Sidarth G"
+
 export interface SeoData {
   title: string
   description: string
@@ -50,7 +52,7 @@ export function resolveContentSeo(
   const ogFilename = buildContentOgFilename(type, locale, slug)
 
   return {
-    title: `${seo.title} | Sidarth G`,
+    title: `${seo.title} | ${SITE_NAME}`,
     description: seo.description,
     ogImage: buildAbsoluteUrl(siteUrl, `/og/${ogFilename}`),
     ogType: type === "blog" ? "article" : "website",
@@ -73,7 +75,7 @@ export function resolvePageSeo(
   appendSiteName = true
 ): SeoData {
   return {
-    title: appendSiteName ? `${title} | Sidarth G` : title,
+    title: appendSiteName ? `${title} | ${SITE_NAME}` : title,
     description,
     ogImage: normalizeAbsoluteUrl(ogImage),
     ogType,

@@ -7,41 +7,47 @@ import { getPageSeo, getAllPageSeoEntries } from "./pages"
 describe("getPageSeo", () => {
   it("returns SEO config for home page in English", () => {
     const result = getPageSeo("home", "en")
-    expect(result.title).toBe("Home")
+    expect(result.title).toBe(
+      "Sidarth G | Software Developer Portfolio, Blog & Projects"
+    )
     expect(result.description).toBe(
-      "Sid's portfolio — thoughts on engineering, design, and building things."
+      "Explore Sidarth G's portfolio, blog, projects, and experiments across software engineering, product thinking, and the occasional side quest."
     )
   })
 
   it("returns translated SEO config for home page in Spanish", () => {
     const result = getPageSeo("home", "es")
-    expect(result.title).toBe("Home")
+    expect(result.title).toBe(
+      "Sidarth G | Portafolio de desarrollo, blog y proyectos"
+    )
     expect(result.description).toBe(
-      "Portafolio de Sid — reflexiones sobre ingeniería, diseño y construcción de cosas."
+      "Explora el portafolio, blog, proyectos y experimentos de Sidarth G sobre ingeniería de software, producto y alguna que otra aventura extra."
     )
   })
 
   it("returns translated SEO config for home page in French", () => {
     const result = getPageSeo("home", "fr")
-    expect(result.title).toBe("Home")
+    expect(result.title).toBe(
+      "Sidarth G | Portfolio développeur, blog et projets"
+    )
     expect(result.description).toBe(
-      "Portfolio de Sid — réflexions sur l'ingénierie, le design, et la construction de choses."
+      "Découvrez le portfolio, le blog, les projets et les expériences de Sidarth G autour du développement, du produit et de quelques détours."
     )
   })
 
   it("returns SEO config for blog page", () => {
     const result = getPageSeo("blog", "en")
-    expect(result.title).toBe("Blog")
+    expect(result.title).toBe("Engineering blog, notes, and project deep dives")
     expect(result.description).toBe(
-      "Thoughts on engineering, design, and building things."
+      "Read concise notes and deeper posts on software engineering, shipping products, and working with React, Astro, Go, and modern tooling."
     )
   })
 
   it("returns SEO config for profile page", () => {
     const result = getPageSeo("profile", "en")
-    expect(result.title).toBe("Profile")
+    expect(result.title).toBe("Profile, skills, experience, and certifications")
     expect(result.description).toBe(
-      "Professional bug writer and occasional feature shipper."
+      "See Sidarth G's profile, skills, experience, certifications, and a compact summary of how he builds software and keeps learning."
     )
   })
 
@@ -66,7 +72,9 @@ describe("getAllPageSeoEntries", () => {
     // Should have entries for all locales
     const homeEn = entries.find((e) => e.page === "home" && e.locale === "en")
     expect(homeEn).toBeDefined()
-    expect(homeEn!.title).toBe("Home")
+    expect(homeEn!.title).toBe(
+      "Sidarth G | Software Developer Portfolio, Blog & Projects"
+    )
   })
 
   it("includes all core pages", () => {
