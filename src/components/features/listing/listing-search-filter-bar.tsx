@@ -210,68 +210,63 @@ export function SearchFilterBar({
     <div className="mb-8 space-y-3">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-2">
-        <div className="ml-auto flex shrink-0 items-center gap-2">
-          {/* Categories combobox */}
-          {categories.length > 0 && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  data-testid="category-filter-trigger"
-                  aria-label={t(locale, "filters.categories")}
-                >
-                  <HugeiconsIcon
-                    icon={Folder01Icon}
-                    size={14}
-                    strokeWidth={2}
-                  />
+        {/* Categories combobox */}
+        {categories.length > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="category-filter-trigger"
+                aria-label={t(locale, "filters.categories")}
+              >
+                <HugeiconsIcon icon={Folder01Icon} size={14} strokeWidth={2} />
+                <span className="hidden sm:inline">
                   {t(locale, "filters.categories")}
-                  {filters.categories.length > 0 && (
-                    <Badge variant="secondary" className="px-1.5">
-                      {filters.categories.length}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-56 p-0" align="end">
-                <Command>
-                  <CommandInput
-                    placeholder={t(
-                      locale,
-                      "filters.categoriesSearchPlaceholder"
-                    )}
-                  />
-                  <CommandList>
-                    <CommandEmpty>
-                      {t(locale, "filters.categoriesEmpty")}
-                    </CommandEmpty>
-                    {categories.map((category) => {
-                      const isActive = filters.categories.includes(category)
-                      return (
-                        <CommandItem
-                          key={category}
-                          value={category}
-                          data-testid="category-filter-option"
-                          onSelect={() => handleCategoryToggle(category)}
-                          className="capitalize"
-                        >
-                          <HugeiconsIcon
-                            icon={Tick02Icon}
-                            size={14}
-                            strokeWidth={2}
-                            className={isActive ? "opacity-100" : "opacity-0"}
-                          />
-                          {category}
-                        </CommandItem>
-                      )
-                    })}
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          )}
+                </span>
+                {filters.categories.length > 0 && (
+                  <Badge variant="secondary" className="px-1.5">
+                    {filters.categories.length}
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-0" align="start">
+              <Command>
+                <CommandInput
+                  placeholder={t(locale, "filters.categoriesSearchPlaceholder")}
+                />
+                <CommandList>
+                  <CommandEmpty>
+                    {t(locale, "filters.categoriesEmpty")}
+                  </CommandEmpty>
+                  {categories.map((category) => {
+                    const isActive = filters.categories.includes(category)
+                    return (
+                      <CommandItem
+                        key={category}
+                        value={category}
+                        data-testid="category-filter-option"
+                        onSelect={() => handleCategoryToggle(category)}
+                        className="capitalize"
+                      >
+                        <HugeiconsIcon
+                          icon={Tick02Icon}
+                          size={14}
+                          strokeWidth={2}
+                          className={isActive ? "opacity-100" : "opacity-0"}
+                        />
+                        {category}
+                      </CommandItem>
+                    )
+                  })}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        )}
 
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           {/* Tags combobox */}
           {tags.length > 0 && (
             <Popover>
@@ -283,7 +278,9 @@ export function SearchFilterBar({
                   aria-label={t(locale, "filters.tags")}
                 >
                   <HugeiconsIcon icon={Tag01Icon} size={14} strokeWidth={2} />
-                  {t(locale, "filters.tags")}
+                  <span className="hidden sm:inline">
+                    {t(locale, "filters.tags")}
+                  </span>
                   {filters.tags.length > 0 && (
                     <Badge variant="secondary" className="px-1.5">
                       {filters.tags.length}
@@ -339,7 +336,11 @@ export function SearchFilterBar({
                   size={14}
                   strokeWidth={2}
                 />
-                {hasDateRange ? dateRangeLabel : t(locale, "filters.dateRange")}
+                <span className="hidden sm:inline">
+                  {hasDateRange
+                    ? dateRangeLabel
+                    : t(locale, "filters.dateRange")}
+                </span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="end">
