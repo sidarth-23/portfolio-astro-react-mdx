@@ -41,32 +41,64 @@ describe("SearchFilterBar", () => {
     onFiltersChange: vi.fn(),
   }
 
-  it("renders all category badges", () => {
-    renderReact(<SearchFilterBar {...defaultProps} />)
-    expect(
-      screen.getByRole("button", { name: "Web Application" })
-    ).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Website" })).toBeInTheDocument()
-    expect(
-      screen.getByRole("button", { name: "Experiment" })
-    ).toBeInTheDocument()
-  })
+  describe("categories combobox", () => {
+    it("lists categories in the popover and toggles them", async () => {
+      const handleFiltersChange = vi.fn()
+      const user = setupUser()
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          onFiltersChange={handleFiltersChange}
+        />
+      )
 
-  it("toggles category on click", async () => {
-    const handleFiltersChange = vi.fn()
-    const user = setupUser()
-    renderReact(
-      <SearchFilterBar
-        {...defaultProps}
-        onFiltersChange={handleFiltersChange}
-      />
-    )
+      await user.click(screen.getByTestId("category-filter-trigger"))
 
-    await user.click(screen.getByRole("button", { name: "Web Application" }))
+      const options = screen.getAllByTestId("category-filter-option")
+      expect(options.map((option) => option.textContent)).toEqual([
+        "Web Application",
+        "Website",
+        "Experiment",
+      ])
 
-    expect(handleFiltersChange).toHaveBeenCalledWith({
-      ...emptyFilters,
-      categories: ["Web Application"],
+      await user.click(screen.getByRole("option", { name: "Web Application" }))
+
+      expect(handleFiltersChange).toHaveBeenCalledWith({
+        ...emptyFilters,
+        categories: ["Web Application"],
+      })
+    })
+
+    it("filters categories by search input", async () => {
+      const user = setupUser()
+      renderReact(<SearchFilterBar {...defaultProps} />)
+
+      await user.click(screen.getByTestId("category-filter-trigger"))
+      await user.type(
+        screen.getByPlaceholderText("Search categories..."),
+        "exp"
+      )
+
+      const options = screen.getAllByTestId("category-filter-option")
+      expect(options.map((option) => option.textContent)).toEqual([
+        "Experiment",
+      ])
+    })
+
+    it("shows a count badge for selected categories", () => {
+      renderReact(
+        <SearchFilterBar
+          {...defaultProps}
+          initialFilters={{
+            ...emptyFilters,
+            categories: ["Web Application", "Website"],
+          }}
+        />
+      )
+
+      expect(screen.getByTestId("category-filter-trigger")).toHaveTextContent(
+        "Categories2"
+      )
     })
   })
 
@@ -334,10 +366,12 @@ describe("SearchFilterBar", () => {
     expect(handleFiltersChange).toHaveBeenCalledWith(emptyFilters)
   })
 
-  it("does not render category badges when no categories provided", () => {
+  it("does not render the category combobox when no categories provided", () => {
     renderReact(<SearchFilterBar {...defaultProps} categories={[]} />)
 
-    expect(screen.queryByTestId("category-filter")).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId("category-filter-trigger")
+    ).not.toBeInTheDocument()
   })
 
   it("does not render the tag combobox when no tags provided", () => {

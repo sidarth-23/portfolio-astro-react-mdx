@@ -33,6 +33,8 @@ export const TranslationSchema = z.object({
     tagsSearchPlaceholder: z.string(),
     tagsEmpty: z.string(),
     categories: z.string(),
+    categoriesSearchPlaceholder: z.string(),
+    categoriesEmpty: z.string(),
     dateRange: z.string(),
     datePresetLast6Months: z.string(),
     datePresetThisYear: z.string(),
