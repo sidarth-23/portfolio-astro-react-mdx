@@ -50,6 +50,9 @@ export const TranslationSchema = z.object({
     kindPage: z.string(),
     kindSection: z.string(),
     kindItem: z.string(),
+    hintNavigate: z.string(),
+    hintOpen: z.string(),
+    hintClose: z.string(),
   }),
   lang: z.object({
     aiGenerated: z.string(),

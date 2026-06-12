@@ -2,8 +2,9 @@
 
 import { Search01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
 
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import {
   Badge,
   Button,
@@ -14,6 +15,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
   Spinner,
 } from "@/components/ui/react"
 import type { Locale } from "@/i18n/config"
@@ -71,6 +73,16 @@ function useSearchShortcuts(onToggle: () => void, onOpen: () => void) {
   }, [onToggle, onOpen])
 }
 
+const emptySubscribe = () => () => {}
+
+function useIsMac() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => /Mac|iPhone|iPad|iPod/i.test(navigator.platform),
+    () => false
+  )
+}
+
 function ResultItem({
   result,
   locale,
@@ -91,24 +103,26 @@ function ResultItem({
     <CommandItem
       value={result.id}
       onSelect={() => onSelect(result.url)}
-      className="flex-col items-start gap-1 py-2"
+      className="flex-col items-start gap-1.5 px-3 py-2.5"
     >
-      <div className="flex w-full flex-wrap items-center gap-2">
-        <Badge variant="outline">{kindLabel}</Badge>
-        {result.sectionTitle && (
-          <span className="text-sm font-medium text-foreground">
-            <HighlightedText
-              text={result.sectionTitle}
-              matches={result.sectionTitleMatches}
-            />
-          </span>
-        )}
+      <div className="flex w-full items-center gap-2">
+        <p className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
+          <HighlightedText text={result.title} matches={result.titleMatches} />
+        </p>
+        <Badge variant="outline" className="shrink-0 text-[10px]">
+          {kindLabel}
+        </Badge>
       </div>
-      <p className="text-sm font-medium text-foreground">
-        <HighlightedText text={result.title} matches={result.titleMatches} />
-      </p>
+      {result.sectionTitle && (
+        <p className="text-xs text-muted-foreground">
+          <HighlightedText
+            text={result.sectionTitle}
+            matches={result.sectionTitleMatches}
+          />
+        </p>
+      )}
       {result.snippet && (
-        <p className="line-clamp-2 text-sm text-muted-foreground">
+        <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
           <HighlightedText
             text={result.snippet}
             matches={result.snippetMatches}
@@ -127,6 +141,7 @@ export function GlobalSearch({ locale }: GlobalSearchProps) {
   const [error, setError] = useState<string | null>(null)
 
   const trimmedQuery = query.trim()
+  const isMac = useIsMac()
 
   useSearchShortcuts(
     () => setOpen((current) => !current),
@@ -209,12 +224,24 @@ export function GlobalSearch({ locale }: GlobalSearchProps) {
   return (
     <>
       <Button
-        variant="ghost"
+        variant="outline"
         size="icon-sm"
         aria-label={t(locale, "search.open")}
         onClick={() => setOpen(true)}
+        className="max-md:border-transparent max-md:bg-transparent md:h-8 md:w-56 md:justify-start md:gap-2 md:rounded-lg md:bg-muted/50 md:px-2.5 md:font-normal md:text-muted-foreground md:shadow-none max-md:dark:border-transparent max-md:dark:bg-transparent md:dark:bg-input/30"
       >
-        <HugeiconsIcon icon={Search01Icon} size={18} strokeWidth={2} />
+        <HugeiconsIcon
+          icon={Search01Icon}
+          strokeWidth={2}
+          className="size-4 shrink-0"
+        />
+        <span className="hidden flex-1 truncate text-left text-sm md:inline-block">
+          {t(locale, "search.open")}
+        </span>
+        <KbdGroup className="ml-auto hidden md:inline-flex">
+          <Kbd>{isMac ? "⌘" : "Ctrl"}</Kbd>
+          <Kbd>K</Kbd>
+        </KbdGroup>
       </Button>
 
       <CommandDialog
@@ -232,23 +259,25 @@ export function GlobalSearch({ locale }: GlobalSearchProps) {
           />
           <CommandList className="max-h-[min(60vh,28rem)]">
             {!hasQuery && (
-              <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+              <p className="px-3 py-10 text-center text-sm text-muted-foreground">
                 {t(locale, "search.minChars")}
               </p>
             )}
             {visibleError && (
-              <p className="px-3 py-6 text-center text-sm text-destructive">
+              <p className="px-3 py-10 text-center text-sm text-destructive">
                 {visibleError}
               </p>
             )}
             {isLoading && (
-              <div className="flex items-center justify-center gap-2 px-3 py-6 text-sm text-muted-foreground">
+              <div className="flex items-center justify-center gap-2 px-3 py-10 text-sm text-muted-foreground">
                 <Spinner className="size-3.5" />
                 {t(locale, "search.loading")}
               </div>
             )}
             {showEmpty && (
-              <CommandEmpty>{t(locale, "search.empty")}</CommandEmpty>
+              <CommandEmpty className="py-10">
+                {t(locale, "search.empty")}
+              </CommandEmpty>
             )}
 
             {!isLoading && groups.has("blog") && (
@@ -263,6 +292,9 @@ export function GlobalSearch({ locale }: GlobalSearchProps) {
                 ))}
               </CommandGroup>
             )}
+            {!isLoading && groups.has("blog") && groups.has("profile") && (
+              <CommandSeparator className="my-1" />
+            )}
             {!isLoading && groups.has("profile") && (
               <CommandGroup heading={t(locale, "search.groupProfile")}>
                 {groups.get("profile")!.map((result) => (
@@ -276,6 +308,23 @@ export function GlobalSearch({ locale }: GlobalSearchProps) {
               </CommandGroup>
             )}
           </CommandList>
+          <div className="hidden items-center gap-4 border-t px-3 py-2 text-xs text-muted-foreground sm:flex">
+            <span className="flex items-center gap-1.5">
+              <KbdGroup>
+                <Kbd>↑</Kbd>
+                <Kbd>↓</Kbd>
+              </KbdGroup>
+              {t(locale, "search.hintNavigate")}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Kbd>↵</Kbd>
+              {t(locale, "search.hintOpen")}
+            </span>
+            <span className="ml-auto flex items-center gap-1.5">
+              <Kbd>Esc</Kbd>
+              {t(locale, "search.hintClose")}
+            </span>
+          </div>
         </Command>
       </CommandDialog>
     </>

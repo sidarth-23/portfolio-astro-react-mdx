@@ -56,6 +56,9 @@ const translations: Record<Locale, TranslationSchema> = {
       kindPage: "Page",
       kindSection: "Section",
       kindItem: "Item",
+      hintNavigate: "navigate",
+      hintOpen: "open",
+      hintClose: "close",
     },
     lang: {
       aiGenerated: "AI Translated",
@@ -133,6 +136,9 @@ const translations: Record<Locale, TranslationSchema> = {
       kindPage: "Página",
       kindSection: "Sección",
       kindItem: "Elemento",
+      hintNavigate: "navegar",
+      hintOpen: "abrir",
+      hintClose: "cerrar",
     },
     lang: {
       aiGenerated: "Traducido por IA",
@@ -211,6 +217,9 @@ const translations: Record<Locale, TranslationSchema> = {
       kindPage: "Page",
       kindSection: "Section",
       kindItem: "Élément",
+      hintNavigate: "naviguer",
+      hintOpen: "ouvrir",
+      hintClose: "fermer",
     },
     lang: {
       aiGenerated: "Traduit par IA",
