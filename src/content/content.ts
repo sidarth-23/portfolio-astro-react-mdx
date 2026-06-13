@@ -3,6 +3,7 @@ import type {
   GlobalLinkId,
   PageSeoConfig,
   ProfileContentByLocale,
+  ProfileSkillItem,
   SidebarNavigationContentItem,
   SidebarProfileContent,
 } from "./content.types"
@@ -92,6 +93,23 @@ export const sidebarNavigationContent = [
     icon: "profile",
   },
 ] as const satisfies readonly SidebarNavigationContentItem[]
+
+export const homeTechMarquee = [
+  { label: "TypeScript", icon: { source: "simple", name: "typescript" } },
+  { label: "Go", icon: { source: "simple", name: "go" } },
+  { label: "React", icon: { source: "simple", name: "react" } },
+  { label: "Next.js", icon: { source: "simple", name: "nextjs" } },
+  { label: "Astro", icon: { source: "simple", name: "astro" } },
+  { label: "Node.js", icon: { source: "simple", name: "nodedotjs" } },
+  { label: "Python", icon: { source: "simple", name: "python" } },
+  { label: "PostgreSQL", icon: { source: "simple", name: "postgresql" } },
+  { label: "Tailwind CSS", icon: { source: "simple", name: "tailwindcss" } },
+  { label: "TanStack", icon: { source: "simple", name: "tanstack" } },
+  { label: "Turso", icon: { source: "simple", name: "turso" } },
+  { label: "Drizzle", icon: { source: "custom", name: "drizzle" } },
+  { label: "gRPC", icon: { source: "custom", name: "grpc" } },
+  { label: "Hono", icon: { source: "custom", name: "hono" } },
+] as const satisfies readonly ProfileSkillItem[]
 
 export const pageSeo = {
   home: {

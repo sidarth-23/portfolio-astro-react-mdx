@@ -2,7 +2,7 @@
 import ContentLayout from "@/layouts/content/content-layout.astro"
 import Hero from "@/components/features/home/hero.astro"
 import FeaturedListing from "@/components/features/home/featured-listing.astro"
-import heroIllustration from "@/assets/images/hero-illustration.svg"
+import TechMarquee from "@/components/features/home/tech-marquee.astro"
 import BlogCard from "@/components/features/blog/blog-card.astro"
 import {
   getPublishedBlogPosts,
@@ -42,7 +42,7 @@ const seo = resolvePageSeo(
 )
 ---
 
-<ContentLayout seo={seo} locale={locale}>
+<ContentLayout seo={seo} locale={locale} noTopPadding>
   <Hero
     heading={t(locale, "hero.heading")}
     role={t(locale, "hero.role")}
@@ -58,16 +58,9 @@ const seo = resolvePageSeo(
         isExternal: secondaryLink.isExternal,
       },
     }}
-  >
-    <img
-      slot="image"
-      src={heroIllustration.src}
-      alt={t(locale, "hero.imageAlt")}
-      width={800}
-      height={600}
-      class="max-h-150 w-full rounded-md object-contain lg:max-h-200 dark:invert"
-    />
-  </Hero>
+  />
+
+  <TechMarquee heading={t(locale, "home.techStack")} />
 
   {
     heroPost && (
@@ -82,10 +75,14 @@ const seo = resolvePageSeo(
           post={heroPost}
           locale={locale}
         />
-        {gridPosts.map((post) => (
-          <BlogCard variant="compact" post={post} locale={locale} />
+        {gridPosts.map((post, i) => (
+          <div data-reveal style={`--reveal-delay: ${i * 75}ms`}>
+            <BlogCard variant="compact" post={post} locale={locale} />
+          </div>
         ))}
       </FeaturedListing>
     )
   }
 </ContentLayout>
+
+<script src="@/components/features/home/scroll-reveal.client.ts"></script>

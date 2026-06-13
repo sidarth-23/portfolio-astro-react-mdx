@@ -77,7 +77,9 @@ export const TranslationSchema = z.object({
     description: z.string(),
     connect: z.string(),
     resume: z.string(),
-    imageAlt: z.string(),
+  }),
+  home: z.object({
+    techStack: z.string(),
   }),
   toc: z.object({
     onThisPage: z.string(),

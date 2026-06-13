@@ -85,7 +85,9 @@ const translations: Record<Locale, TranslationSchema> = {
         "Professional bug writer and occasional feature shipper. I speak React, Next.js, Node.js, and Go — sometimes all in the same project. Currently exploring TanStack Start because one framework is never enough. Yes, I still Google 'how to exit vim'. Always curious, always learning.",
       connect: "Let's Connect",
       resume: "View Profile",
-      imageAlt: "Sidarth G — Software Developer",
+    },
+    home: {
+      techStack: "Technologies I work with",
     },
     toc: {
       onThisPage: "On this page",
@@ -173,7 +175,9 @@ const translations: Record<Locale, TranslationSchema> = {
         "Escritor profesional de bugs y enviador ocasional de features. Hablo React, Next.js, Node.js y Go — a veces todos en el mismo proyecto. Actualmente explorando TanStack Start porque un framework nunca es suficiente. Sí, todavía busco 'cómo salir de vim'. Siempre curioso, siempre aprendiendo.",
       connect: "Conectemos",
       resume: "Ver Perfil",
-      imageAlt: "Sidarth G — Desarrollador de Software",
+    },
+    home: {
+      techStack: "Tecnologías con las que trabajo",
     },
     toc: {
       onThisPage: "En esta página",
@@ -261,7 +265,9 @@ const translations: Record<Locale, TranslationSchema> = {
         "Rédacteur professionnel de bugs et expéditeur occasionnel de features. Je parle React, Next.js, Node.js et Go — parfois tous dans le même projet. J'explore actuellement TanStack Start parce qu'un framework ne suffit jamais. Oui, je Google toujours 'comment quitter vim'. Toujours curieux, toujours en train d'apprendre.",
       connect: "Me Contacter",
       resume: "Voir le Profil",
-      imageAlt: "Sidarth G — Développeur Logiciel",
+    },
+    home: {
+      techStack: "Technologies avec lesquelles je travaille",
     },
     toc: {
       onThisPage: "Sur cette page",

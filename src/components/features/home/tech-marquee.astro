@@ -1,0 +1,48 @@
+---
+import { SkillIcon } from "@/components/icon/skill-icons"
+import { homeTechMarquee } from "@/content/content"
+
+interface Props {
+  heading: string
+  className?: string
+}
+
+const { heading, className } = Astro.props
+const items = homeTechMarquee
+---
+
+<section class:list={["py-10", className]} aria-label={heading}>
+  <h2
+    class="mb-6 text-center text-sm font-semibold tracking-wider text-muted-foreground uppercase"
+  >
+    {heading}
+  </h2>
+  <div
+    class="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
+  >
+    <div
+      class="flex w-max animate-marquee items-center gap-12 pr-12 group-hover:[animation-play-state:paused] motion-reduce:w-full motion-reduce:animate-none motion-reduce:flex-wrap motion-reduce:justify-center motion-reduce:pr-0"
+    >
+      {
+        [false, true].map((isDuplicate) => (
+          <ul
+            aria-hidden={isDuplicate || undefined}
+            class:list={[
+              "flex items-center gap-12",
+              isDuplicate && "motion-reduce:hidden",
+            ]}
+          >
+            {items.map((item) => (
+              <li class="flex items-center gap-2.5 text-muted-foreground/80 transition-colors hover:text-foreground">
+                <SkillIcon icon={item.icon} className="size-5 shrink-0" />
+                <span class="text-sm font-medium whitespace-nowrap">
+                  {item.label}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</section>

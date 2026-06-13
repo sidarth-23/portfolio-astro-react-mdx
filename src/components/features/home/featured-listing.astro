@@ -10,7 +10,7 @@ const hasGridItems = Astro.slots.has("default")
 ---
 
 <section class="mb-16">
-  <div class="mb-6 flex items-end justify-between gap-4">
+  <div data-reveal class="mb-6 flex items-end justify-between gap-4">
     <h2
       class="text-sm font-semibold tracking-wider text-muted-foreground uppercase"
     >
@@ -24,7 +24,7 @@ const hasGridItems = Astro.slots.has("default")
     </a>
   </div>
 
-  <div class="mb-6">
+  <div data-reveal style="--reveal-delay: 75ms" class="mb-6">
     <slot name="featured" />
   </div>
 
