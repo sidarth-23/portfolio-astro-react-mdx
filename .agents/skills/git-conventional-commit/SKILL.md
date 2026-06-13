@@ -7,7 +7,7 @@ description: Generate conventional commit messages from staged or unstaged chang
 
 ## Quick start
 
-Run `scripts/diff-context.sh` to get changes. Generate a message in this format:
+Run `.agents/skills/git-conventional-commit/scripts/diff-context.sh` to get changes. Generate a message in this format:
 
 ```
 type(scope): subject
@@ -40,7 +40,7 @@ Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chor
 
 ## Workflow
 
-1. Run `scripts/diff-context.sh` to read staged (or all unstaged) changes
+1. Run `.agents/skills/git-conventional-commit/scripts/diff-context.sh` to read staged (or all unstaged) changes
 2. Analyze changes to pick type and scope
 3. Write header: `type(scope): concise description`
 4. Add body if changes need explanation; use clean, precise bullet points — one point per logical change
