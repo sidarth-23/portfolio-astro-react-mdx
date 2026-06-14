@@ -34,17 +34,14 @@ A note about deployment.`,
   ],
   profileTitle: "Profile",
   profile: {
-    locale: "en",
-    profile: {
-      name: "Sidarth G",
-      role: "Software Developer",
-      summary: "Deployment specialist.",
-      focus: ["Backend"],
-    },
+    name: "Sidarth G",
+    role: "Software Developer",
+    tagline: "Deployment specialist.",
+    focus: ["Backend"],
     skills: [],
     certifications: [],
   },
-  experiences: [],
+  profileSections: [],
 }
 
 vi.mock("./server", () => ({
@@ -63,7 +60,7 @@ describe("searchBlogSlugs", () => {
   })
 
   it("excludes profile documents", async () => {
-    // "specialist" only appears in the profile summary
+    // "specialist" only appears in the profile tagline
     const slugs = await searchBlogSlugs("en", "specialist")
 
     expect(slugs).toEqual([])

@@ -2,10 +2,9 @@
 import ContentLayout from "@/layouts/content/content-layout.astro"
 import ProfileContent from "@/components/features/profile/profile-content.astro"
 import { defaultLocale, locales, type Locale } from "@/i18n/config"
-import { getProfileExperienceByLocale } from "@/lib/content/queries"
 import { resolvePageSeo } from "@/lib/seo/resolve"
 import { getPageSeo } from "@/lib/seo/pages"
-import { profileContent } from "@/content/content"
+import { getCollection, render } from "astro:content"
 import { SITE_URL } from "astro:env/server"
 
 export async function getStaticPaths() {
@@ -13,16 +12,12 @@ export async function getStaticPaths() {
 }
 
 const { locale } = Astro.params as { locale: Locale }
-const entry = profileContent[locale] ?? profileContent[defaultLocale]
+const entries = await getCollection("profile")
+const entry =
+  entries.find((item) => item.id === locale) ??
+  entries.find((item) => item.id === defaultLocale)!
 
-const experienceEntries =
-  (await getProfileExperienceByLocale(locale)).length > 0
-    ? await getProfileExperienceByLocale(locale)
-    : await getProfileExperienceByLocale(defaultLocale)
-
-const experiences = experienceEntries.map((item) => ({
-  data: item.data,
-}))
+const { Content } = await render(entry)
 
 const siteUrl = SITE_URL
 const pageSeo = getPageSeo("profile", locale)
@@ -38,5 +33,7 @@ const seo = resolvePageSeo(
 ---
 
 <ContentLayout seo={seo} headerTitle="Profile" locale={locale}>
-  <ProfileContent data={entry} experiences={experiences} />
+  <ProfileContent data={entry.data}>
+    <Content />
+  </ProfileContent>
 </ContentLayout>

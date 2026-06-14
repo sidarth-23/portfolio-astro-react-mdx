@@ -3,14 +3,20 @@ import path from "path"
 
 import matter from "gray-matter"
 
-import { pageSeo, profileContent } from "../src/content/content"
+import { pageSeo } from "../src/content/content"
 import { locales, type Locale } from "../src/i18n/config"
 import { buildSearchExports } from "../src/lib/search/exports"
+import { splitMarkdownSections } from "../src/lib/search/search"
 
+import type {
+  ProfileSkillGroup,
+  ProfileCertification,
+} from "../src/content/content.types"
 import type {
   SearchBlogPostInput,
   SearchCorpusInput,
-  SearchExperienceInput,
+  SearchProfileInput,
+  SearchProfileSection,
 } from "../src/lib/search/search"
 
 const OUTPUT_DIR = path.resolve(process.cwd(), "src/generated")
@@ -67,84 +73,39 @@ async function readBlogPosts(locale: Locale): Promise<SearchBlogPostInput[]> {
   return posts.filter((post): post is SearchBlogPostInput => post !== null)
 }
 
-async function readExperiences(
-  locale: Locale
-): Promise<SearchExperienceInput[]> {
-  const contentDir = path.resolve(
-    process.cwd(),
-    "src/content/profile-experience",
-    locale
+async function readProfile(locale: Locale): Promise<{
+  profile: SearchProfileInput
+  profileSections: SearchProfileSection[]
+}> {
+  const dir = path.resolve(process.cwd(), "src/content/profile")
+  const raw = await readFile(path.join(dir, `${locale}.mdx`), "utf-8").catch(
+    () => readFile(path.join(dir, "en.mdx"), "utf-8")
   )
-  const files = await walkFiles(contentDir, ".md")
+  const { data, content } = matter(raw)
 
-  const entries = await Promise.all(
-    files.map(async (file) => {
-      const raw = await readFile(file, "utf-8")
-      const { data, content } = matter(raw)
-
-      return {
-        id: Number(data.id),
-        company: String(data.company),
-        location: String(data.companyLocation),
-        role: {
-          title: String(data.role?.title ?? ""),
-          location: data.role?.location
-            ? String(data.role.location)
-            : undefined,
-          details: content.trim(),
-        },
-      }
-    })
-  )
-
-  const grouped = new Map<
-    string,
-    {
-      id: number
-      company: string
-      location: string
-      roles: SearchExperienceInput["roles"]
-    }
-  >()
-
-  for (const entry of entries) {
-    const key = `${locale}-${entry.id}-${entry.company}`
-    const existing = grouped.get(key)
-
-    if (existing) {
-      existing.roles.push({
-        id: `experience-${entry.id}-${existing.roles.length}`,
-        title: entry.role.title,
-        location: entry.role.location,
-        details: entry.role.details,
-      })
-      continue
-    }
-
-    grouped.set(key, {
-      id: entry.id,
-      company: entry.company,
-      location: entry.location,
-      roles: [
-        {
-          id: `experience-${entry.id}-0`,
-          title: entry.role.title,
-          location: entry.role.location,
-          details: entry.role.details,
-        },
-      ],
-    })
+  return {
+    profile: {
+      name: String(data.name ?? ""),
+      role: String(data.role ?? ""),
+      tagline: String(data.tagline ?? ""),
+      focus: Array.isArray(data.focus) ? data.focus.map(String) : [],
+      skills: (Array.isArray(data.skills)
+        ? data.skills
+        : []) as ProfileSkillGroup[],
+      certifications: (Array.isArray(data.certifications)
+        ? data.certifications
+        : []) as ProfileCertification[],
+    },
+    profileSections: splitMarkdownSections(content),
   }
-
-  return Array.from(grouped.values())
 }
 
 async function buildCorpus(): Promise<Record<Locale, SearchCorpusInput>> {
   const entries = await Promise.all(
     locales.map(async (locale) => {
-      const [blogPosts, experiences] = await Promise.all([
+      const [blogPosts, { profile, profileSections }] = await Promise.all([
         readBlogPosts(locale),
-        readExperiences(locale),
+        readProfile(locale),
       ])
 
       return [
@@ -153,8 +114,8 @@ async function buildCorpus(): Promise<Record<Locale, SearchCorpusInput>> {
           locale,
           blogPosts,
           profileTitle: pageSeo.profile[locale].title,
-          profile: profileContent[locale],
-          experiences,
+          profile,
+          profileSections,
         } satisfies SearchCorpusInput,
       ] as const
     })

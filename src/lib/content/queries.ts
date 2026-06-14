@@ -81,68 +81,6 @@ export async function getFeaturedBlogPosts(locale: Locale = "en") {
   )
 }
 
-export async function getProfileExperienceByLocale(locale: Locale = "en") {
-  const entries = await getCollection("profileExperience")
-
-  const grouped = new Map<
-    string,
-    {
-      data: {
-        id: number
-        locale: Locale
-        company: string
-        location: string
-        roles: Array<{
-          title: string
-          location?: string
-          start: string
-          end?: string | null
-          currentlyWorking: boolean
-          details: string
-        }>
-      }
-    }
-  >()
-
-  for (const entry of entries) {
-    if (entry.data.locale !== locale) continue
-    const key = `${entry.data.locale}-${entry.data.id}-${entry.data.company}`
-    const existing = grouped.get(key)
-    const role = {
-      ...entry.data.role,
-      details: (entry.body ?? "").trim(),
-    }
-
-    if (existing) {
-      existing.data.roles.push(role)
-      continue
-    }
-
-    grouped.set(key, {
-      data: {
-        id: entry.data.id,
-        locale: entry.data.locale,
-        company: entry.data.company,
-        location: entry.data.companyLocation,
-        roles: [role],
-      },
-    })
-  }
-
-  return Array.from(grouped.values())
-    .filter((entry) => entry.data.locale === locale)
-    .map((entry) => ({
-      ...entry,
-      data: {
-        ...entry.data,
-        roles: [...entry.data.roles].sort((a, b) =>
-          a.start < b.start ? -1 : a.start > b.start ? 1 : 0
-        ),
-      },
-    }))
-    .sort((a, b) => a.data.id - b.data.id)
-}
-
 export function getAllCategories(posts: CollectionEntry<"blog">[]): string[] {
   const categories = new Set<string>()
   for (const post of posts) {

@@ -1,0 +1,95 @@
+---
+name: Sidarth G
+role: Software Developer
+tagline: Frontend-curious, backend-obsessed, perpetually one new framework deep.
+focus:
+  - React & Next.js
+  - Node.js & Go
+  - Always Learning
+skills:
+  - title: Backend & Systems
+    items:
+      - { label: Golang, icon: { source: simple, name: go } }
+      - { label: Python, icon: { source: simple, name: python } }
+      - { label: Node.js, icon: { source: simple, name: nodedotjs } }
+      - { label: Hono, icon: { source: custom, name: hono } }
+      - { label: Elysia, icon: { source: custom, name: elysia } }
+      - { label: gRPC, icon: { source: custom, name: grpc } }
+      - { label: WebSockets, icon: { source: huge, name: cloud } }
+  - title: Database & Auth
+    items:
+      - { label: PostgreSQL, icon: { source: simple, name: postgresql } }
+      - { label: SQL, icon: { source: huge, name: database } }
+      - { label: Turso (SQLite), icon: { source: simple, name: turso } }
+      - { label: Drizzle, icon: { source: custom, name: drizzle } }
+      - { label: GORM, icon: { source: custom, name: gorm } }
+  - title: Frontend & DX
+    items:
+      - { label: React, icon: { source: simple, name: react } }
+      - { label: Next.js, icon: { source: simple, name: nextjs } }
+      - { label: TanStack Start, icon: { source: simple, name: tanstack } }
+      - { label: Astro, icon: { source: simple, name: astro } }
+      - { label: TypeScript, icon: { source: simple, name: typescript } }
+      - { label: Tailwind CSS, icon: { source: simple, name: tailwindcss } }
+certifications:
+  - title: Learn Go
+    url: https://www.boot.dev/certificate/lostboot50/3b39d0f6-f944-4f1b-832d-a1daba32eda4
+  - title: CS50's Introduction to Computer Science
+    url: https://certificates.cs50.io/bf85e0a3-fe88-4281-badc-948d55a269d1.pdf
+  - title: "Google Project Management: Professional Certificate"
+    url: https://www.coursera.org/account/accomplishments/specialization/certificate/PAEF3VXVBNB4
+  - title: IBM Full Stack Software Developer Professional Certificate
+    url: https://www.coursera.org/account/accomplishments/specialization/certificate/NLAT8P4VQJS9
+---
+
+import ProfileHighlight from "@/components/mdx/profile-highlight.astro"
+
+I started with HTML because I wanted to make cool websites. That's the whole origin story — no grand plan, just a kid who thought making a page change colour was the height of engineering. Then I fell into the React rabbit hole, climbed back out into backend development, and somehow ended up writing Go and enjoying it.
+
+These days I get unreasonably excited about new JavaScript frameworks (currently it's TanStack Start), I still Google _"how to center a div"_ just to feel something, and I'm happiest in the messy middle of a system — where the frontend, the backend, and the thing nobody documented all have to agree with each other.
+
+> Always learning, always breaking things, always wondering why it works on my machine.
+
+Here's how I actually got here.
+
+## Where it got serious at TeachEdison
+
+TeachEdison is where I stopped just writing features and started thinking about how teams build. It began, oddly, with furniture: I helped set up the office and smooth the move from a fully remote team to an in-person one — which turns out to be 10% desks and 90% making sure people don't feel like they've been teleported into a stranger's living room.
+
+On the engineering side, I laid down the base framework for a new application — a [Turborepo](https://turbo.build/repo) monorepo with an OpenAPI contract as the single source of truth, a Next.js web app, and a Django server speaking to it. I also kicked off an open-source experiment to build a genuinely robust LMS, because the best way to learn how something should work is to try to build it in the open.
+
+The project I'm proudest of there is **Bluebook Insights** — and it earned its own full write-up.
+
+<ProfileHighlight title="Bluebook Insights" tech={["SvelteKit", "PocketBase", "Next.js", "Auth"]}>
+  Students upload their SAT Bluebook practice results and get a detailed breakdown back. The first version (SvelteKit + PocketBase) asked for too much from the user, so we rebuilt the flow: a guided, under-two-minute upload of just the results page and scorecard — no fiddly manual entry. Then we layered on accounts so results persist, plus shareable links (public or in-app) that can be revoked.
+</ProfileHighlight>
+
+I wrote the long version of that story — two rewrites, a Python microservice, and the lessons about building for your team instead of your tech preferences — over on [the blog](/en/blog/bluebook-insights-analytics-platform).
+
+## Now at Truvanta
+
+Truvanta is where I get to wear every hat at once, and I love it. It started with a blank page: I designed the core idea of our ticketing platform by studying the competition and sketching rough Figma flows until the shape of the product made sense.
+
+From there the work spread across the stack. I helped move our entire marketing site off Webflow and onto a PayloadCMS + Next.js setup so the whole team could live on the Next.js train together — and while I was in there, I streamlined content creation and even the hiring pipeline by using Payload to filter the noise and export clean CSVs of the data we actually needed.
+
+Then I went after the backend. I cleaned it up and made some serious security overhauls: input validation everywhere, every endpoint documented with OpenAPI through an auto-generator, and — my favourite part — a CI check that simply compares the number of routes in the router against the generated YAML. If they don't match, someone forgot to document an endpoint, and the build says so. Boring discipline, enforced automatically.
+
+A few systems from Truvanta I keep coming back to:
+
+<ProfileHighlight title="Redis Streams notification system" tech={["Redis Streams", "Pub/Sub", "Email", "Audit"]}>
+  One event comes in, and parallel streams fan it out: persisted to the database for audit, pushed as an in-app notification to every active user over a stream, and emitted as an email event. It's fast, it survives backend crashes without dropping events, and it scales horizontally — with a permission gate so users only ever receive the events they're actually allowed to see.
+</ProfileHighlight>
+
+<ProfileHighlight title="Documentation module" tech={["Nested collections", "Sharing", "Collaboration"]}>
+  Inspired by Outline, this is a shared space for content rather than a static doc dump: nested collections and items that people can share and collaborate on. The goal was to make documentation feel like a place you go, not a folder you dread.
+</ProfileHighlight>
+
+<ProfileHighlight title="Scripts module" tech={["Git-style branching", "VCS"]}>
+  I designed the scripts module as the base of a mini git client — branching included — so it can integrate directly with a real git client down the line without fighting it. Version control instincts, applied to a place people didn't expect them.
+</ProfileHighlight>
+
+## Outside the editor
+
+When I'm not staring at a diff, I'm usually on a bike — cycling is my reset button. The rest of the time I'm travelling, poking at whatever new corner of tech caught my eye that week, or just hanging around with people, which is underrated as a debugging strategy for life.
+
+That's the short version. The skills and certifications below are the receipts.

@@ -8,7 +8,7 @@ import {
   linkSchema,
   tagSchema,
   dateSchema,
-  profileExperienceSchema,
+  profileFrontmatterSchema,
 } from "@/lib/schemas"
 
 const blog = defineCollection({
@@ -31,15 +31,12 @@ const blog = defineCollection({
     }),
 })
 
-const profileExperience = defineCollection({
-  loader: glob({
-    pattern: "**/*.md",
-    base: "./src/content/profile-experience",
-  }),
-  schema: profileExperienceSchema,
+const profile = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/profile" }),
+  schema: profileFrontmatterSchema,
 })
 
 export const collections = {
   blog,
-  profileExperience,
+  profile,
 }

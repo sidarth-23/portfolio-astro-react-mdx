@@ -71,19 +71,3 @@ export interface ProfileCertification {
   title: string
   url: string
 }
-
-export interface ProfileLocaleContent<L extends Locale = Locale> {
-  locale: L
-  profile: {
-    name: string
-    role: string
-    summary: string
-    focus: readonly [string, ...string[]]
-  }
-  skills: readonly ProfileSkillGroup[]
-  certifications: readonly ProfileCertification[]
-}
-
-export type ProfileContentByLocale = {
-  [L in Locale]: ProfileLocaleContent<L>
-}

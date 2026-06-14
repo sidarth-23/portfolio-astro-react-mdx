@@ -1,6 +1,7 @@
 ---
 import { SkillIcon } from "@/components/icon/skill-icons"
-import { homeTechMarquee } from "@/content/content"
+import { getCollection } from "astro:content"
+import { defaultLocale } from "@/i18n/config"
 
 interface Props {
   heading: string
@@ -8,7 +9,14 @@ interface Props {
 }
 
 const { heading, className } = Astro.props
-const items = homeTechMarquee
+
+// Technologies are sourced from the profile's skills (the single content
+// source), flattened across groups so the home marquee and profile stay in sync.
+const profileEntries = await getCollection("profile")
+const profile =
+  profileEntries.find((entry) => entry.id === defaultLocale) ??
+  profileEntries[0]
+const items = profile.data.skills.flatMap((group) => group.items)
 ---
 
 <section class:list={["py-10", className]} aria-label={heading}>

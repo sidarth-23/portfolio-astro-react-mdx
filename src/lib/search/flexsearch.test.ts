@@ -43,13 +43,10 @@ Las métricas importan.`,
   ],
   profileTitle: "Profile",
   profile: {
-    locale: "en",
-    profile: {
-      name: "Sidarth G",
-      role: "Software Developer",
-      summary: "I build web apps.",
-      focus: ["Frontend", "Backend"],
-    },
+    name: "Sidarth G",
+    role: "Software Developer",
+    tagline: "I build web apps.",
+    focus: ["Frontend", "Backend"],
     skills: [
       {
         title: "Frontend & DX",
@@ -61,19 +58,10 @@ Las métricas importan.`,
     ],
     certifications: [{ title: "Learn Go", url: "https://example.com/cert" }],
   },
-  experiences: [
+  profileSections: [
     {
-      id: 1,
-      company: "Truvanta",
-      location: "Remote",
-      roles: [
-        {
-          id: "experience-1-0",
-          title: "Full Stack Developer",
-          location: "Remote",
-          details: "Built deployment tooling and observability dashboards.",
-        },
-      ],
+      title: "Now, at Truvanta",
+      content: "Built deployment tooling and observability dashboards.",
     },
   ],
 }
@@ -134,7 +122,7 @@ describe("flexsearch engine", () => {
   it("filters results by scope", async () => {
     const engine = createEngine()
 
-    // "deployment" appears in blog content and a profile experience role
+    // "deployment" appears in blog content and a profile narrative section
     const all = await searchSearchEngine(engine, "deployment")
     const blogOnly = await searchSearchEngine(engine, "deployment", {
       scope: "blog",

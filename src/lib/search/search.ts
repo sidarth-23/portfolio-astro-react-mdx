@@ -1,5 +1,4 @@
 import type {
-  ProfileLocaleContent,
   ProfileSkillGroup,
   ProfileCertification,
 } from "@/content/content.types"
@@ -21,18 +20,18 @@ export interface SearchBlogPostInput {
   body: string
 }
 
-export interface SearchExperienceRoleInput {
-  id: string
-  title: string
-  location?: string
-  details: string
+export interface SearchProfileInput {
+  name: string
+  role: string
+  tagline: string
+  focus: string[]
+  skills: ProfileSkillGroup[]
+  certifications: ProfileCertification[]
 }
 
-export interface SearchExperienceInput {
-  id: number
-  company: string
-  location: string
-  roles: SearchExperienceRoleInput[]
+export interface SearchProfileSection {
+  title: string
+  content: string
 }
 
 export interface SearchDocument {
@@ -65,33 +64,17 @@ export interface SearchCorpusInput {
   locale: Locale
   blogPosts: SearchBlogPostInput[]
   profileTitle: string
-  profile: ProfileLocaleContent
-  experiences: SearchExperienceInput[]
+  profile: SearchProfileInput
+  profileSections: SearchProfileSection[]
 }
 
-function buildBlogSectionDocuments(
-  locale: Locale,
-  post: SearchBlogPostInput
-): SearchDocument[] {
-  const pageUrl = `/${locale}/blog/${post.slug}`
-  const docs: SearchDocument[] = []
-
-  docs.push({
-    id: `blog-${post.slug}`,
-    title: post.title,
-    sectionTitle: "",
-    url: pageUrl,
-    content: stripMarkdownToText(
-      [post.description, post.tags.join(" "), post.category ?? ""].join("\n\n")
-    ),
-    kind: "page",
-    weight: 100,
-    tags: post.tags,
-    scope: "blog",
-    slug: post.slug,
-  })
-
-  const lines = post.body.split(/\r?\n/)
+// Split a markdown/MDX body into heading-delimited sections, returning the
+// stripped plain-text content per section. Content before the first heading is
+// ignored. Used for both blog bodies and the profile narrative.
+export function splitMarkdownSections(
+  body: string
+): Array<{ title: string; content: string }> {
+  const lines = body.split(/\r?\n/)
   let currentHeading = ""
   let currentLines: string[] = []
   let inCodeFence = false
@@ -126,6 +109,33 @@ function buildBlogSectionDocuments(
 
   flushSection()
 
+  return sections
+}
+
+function buildBlogSectionDocuments(
+  locale: Locale,
+  post: SearchBlogPostInput
+): SearchDocument[] {
+  const pageUrl = `/${locale}/blog/${post.slug}`
+  const docs: SearchDocument[] = []
+
+  docs.push({
+    id: `blog-${post.slug}`,
+    title: post.title,
+    sectionTitle: "",
+    url: pageUrl,
+    content: stripMarkdownToText(
+      [post.description, post.tags.join(" "), post.category ?? ""].join("\n\n")
+    ),
+    kind: "page",
+    weight: 100,
+    tags: post.tags,
+    scope: "blog",
+    slug: post.slug,
+  })
+
+  const sections = splitMarkdownSections(post.body)
+
   for (const section of sections) {
     docs.push({
       id: `blog-${post.slug}-${slugify(section.title)}`,
@@ -159,8 +169,8 @@ function flattenProfileCertifications(
 function buildProfileDocuments(
   locale: Locale,
   profileTitle: string,
-  profile: ProfileLocaleContent,
-  experiences: SearchExperienceInput[]
+  profile: SearchProfileInput,
+  profileSections: SearchProfileSection[]
 ): SearchDocument[] {
   const pageUrl = `/${locale}/profile`
   const docs: SearchDocument[] = []
@@ -172,67 +182,32 @@ function buildProfileDocuments(
     url: `${pageUrl}#overview`,
     content: stripMarkdownToText(
       [
-        profile.profile.name,
-        profile.profile.role,
-        profile.profile.summary,
-        profile.profile.focus.join(" "),
+        profile.name,
+        profile.role,
+        profile.tagline,
+        profile.focus.join(" "),
       ].join("\n\n")
     ),
     kind: "section",
     weight: 95,
-    tags: [profile.profile.role],
+    tags: [profile.role],
     scope: "profile",
     slug: null,
   })
 
-  docs.push({
-    id: "profile-experience",
-    title: profileTitle,
-    sectionTitle: "Experience",
-    url: `${pageUrl}#experience`,
-    content: stripMarkdownToText(
-      experiences
-        .flatMap((experience) => [
-          experience.company,
-          experience.location,
-          ...experience.roles.flatMap((role) => [
-            role.title,
-            role.location ?? "",
-            role.details,
-          ]),
-        ])
-        .join("\n\n")
-    ),
-    kind: "section",
-    weight: 40,
-    tags: [],
-    scope: "profile",
-    slug: null,
-  })
-
-  for (const experience of experiences) {
-    for (const [roleIndex, role] of experience.roles.entries()) {
-      docs.push({
-        id: role.id,
-        title: profileTitle,
-        sectionTitle: `${experience.company} · ${role.title}`,
-        url: `${pageUrl}#${role.id}`,
-        content: stripMarkdownToText(
-          [
-            experience.company,
-            experience.location,
-            role.title,
-            role.location ?? "",
-            role.details,
-          ].join("\n\n")
-        ),
-        kind: "item",
-        weight: 85 - roleIndex,
-        tags: [experience.company],
-        scope: "profile",
-        slug: null,
-      })
-    }
+  for (const [index, section] of profileSections.entries()) {
+    docs.push({
+      id: `profile-${slugify(section.title)}`,
+      title: profileTitle,
+      sectionTitle: section.title,
+      url: `${pageUrl}#${slugify(section.title)}`,
+      content: section.content,
+      kind: "section",
+      weight: 84 - index,
+      tags: [],
+      scope: "profile",
+      slug: null,
+    })
   }
 
   docs.push({
@@ -309,7 +284,7 @@ export function buildSearchDocuments(
       input.locale,
       input.profileTitle,
       input.profile,
-      input.experiences
+      input.profileSections
     ),
   ]
 }

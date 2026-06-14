@@ -1,0 +1,40 @@
+---
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/astro/card"
+import { Badge } from "@/components/ui/astro/badge"
+
+interface Props {
+  title: string
+  tech?: string[]
+}
+
+const { title, tech = [] } = Astro.props
+---
+
+<div class="not-prose my-6">
+  <Card
+    class="border-primary/20 bg-linear-to-br from-card via-card to-primary/5"
+  >
+    <CardHeader>
+      <CardTitle class="text-base md:text-lg">{title}</CardTitle>
+      {
+        tech.length > 0 && (
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            {tech.map((item) => (
+              <Badge variant="outline">{item}</Badge>
+            ))}
+          </div>
+        )
+      }
+    </CardHeader>
+    <CardContent
+      class="text-sm leading-6 text-muted-foreground md:text-base [&>p]:my-0"
+    >
+      <slot />
+    </CardContent>
+  </Card>
+</div>

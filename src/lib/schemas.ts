@@ -26,61 +26,30 @@ export const profileSkillIconSchema = z.object({
   name: z.string().min(1),
 })
 
-const profileMonthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, {
-  message: "Expected month in YYYY-MM format",
-})
-
-export const profileSchema = z.object({
-  locale: z.enum(["en", "es", "fr"]),
-  profile: z.object({
-    name: z.string().min(1),
-    role: z.string().min(1),
-    summary: z.string().min(1),
-    focus: z.array(z.string().min(1)).min(1),
-  }),
-
-  skills: z
+const profileSkillGroupSchema = z.object({
+  title: z.string().min(1),
+  items: z
     .array(
       z.object({
-        title: z.string().min(1),
-        items: z
-          .array(
-            z.object({
-              label: z.string().min(1),
-              icon: profileSkillIconSchema,
-            })
-          )
-          .min(1),
-      })
-    )
-    .min(1),
-  certifications: z
-    .array(
-      z.object({
-        title: z.string().min(1),
-        url: z.url(),
+        label: z.string().min(1),
+        icon: profileSkillIconSchema,
       })
     )
     .min(1),
 })
 
-const profileExperienceRoleSchema = z
-  .object({
-    title: z.string().min(1),
-    location: z.string().min(1).optional(),
-    start: profileMonthSchema,
-    end: profileMonthSchema.nullable().optional(),
-    currentlyWorking: z.boolean().default(false),
-  })
-  .refine((item) => item.currentlyWorking || Boolean(item.end), {
-    message: "end is required when currentlyWorking is false",
-    path: ["end"],
-  })
+const profileCertificationSchema = z.object({
+  title: z.string().min(1),
+  url: z.url(),
+})
 
-export const profileExperienceSchema = z.object({
-  id: z.number().int().positive(),
-  locale: z.enum(["en", "es", "fr"]),
-  company: z.string().min(1),
-  companyLocation: z.string().min(1),
-  role: profileExperienceRoleSchema,
+// Frontmatter for the single-MDX profile biopic. The narrative lives in the
+// body; this carries the header metadata + the reference-style skills/certs.
+export const profileFrontmatterSchema = z.object({
+  name: z.string().min(1),
+  role: z.string().min(1),
+  tagline: z.string().min(1),
+  focus: z.array(z.string().min(1)).min(1),
+  skills: z.array(profileSkillGroupSchema).min(1),
+  certifications: z.array(profileCertificationSchema).min(1),
 })

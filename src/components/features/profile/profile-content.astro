@@ -1,21 +1,10 @@
 ---
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  Briefcase01Icon,
   Award03Icon,
   Layers01Icon,
   LinkSquare02Icon,
 } from "@hugeicons/core-free-icons"
-import {
-  Timeline,
-  TimelineContent,
-  TimelineDate,
-  TimelineHeader,
-  TimelineIndicator,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineTitle,
-} from "@/components/reui/timeline"
 import {
   Card,
   CardContent,
@@ -24,99 +13,25 @@ import {
   CardTitle,
 } from "@/components/ui/astro/card"
 import { Badge } from "@/components/ui/astro/badge"
+import { Separator } from "@/components/ui/astro/separator"
 import { SkillIcon } from "@/components/icon/skill-icons"
 import avatarImage from "@/assets/images/avatar.jpg"
 import { Image } from "astro:assets"
-import { createMarkdownProcessor } from "@astrojs/markdown-remark"
-import type { ProfileLocaleContent } from "@/content/content.types"
 import { slugify } from "@/lib/search/slugify"
+import type { z } from "astro/zod"
+import type { profileFrontmatterSchema } from "@/lib/schemas"
 
-type ExperienceRole = {
-  title: string
-  location?: string
-  start: string
-  end?: string | null
-  currentlyWorking: boolean
-  details: string
-}
-
-type ExperienceData = {
-  id: number
-  locale: "en" | "es" | "fr"
-  company: string
-  location: string
-  roles: ExperienceRole[]
-}
-
-type ExperienceItem = {
-  data: ExperienceData
-}
+type ProfileData = z.infer<typeof profileFrontmatterSchema>
 
 interface Props {
-  data: ProfileLocaleContent
-  experiences: ExperienceItem[]
+  data: ProfileData
 }
 
-const { data, experiences } = Astro.props
-const markdownProcessor = await createMarkdownProcessor()
-
-function formatMonthLabel(value: string): string {
-  const [year, month] = value.split("-")
-  const date = new Date(Number(year), Number(month) - 1)
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    year: "numeric",
-  }).format(date)
-}
-
-function getPeriodLabel(
-  start: string,
-  end: string | null | undefined,
-  currentlyWorking: boolean
-): string {
-  const from = formatMonthLabel(start)
-  const to = currentlyWorking ? "Present" : formatMonthLabel(end as string)
-  return `${from} - ${to}`
-}
-
-function getExperiencePeriodLabel(roles: ExperienceRole[]): string {
-  const sortedRoles = [...roles].sort((a, b) =>
-    a.start < b.start ? -1 : a.start > b.start ? 1 : 0
-  )
-
-  const firstRole = sortedRoles[0]
-  const currentRole = sortedRoles.find((role) => role.currentlyWorking)
-  const lastRole = sortedRoles[sortedRoles.length - 1]
-
-  return getPeriodLabel(
-    firstRole.start,
-    currentRole ? null : lastRole.end,
-    Boolean(currentRole)
-  )
-}
-
-async function renderMarkdownToHtml(markdown: string): Promise<string> {
-  return (await markdownProcessor.render(markdown)).code
-}
-
-const experiencesWithRoleDetails = await Promise.all(
-  experiences.map(async (experience) => ({
-    ...experience,
-    data: {
-      ...experience.data,
-      roles: await Promise.all(
-        experience.data.roles.map(async (role) => ({
-          ...role,
-          detailsHtml: await renderMarkdownToHtml(role.details),
-        }))
-      ),
-    },
-  }))
-)
+const { data } = Astro.props
 ---
 
-<div class="space-y-14">
-  <section id="overview" class="space-y-6">
+<div class="space-y-12">
+  <section id="overview">
     <Card
       class="border-primary/20 bg-linear-to-br from-card via-card to-primary/5"
     >
@@ -124,7 +39,7 @@ const experiencesWithRoleDetails = await Promise.all(
         <div class="flex items-center gap-4">
           <Image
             src={avatarImage}
-            alt={data.profile.name}
+            alt={data.name}
             width={64}
             height={64}
             format="webp"
@@ -134,102 +49,29 @@ const experiencesWithRoleDetails = await Promise.all(
             decoding="async"
           />
           <div>
-            <CardTitle class="text-xl md:text-2xl"
-              >{data.profile.name}</CardTitle
-            >
-            <CardDescription class="text-base"
-              >{data.profile.role}</CardDescription
-            >
+            <CardTitle class="text-xl md:text-2xl">{data.name}</CardTitle>
+            <CardDescription class="text-base">{data.role}</CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent class="space-y-4">
         <CardDescription class="max-w-3xl text-base leading-6">
-          {data.profile.summary}
+          {data.tagline}
         </CardDescription>
         <div class="flex flex-wrap gap-2">
-          {
-            data.profile.focus.map((item) => (
-              <Badge variant="secondary">{item}</Badge>
-            ))
-          }
+          {data.focus.map((item) => <Badge variant="secondary">{item}</Badge>)}
         </div>
       </CardContent>
     </Card>
   </section>
 
-  <section id="experience" class="space-y-6">
-    <div class="flex items-center gap-3">
-      <HugeiconsIcon icon={Briefcase01Icon} size={20} strokeWidth={2} />
-      <h2 class="text-xl font-semibold tracking-tight md:text-2xl">
-        Experience
-      </h2>
-    </div>
-
-    <Timeline defaultValue={experiences.length} className="w-full">
-      {
-        experiencesWithRoleDetails.map(({ data: item }, itemIndex) => (
-          <TimelineItem
-            step={item.id}
-            className="group-data-[orientation=vertical]/timeline:ms-10 group-data-[orientation=vertical]/timeline:pb-10"
-          >
-            <TimelineHeader>
-              <TimelineSeparator
-                className={`group-data-completed/timeline-item:bg-primary group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5 ${itemIndex === experiencesWithRoleDetails.length - 1 ? "hidden!" : "block!"}`}
-              />
-              <TimelineTitle className="mt-0.5 text-base font-semibold">
-                {item.company}
-              </TimelineTitle>
-              <TimelineIndicator className="flex size-6 items-center justify-center border-none bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground group-data-[orientation=vertical]/timeline:-left-7">
-                <HugeiconsIcon
-                  icon={Briefcase01Icon}
-                  size={14}
-                  strokeWidth={2}
-                />
-              </TimelineIndicator>
-            </TimelineHeader>
-
-            <TimelineContent>
-              <p class="text-base font-medium text-foreground">
-                {item.location}
-              </p>
-              <TimelineDate className="mt-1 mb-4">
-                {getExperiencePeriodLabel(item.roles)}
-              </TimelineDate>
-
-              <div class="space-y-6">
-                {item.roles.map((role, index) => (
-                  <div
-                    id={`experience-${item.id}-${index}`}
-                    class={index > 0 ? "border-t border-border/40 pt-6" : ""}
-                  >
-                    <h4 class="text-base font-semibold text-foreground">
-                      {role.title}
-                    </h4>
-                    <TimelineDate className="mt-1 mb-1 text-sm">
-                      {getPeriodLabel(
-                        role.start,
-                        role.end,
-                        role.currentlyWorking
-                      )}
-                    </TimelineDate>
-                    {role.location && (
-                      <p class="mb-2 text-sm font-medium text-foreground">
-                        {role.location}
-                      </p>
-                    )}
-                    <div class="ml-3 max-w-none text-base text-muted-foreground [&_li]:my-1 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5">
-                      <div set:html={role.detailsHtml} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </TimelineContent>
-          </TimelineItem>
-        ))
-      }
-    </Timeline>
+  <section
+    class="prose prose-base max-w-none prose-zinc dark:prose-invert prose-headings:tracking-tight"
+  >
+    <slot />
   </section>
+
+  <Separator />
 
   <section id="technologies-skills" class="space-y-6">
     <div class="flex items-center gap-3">
@@ -239,7 +81,7 @@ const experiencesWithRoleDetails = await Promise.all(
       </h2>
     </div>
 
-    <Card size="sm" class="max-w-3xl">
+    <Card size="sm">
       <CardContent class="divide-y divide-border/40">
         {
           data.skills.map((group) => (
@@ -270,7 +112,7 @@ const experiencesWithRoleDetails = await Promise.all(
         Certifications
       </h2>
     </div>
-    <div class="max-w-2xl divide-y divide-border/40">
+    <div class="divide-y divide-border/40">
       {
         data.certifications.map((cert) => (
           <a
