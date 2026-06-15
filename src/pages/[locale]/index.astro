@@ -1,13 +1,7 @@
 ---
 import ContentLayout from "@/layouts/content/content-layout.astro"
 import Hero from "@/components/features/home/hero.astro"
-import FeaturedListing from "@/components/features/home/featured-listing.astro"
 import TechMarquee from "@/components/features/home/tech-marquee.astro"
-import BlogCard from "@/components/features/blog/blog-card.astro"
-import {
-  getPublishedBlogPosts,
-  getFeaturedBlogPosts,
-} from "@/lib/content/queries"
 import { locales, type Locale } from "@/i18n/config"
 import { t } from "@/i18n/ui"
 import { resolvePageSeo } from "@/lib/seo/resolve"
@@ -21,12 +15,7 @@ export async function getStaticPaths() {
 
 const { locale } = Astro.params as { locale: Locale }
 
-const posts = await getPublishedBlogPosts(locale)
-const featured = await getFeaturedBlogPosts(locale)
-const heroPost = featured[0] ?? posts[0]
-const gridPosts = posts.filter((post) => post.id !== heroPost?.id).slice(0, 4)
 const primaryLink = getGlobalLink(homeCtaLinkIds.primary)
-const secondaryLink = getGlobalLink(homeCtaLinkIds.secondary)
 
 const siteUrl = SITE_URL
 const pageSeo = getPageSeo("home", locale)
@@ -54,35 +43,11 @@ const seo = resolvePageSeo(
       },
       secondary: {
         text: t(locale, "hero.resume"),
-        url: secondaryLink.href(locale),
-        isExternal: secondaryLink.isExternal,
+        url: `/${locale}/profile`,
+        isExternal: false,
       },
     }}
   />
 
   <TechMarquee heading={t(locale, "home.techStack")} />
-
-  {
-    heroPost && (
-      <FeaturedListing
-        title={t(locale, "blog.latest")}
-        viewAllHref={`/${locale}/blog`}
-        viewAllText={t(locale, "blog.viewAll")}
-      >
-        <BlogCard
-          slot="featured"
-          variant="featured"
-          post={heroPost}
-          locale={locale}
-        />
-        {gridPosts.map((post, i) => (
-          <div data-reveal style={`--reveal-delay: ${i * 75}ms`}>
-            <BlogCard variant="compact" post={post} locale={locale} />
-          </div>
-        ))}
-      </FeaturedListing>
-    )
-  }
 </ContentLayout>
-
-<script src="@/components/features/home/scroll-reveal.client.ts"></script>
