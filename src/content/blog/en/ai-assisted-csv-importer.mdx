@@ -1,0 +1,221 @@
+---
+title: 'Building a Production-Grade AI CSV Importer: Hybrid AI Pipelines, SSE Streaming, and the In-Process Worker'
+description: >-
+  CSV imports are a notorious source of friction, with varying column layouts,
+  unformatted phones, and messy date formats. I built an AI-assisted CRM importer
+  that solves this by separating AI reasoning (mapping plans) from deterministic
+  execution, backed by BullMQ queues and real-time SSE streaming.
+date: 2026-07-08T00:00:00.000Z
+draft: false
+featured: true
+coverImage: ../../../assets/images/blog/ai-assisted-csv-importer/cover.jpg
+links:
+  - type: github
+    url: 'https://github.com/sidarth-23/csv-importer'
+tags:
+  - ai
+  - typescript
+  - nextjs
+  - redis
+  - golang
+category: Engineering Journeys
+locale: en
+seo:
+  title: 'Building a Production-Grade AI CSV Importer'
+  description: >-
+    A deep-dive into building a production-grade AI-assisted CRM CSV importer:
+    hybrid AI pipelines, BullMQ in-process queues, and SSE streaming.
+---
+
+import ImageGallery from '../../../components/mdx/image-gallery.astro'
+import homeScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/home.png'
+import previewScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/preview.png'
+import processingScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/processing.png'
+import reviewScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/review.png'
+import recordsScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/records.png'
+
+Building a CSV importer is a rite of passage for software engineers. It starts simple—just parse some comma-separated values, map them to database columns, and call it a day. 
+
+Then, real-world data hits. One campaign export formats mobile numbers as `+1 (555) 123-4567`, while another uses `0091 98765 43210`. Facebook Lead Ads output different column headers than Salesforce or HubSpot. Users upload multi-sheet Excel files, or leave mandatory fields blank. 
+
+To solve this, I built **Sid's CRM AI CSV Importer**—a tool that shifts column mapping from rigid, hardcoded rules to an LLM-driven **mapping plan**, processes rows using **deterministic local transforms**, and uses targeted AI to **enrich** fields only when inference is required.
+
+Here is a deep dive into the architecture, the hybrid pipeline, and the engineering decisions behind it.
+
+<ImageGallery
+  images={[homeScreenshot, previewScreenshot, processingScreenshot, reviewScreenshot, recordsScreenshot]}
+  title="The AI CSV Importer upload, preview, processing, review, and final records screen"
+/>
+
+---
+
+## The Tech Stack & Architecture
+
+The application is built as a pnpm monorepo consisting of:
+- **`apps/web`**: Next.js 16 (App Router, Turbopack, React 19) styled with Tailwind CSS v4, using TanStack Table, TanStack Query, and nuqs for URL state management.
+- **`apps/api`**: Express 4, Zod, Drizzle ORM (Postgres), BullMQ (Redis), and the Vercel AI SDK (`@ai-sdk/openai`).
+- **`packages/shared`**: Reusable schemas, header detectors, mapping utilities, and progress indicators.
+
+```
++-------------------------------------------------------------+
+|                        Browser (Next.js)                    |
++-------------------------------------------------------------+
+          | (REST + upload)                ^ (SSE progress)
+          v                                |
++-------------------------------------------------------------+
+|                         Express API                         |
+|  +-------------------------------------------------------+  |
+|  |                BullMQ Worker (In-Process)             |  |
+|  +-------------------------------------------------------+  |
++-------------------------------------------------------------+
+    | (Drizzle)          | (BullMQ)       | (AI SDK)   | (S3 API)
+    v                    v                v            v
+[Postgres]            [Redis]          [OpenAI]     [MinIO]
+```
+
+### The "In-Process" Worker Pattern
+
+Coming from a **Go** background for a long time, background concurrency is something I expect natively. In Go, you spin up a goroutine, connect it with channels, and background work is managed out-of-the-box by the runtime scheduler.
+
+In the Node/TypeScript world, concurrency is single-threaded and event-loop driven. If you block the main thread parsing a 50,000-row spreadsheet, your API server becomes unresponsive. The standard practice is to deploy a separate queue-consuming worker process.
+
+For this project, I chose **BullMQ** backed by **Redis 8**, but implemented an **in-process worker pattern**:
+
+```typescript
+// apps/api/src/worker.ts
+import { Worker } from "bullmq";
+import { processFile } from "./modules/processing/processing.service";
+
+export function startImportWorker(redisUrl: string) {
+  const worker = new Worker(
+    "import-jobs",
+    async (job) => {
+      const result = await processFile(job.data);
+      return result;
+    },
+    { connection: { url: redisUrl } }
+  );
+
+  worker.on("ready", () => console.log("Import worker ready"));
+}
+```
+
+By launching this worker in the *same* process as the Express API during bootstrap, I get the reliability and isolation of a persistent queue runner without the deployment overhead of a separate container service. If a job fails, Redis manages retries, and Express remains free to serve requests.
+
+---
+
+## Designing a Hybrid AI Pipeline
+
+Most "AI importers" make the mistake of feeding raw rows directly into an LLM. This is slow, incredibly expensive, and bound to fail on larger datasets due to context limits or hallucinated data formats.
+
+The pipeline here splits the process into three distinct phases:
+
+### Phase 1: Bounded AI Analysis
+
+Instead of processing all data with the LLM, the API takes a compact, token-lean sample of the spreadsheet (the header and the first 10 rows of data) and sends it to the Vercel AI SDK's `streamObject` to generate a structured `MappingPlan`:
+
+```typescript
+// apps/api/src/modules/processing/analysis.service.ts
+const { partialObjectStream, object } = streamObject({
+  model: openai("gpt-4o-mini"),
+  schema: mappingPlanSchema,
+  temperature: 0,
+  prompt: buildAnalysisPrompt(sampleSheets, sourceHint),
+});
+```
+
+The LLM is asked to output a JSON mapping plan detailing:
+1. Which source columns map to which destination CRM fields.
+2. The specific **transform** (e.g., `phone_country_split`, `split_multi_first`, `enum_status`) to apply to each column.
+3. Whether a column requires downstream **semantic inference** (`needsInference: true`).
+
+Because we use `streamObject`, the frontend receives the mapping plan piece-by-piece, allowing us to show a live stream of what the AI is mapping in real-time.
+
+### Phase 2: Deterministic Local Transforms
+
+Once the mapping plan is established, we apply it to the remaining rows locally. We process the spreadsheet in chunks of 500 rows using pure, side-effect-free TypeScript functions:
+
+```typescript
+// packages/shared/src/mapping.ts
+export function applyMapping({ grid, selection, startRow, endRow }) {
+  const records = [];
+  const skippedRecords = [];
+
+  for (let i = startRow; i < endRow; i++) {
+    const row = grid[i];
+    const record = buildRecord(row, selection);
+    
+    // Validate record structure
+    const parsed = crmRecordSchema.safeParse(record);
+    if (!parsed.success || shouldSkipCrmRecord(parsed.data)) {
+      skippedRecords.push({ rowIndex: i, reason: "Failed validation", raw: row });
+    } else {
+      records.push(parsed.data);
+    }
+  }
+  return { records, skippedRecords };
+}
+```
+
+Transforms like splitting multi-value fields (e.g., keeping the first email and appending the rest to a note) or country-code extraction are executed at native speed. No LLM tokens are wasted on raw data formatting.
+
+### Phase 3: Targeted AI Enrichment (With Deduplication)
+
+For fields that actually require human-like classification—such as inferring `crm_status` (e.g. `GOOD_LEAD_FOLLOW_UP` vs `BAD_LEAD`) from freeform conversation notes—we run a final targeted AI pass.
+
+To optimize token usage, we extract all unique notes, classify only the unique set once, and fan the results back out to the matching records:
+
+```typescript
+// apps/api/src/modules/processing/enrich.service.ts
+export async function enrichRecords({ records, plan }) {
+  const uniqueNotes = [...new Set(records.map(r => r.crm_note).filter(Boolean))];
+  
+  // Call LLM only on unique values
+  const classifications = await classifyNotesWithAI(uniqueNotes);
+  
+  // Map back to records
+  return records.map(record => ({
+    ...record,
+    crm_status: classifications[record.crm_note] || record.crm_status
+  }));
+}
+```
+This deduplication optimization yields up to a **90% reduction in AI cost** and execution latency on large sheets with repetitive status notes.
+
+---
+
+## UI/UX & The Challenge of Getting the Design Right
+
+While the backend logic came together relatively quickly, **getting the design right was the most challenging part of the project.**
+
+A good importer needs to feel alive. If a user uploads a 50,000-row file, they shouldn't stare at a static spinner. I solved this by establishing a **Server-Sent Events (SSE)** connection that streams live narration events from the worker:
+
+```typescript
+// apps/api/src/modules/imports/imports.sse.ts
+export function setupSSEConnection(req, res) {
+  const sse = new SSESession(req, res);
+  // Listen to BullMQ progress events and stream them
+  jobQueue.on("progress", (jobId, progress) => {
+    sse.write({ event: "progress", data: progress });
+  });
+}
+```
+
+The frontend renders this activity stream as a terminal-like log, displaying messages like *"Parsing sheet 'leads_2026'..."*, *"AI mapping: Phone -> mobile_without_country_code"*, and progress bars showing the chunked parsing.
+
+### The "Review & Accept" Safety Net
+
+Even with smart AI mappings, users shouldn't have to trust the AI blindly. The final step of the import wizard renders a complete **Verify Step**:
+
+1. It shows a paginated, filterable table of the processed leads.
+2. It uses **TanStack Table** with **TanStack Virtual** to ensure that scrolling through large sets remains butter-smooth.
+3. Users can deselect rows they want to exclude or edit values inline.
+4. Only when they click **Accept** are the records permanently committed to the main CRM table.
+
+---
+
+## Lessons Learned
+
+Building this importer reinforced a key rule of AI engineering: **let AI handle structure, and let code handle execution.** 
+
+By using the LLM strictly to generate a structured `MappingPlan` and perform semantic enrichment, we build a system that is incredibly fast, predictable, and highly cost-effective—while retaining the flexibility to ingest any arbitrary CSV spreadsheet layout thrown at it.

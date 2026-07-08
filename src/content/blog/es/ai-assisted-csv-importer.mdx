@@ -1,0 +1,222 @@
+---
+title: 'Importador de CSV con IA para Producción: Pipelines Híbridos, Streaming SSE y Worker En Proceso'
+description: >-
+  Los archivos CSV son una fuente notoria de fricción, con diseños de columnas variables,
+  teléfonos no formateados y formatos de fecha desordenados. Construí un importador de CRM
+  asistido por IA que soluciona esto separando el razonamiento de la IA (planes de mapeo)
+  de la ejecución determinista local, respaldado por colas de BullMQ y streaming de SSE en tiempo real.
+date: 2026-07-08T00:00:00.000Z
+draft: false
+featured: true
+coverImage: ../../../assets/images/blog/ai-assisted-csv-importer/cover.jpg
+links:
+  - type: github
+    url: 'https://github.com/sidarth-23/csv-importer'
+tags:
+  - ai
+  - typescript
+  - nextjs
+  - redis
+  - golang
+category: Engineering Journeys
+locale: es
+seo:
+  title: 'Construyendo un Importador de CSV con IA para Producción'
+  description: >-
+    Un análisis profundo de la construcción de un importador de CSV con IA para CRM:
+    pipelines híbridos de IA, colas en proceso de BullMQ y streaming de SSE.
+---
+
+import ImageGallery from '../../../components/mdx/image-gallery.astro'
+import homeScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/home.png'
+import previewScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/preview.png'
+import processingScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/processing.png'
+import reviewScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/review.png'
+import recordsScreenshot from '../../../assets/images/blog/ai-assisted-csv-importer/records.png'
+
+Construir un importador de CSV es un rito de iniciación para los ingenieros de software. Comienza simple: solo analizar algunos valores separados por comas, asignarlos a columnas de la base de datos y dar por terminado el día. 
+
+Luego, llegan los datos del mundo real. Una exportación de campaña formatea los números móviles como `+1 (555) 123-4567`, mientras que otra usa `0091 98765 43210`. Los Lead Ads de Facebook generan encabezados de columna diferentes a los de Salesforce o HubSpot. Los usuarios cargan archivos Excel con múltiples hojas o dejan campos obligatorios en blanco. 
+
+Para solucionar esto, construí el **Importador de CSV con IA para CRM de Sid**: una herramienta que cambia el mapeo de columnas de reglas rígidas y predefinidas a un **plan de mapeo** impulsado por un LLM, procesa las filas utilizando **transformaciones locales deterministas** y utiliza IA focalizada para **enriquecer** los campos solo cuando se requiere inferencia.
+
+Aquí hay un análisis profundo de la arquitectura, el pipeline híbrido y las decisiones de ingeniería detrás del proyecto.
+
+<ImageGallery
+  images={[homeScreenshot, previewScreenshot, processingScreenshot, reviewScreenshot, recordsScreenshot]}
+  title="El importador de CSV con IA en sus fases de carga, vista previa, procesamiento, revisión y pantalla final de registros"
+/>
+
+---
+
+## El Stack Tecnológico y la Arquitectura
+
+La aplicación está construida como un monorepo pnpm que consta de:
+- **`apps/web`**: Next.js 16 (App Router, Turbopack, React 19) estructurado con Tailwind CSS v4, utilizando TanStack Table, TanStack Query y nuqs para la gestión del estado de la URL.
+- **`apps/api`**: Express 4, Zod, Drizzle ORM (Postgres), BullMQ (Redis) y el SDK de IA de Vercel (`@ai-sdk/openai`).
+- **`packages/shared`**: Schemas reutilizables, detectores de encabezados, utilidades de mapeo e indicadores de progreso.
+
+```
++-------------------------------------------------------------+
+|                        Browser (Next.js)                    |
++-------------------------------------------------------------+
+          | (REST + upload)                ^ (SSE progress)
+          v                                |
++-------------------------------------------------------------+
+|                         Express API                         |
+|  +-------------------------------------------------------+  |
+|  |                BullMQ Worker (In-Process)             |  |
+|  +-------------------------------------------------------+  |
++-------------------------------------------------------------+
+    | (Drizzle)          | (BullMQ)       | (AI SDK)   | (S3 API)
+    v                    v                v            v
+[Postgres]            [Redis]          [OpenAI]     [MinIO]
+```
+
+### El Patrón de Worker "En Proceso"
+
+Viniendo de una sólida experiencia en **Go** durante mucho tiempo, la concurrencia en segundo plano es algo que espero de forma nativa. En Go, inicias una goroutine, la conectas con canales y el trabajo en segundo plano se gestiona de manera predeterminada mediante el planificador del runtime.
+
+En el mundo de Node/TypeScript, la concurrencia está orientada a un solo hilo y al bucle de eventos. Si bloqueas el hilo principal analizando una hoja de cálculo de 50,000 filas, tu servidor de API deja de responder. La práctica estándar es implementar un proceso de worker consumidor de colas independiente.
+
+Para este proyecto, elegí **BullMQ** respaldado por **Redis 8**, pero implementé un **patrón de worker en proceso**:
+
+```typescript
+// apps/api/src/worker.ts
+import { Worker } from "bullmq";
+import { processFile } from "./modules/processing/processing.service";
+
+export function startImportWorker(redisUrl: string) {
+  const worker = new Worker(
+    "import-jobs",
+    async (job) => {
+      const result = await processFile(job.data);
+      return result;
+    },
+    { connection: { url: redisUrl } }
+  );
+
+  worker.on("ready", () => console.log("Import worker ready"));
+}
+```
+
+Al iniciar este worker en el mismo proceso que la API de Express durante el arranque, obtengo la confiabilidad y el aislamiento de un ejecutor de colas persistente sin la sobrecarga de implementar un contenedor o servicio separado. Si un trabajo falla, Redis gestiona los reintentos y Express sigue libre para atender peticiones.
+
+---
+
+## Diseñando un Pipeline de IA Híbrido
+
+La mayoría de los "importadores de IA" cometen el error de alimentar las filas crudas directamente a un LLM. Esto es lento, increíblemente costoso y está destinado a fallar en conjuntos de datos grandes debido a los límites de contexto o formatos de datos alucinados.
+
+El pipeline aquí divide el proceso en tres fases distintas:
+
+### Fase 1: Análisis Bounded de IA
+
+En lugar de procesar todos los datos con el LLM, la API toma una muestra compacta y eficiente en tokens de la hoja de cálculo (el encabezado y las primeras 10 filas de datos) y la envía al método `streamObject` del SDK de IA de Vercel para generar un `MappingPlan` estructurado:
+
+```typescript
+// apps/api/src/modules/processing/analysis.service.ts
+const { partialObjectStream, object } = streamObject({
+  model: openai("gpt-4o-mini"),
+  schema: mappingPlanSchema,
+  temperature: 0,
+  prompt: buildAnalysisPrompt(sampleSheets, sourceHint),
+});
+```
+
+Se le pide al LLM que produzca un plan de mapeo JSON que detalle:
+1. Qué columnas de origen se mapean a qué campos de destino del CRM.
+2. La **transformación** específica (por ejemplo, `phone_country_split`, `split_multi_first`, `enum_status`) a aplicar a cada columna.
+3. Si una columna requiere **inferencia semántica** posterior (`needsInference: true`).
+
+Debido a que usamos `streamObject`, el frontend recibe el plan de mapeo pieza por pieza, lo que nos permite mostrar un flujo en vivo de lo que la IA está mapeando en tiempo real.
+
+### Fase 2: Transformaciones Locales Deterministas
+
+Una vez establecido el plan de mapeo, lo aplicamos localmente a las filas restantes. Procesamos la hoja de cálculo en trozos de 500 filas utilizando funciones puras de TypeScript libres de efectos secundarios:
+
+```typescript
+// packages/shared/src/mapping.ts
+export function applyMapping({ grid, selection, startRow, endRow }) {
+  const records = [];
+  const skippedRecords = [];
+
+  for (let i = startRow; i < endRow; i++) {
+    const row = grid[i];
+    const record = buildRecord(row, selection);
+    
+    // Validar la estructura del registro
+    const parsed = crmRecordSchema.safeParse(record);
+    if (!parsed.success || shouldSkipCrmRecord(parsed.data)) {
+      skippedRecords.push({ rowIndex: i, reason: "Failed validation", raw: row });
+    } else {
+      records.push(parsed.data);
+    }
+  }
+  return { records, skippedRecords };
+}
+```
+
+Las transformaciones como la división de campos con múltiples valores (por ejemplo, mantener el primer correo electrónico y añadir el resto a una nota) o la extracción de códigos de país se ejecutan a velocidad nativa. No se desperdician tokens de LLM en el formateo de datos crudos.
+
+### Fase 3: Enriquecimiento Focalizado de IA (Con Deduplicación)
+
+Para los campos que realmente requieren una clasificación de tipo humano, como inferir el `crm_status` (por ejemplo, `GOOD_LEAD_FOLLOW_UP` frente a `BAD_LEAD`) a partir de notas de conversación de texto libre, ejecutamos una última pasada de IA dirigida.
+
+Para optimizar el uso de tokens, extraemos todas las notas únicas, clasificamos solo el conjunto único una vez y distribuimos los resultados de vuelta a los registros coincidentes:
+
+```typescript
+// apps/api/src/modules/processing/enrich.service.ts
+export async function enrichRecords({ records, plan }) {
+  const uniqueNotes = [...new Set(records.map(r => r.crm_note).filter(Boolean))];
+  
+  // Llamar al LLM solo para los valores únicos
+  const classifications = await classifyNotesWithAI(uniqueNotes);
+  
+  // Mapear de vuelta a los registros
+  return records.map(record => ({
+    ...record,
+    crm_status: classifications[record.crm_note] || record.crm_status
+  }));
+}
+```
+
+Esta optimización de deduplicación genera hasta una **reducción del 90% en el costo de IA** y en la latencia de ejecución en hojas de cálculo grandes con notas de estado repetitivas.
+
+---
+
+## UI/UX y el Desafío de Lograr el Diseño Correcto
+
+Aunque la lógica del backend se estructuró con relativa rapidez, **lograr el diseño correcto fue la parte más desafiante del proyecto.**
+
+Un buen importador necesita sentirse vivo. Si un usuario carga un archivo de 50,000 filas, no debería quedarse mirando un spinner estático. Resolví esto estableciendo una conexión de **Server-Sent Events (SSE)** que transmite eventos de narración en vivo desde el worker:
+
+```typescript
+// apps/api/src/modules/imports/imports.sse.ts
+export function setupSSEConnection(req, res) {
+  const sse = new SSESession(req, res);
+  // Escuchar eventos de progreso de BullMQ y transmitirlos
+  jobQueue.on("progress", (jobId, progress) => {
+    sse.write({ event: "progress", data: progress });
+  });
+}
+```
+
+El frontend representa este flujo de actividad como un registro de tipo terminal, mostrando mensajes como *"Analizando hoja 'leads_2026'..."*, *"Mapeo de IA: Teléfono -> mobile_without_country_code"*, y barras de progreso que muestran el análisis fragmentado.
+
+### La Red de Seguridad "Revisar y Aceptar"
+
+Incluso con mapeos inteligentes de IA, los usuarios no deberían tener que confiar ciegamente en la IA. El paso final del asistente de importación presenta una **Fase de Verificación** completa:
+
+1. Muestra una tabla paginada y filtrable de los leads procesados.
+2. Utiliza **TanStack Table** con **TanStack Virtual** para garantizar que el desplazamiento a través de grandes conjuntos de datos sea completamente fluido.
+3. Los usuarios pueden deseleccionar las filas que desean excluir o editar los valores en línea.
+4. Solo cuando hacen clic en **Aceptar** los registros se confirman de forma permanente en la tabla principal del CRM.
+
+---
+
+## Lecciones Aprendidas
+
+Construir este importador reforzó una regla clave de la ingeniería de IA: **deja que la IA se encargue de la estructura y que el código se encargue de la ejecución.**
+
+Al utilizar el LLM estrictamente para generar un `MappingPlan` estructurado y realizar un enriquecimiento semántico, construimos un sistema que es increíblemente rápido, predecible y altamente rentable, a la vez que conserva la flexibilidad para ingerir cualquier diseño de hoja de cálculo CSV que se le presente.
